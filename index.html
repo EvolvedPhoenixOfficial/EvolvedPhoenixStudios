@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EvolvedPhoenix Studios</title>
+  <meta name="description" content="Indie games forged with grit, polish, and player-first design." />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <!-- Tailwind (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* Tailwind config (dark mode via class) */
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <style>
+    ::selection{background:#38bdf8;color:white}
+    html,body{height:100%}
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+<!-- =============== NAVBAR =============== -->
+<header class="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3">
+      <!-- Logo image -->
+      <img data-eps-logo 
+        src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png"
+        alt="EvolvedPhoenix Studios Logo"
+        class="h-10 w-10 rounded-2xl object-cover"
+        decoding="async"
+        loading="lazy"
+      />
+      <span class="font-extrabold tracking-tight text-lg md:text-xl">EvolvedPhoenix Studios</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-2">
+      <a href="#games" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Games</a>
+      <a href="#news"  class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">News</a>
+      <a href="#team"  class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Team</a>
+      <a href="#spec"  class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Special Thanks</a>
+      <a href="#contact" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Contact</a>
+      <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
+      <a href="#games" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm bg-sky-600 text-white hover:bg-sky-700">Play Our Games</a>
+      <a href="https://discord.gg/EkUYKmW" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800">
+        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3a14.531 14.531 0 0 0-.671 1.389 19.808 19.808 0 0 0-7.774 0A14.417 14.417 0 0 0 7.443 3a19.736 19.736 0 0 0-3.76 1.369C1.096 8.051.288 11.585.638 15.07a19.91 19.91 0 0 0 6.07 3.09 14.61 14.61 0 0 0 1.298-2.09 12.83 12.83 0 0 1-2.047-.996c.172-.124.34-.253.501-.387 3.955 1.84 8.234 1.84 12.18 0 .163.134.33.263.501.387-.65.39-1.335.72-2.047.996.364.718.79 1.406 1.298 2.09a19.916 19.916 0 0 0 6.07-3.09c.5-4.9-.853-8.403-2.74-10.701zM8.02 13.68c-.794 0-1.442-.73-1.442-1.632 0-.9.64-1.635 1.442-1.635.806 0 1.45.736 1.442 1.635 0 .902-.636 1.632-1.442 1.632zm7.96 0c-.794 0-1.442-.73-1.442-1.632 0-.9.64-1.635 1.442-1.635.806 0 1.45.736 1.442 1.635 0 .902-.636 1.632-1.442 1.632z"/></svg>
+        Join the Discord
+      </a>
+      <button id="themeBtn" aria-label="Toggle theme" class="ml-2 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+        <svg id="themeIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </nav>
+
+    <!-- mobile -->
+    <div class="md:hidden flex items-center gap-2">
+      <button id="themeBtnM" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Toggle theme">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button id="menuBtn" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Toggle menu">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800">
+    <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-3 grid gap-2">
+      <a href="#games"   class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Games</a>
+      <a href="#news"    class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">News</a>
+      <a href="#team"    class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Team</a>
+      <a href="#spec"    class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Special Thanks</a>
+      <a href="#contact" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Contact</a>
+      <div class="flex gap-2 pt-2">
+        <a href="#games" class="flex-1 inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm bg-sky-600 text-white hover:bg-sky-700">Play Our Games</a>
+        <a href="https://discord.gg/EkUYKmW" class="flex-1 inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800">Join Discord</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- =============== HERO =============== -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl bg-sky-400/40"></div>
+    <div class="absolute -bottom-24 -right-24 h-96 w-96 rounded-full blur-3xl bg-indigo-500/30"></div>
+  </div>
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-20 md:py-28 grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <p class="text-sm font-semibold tracking-widest uppercase text-sky-500">EvolvedPhoenix Studios</p>
+      <h1 class="mt-3 text-4xl md:text-6xl font-extrabold tracking-tight">Indie games forged with grit, polish, and player-first design.</h1>
+      <p class="mt-5 text-lg text-slate-600 dark:text-slate-300 max-w-prose">
+        We build fast, punchy, and highly replayable experiences — from arena racers to sci-fi adventures.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#games" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm bg-sky-600 text-white hover:bg-sky-700">Play Our Games</a>
+        <a href="https://discord.gg/EkUYKmW" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800">
+          <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3a14.531 14.531 0 0 0-.671 1.389 19.808 19.808 0 0 0-7.774 0A14.417 14.417 0 0 0 7.443 3a19.736 19.736 0 0 0-3.76 1.369C1.096 8.051.288 11.585.638 15.07a19.91 19.91 0 0 0 6.07 3.09 14.61 14.61 0 0 0 1.298-2.09 12.83 12.83 0 0 1-2.047-.996c.172-.124.34-.253.501-.387 3.955 1.84 8.234 1.84 12.18 0 .163.134.33.263.501.387-.65.39-1.335.72-2.047.996.364.718.79 1.406 1.298 2.09a19.916 19.916 0 0 0 6.07-3.09c.5-4.9-.853-8.403-2.74-10.701zM8.02 13.68c-.794 0-1.442-.73-1.442-1.632 0-.9.64-1.635 1.442-1.635.806 0 1.45.736 1.442 1.635 0 .902-.636 1.632-1.442 1.632zm7.96 0c-.794 0-1.442-.73-1.442-1.632 0-.9.64-1.635 1.442-1.635.806 0 1.45.736 1.442 1.635 0 .902-.636 1.632-1.442 1.632z"/></svg>
+          Join the Discord
+        </a>
+      </div>
+      <div class="mt-8 flex items-center gap-4 text-slate-500 dark:text-slate-400">
+        <a href="https://discord.gg/EkUYKmW" class="hover:text-slate-900 dark:hover:text-white">Discord</a>
+        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios" class="hover:text-slate-900 dark:hover:text-white">YouTube</a>
+        <a href="https://x.com/EvolvedPhnixDev" class="hover:text-slate-900 dark:hover:text-white">X / Twitter</a>
+        <a href="https://github.com/EvolvedPhoenixOfficial" class="hover:text-slate-900 dark:hover:text-white">GitHub</a>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="aspect-[4/3] w-full rounded-3xl bg-gradient-to-br from-sky-400/30 via-indigo-400/20 to-fuchsia-400/30 shadow-2xl ring-1 ring-slate-200/60 dark:ring-slate-700/50"></div>
+      <div class="absolute -bottom-6 -left-6 bg-white/70 dark:bg-slate-900/70 backdrop-blur rounded-2xl p-4 shadow-xl ring-1 ring-slate-200 dark:ring-slate-800">
+        <p class="text-sm font-semibold">Shipping Games Since</p>
+        <p class="text-2xl font-extrabold">2019</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== GAMES =============== -->
+<section id="games" class="py-16 md:py-24">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8">
+    <header class="mb-10 flex items-end justify-between gap-6 flex-wrap">
+      <div>
+        <p class="mb-2 text-sm font-semibold tracking-widest uppercase text-sky-500">Projects</p>
+        <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">Games & Prototypes</h2>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="search" placeholder="Search projects..." class="bg-transparent outline-none py-2 px-1 text-sm" />
+        </div>
+        <div id="tagButtons" class="flex gap-2 overflow-x-auto"></div>
+      </div>
+    </header>
+
+    <div id="gamesGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- =============== NEWS =============== -->
+<section id="news" class="py-16 md:py-24">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8">
+    <header class="mb-10">
+      <p class="mb-2 text-sm font-semibold tracking-widest uppercase text-sky-500">Updates</p>
+      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">News & Devlogs</h2>
+    </header>
+    <div id="newsGrid" class="grid lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- =============== TEAM =============== -->
+<section id="team" class="py-16 md:py-24">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8">
+    <header class="mb-10">
+      <p class="mb-2 text-sm font-semibold tracking-widest uppercase text-sky-500">Crew</p>
+      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">Meet the Team</h2>
+    </header>
+    <div id="teamGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- =============== SPECIAL THANKS =============== -->
+<section id="spec" class="py-16 md:py-24">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8">
+    <header class="mb-10">
+      <p class="mb-2 text-sm font-semibold tracking-widest uppercase text-sky-500">Thanks</p>
+      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">Special Thanks</h2>
+    </header>
+    <div id="specteamGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- =============== CONTACT =============== -->
+<section id="contact" class="py-16 md:py-24">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 grid lg:grid-cols-2 gap-8">
+    <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm">
+      <h3 class="font-bold">Email</h3>
+      <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">For press, partnerships, or general inquiries — drop us a line.</p>
+      <div class="mt-4 flex items-center gap-2">
+        <span id="emailBadge" class="inline-flex items-center rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-900/40 dark:text-sky-100">
+          <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/></svg>
+          <span id="emailText">glen@evolvedphoenixstudios.com</span>
+        </span>
+        <button id="copyBtn" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800">Copy</button>
+        <a href="mailto:glen@evolvedphoenixstudios.com" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm bg-sky-600 text-white hover:bg-sky-700">Write Email</a>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <a class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800" href="https://discord.gg/EkUYKmW">Discord</a>
+        <a class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800" href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
+        <a class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800" href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
+      </div>
+    </div>
+
+    <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm">
+      <h3 class="font-bold">Quick Message</h3>
+      <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">This demo form uses <em>mailto:</em>. Swap for Formspree/Netlify or your backend.</p>
+      <form action="mailto:glen@evolvedphoenixstudios.com" method="post" class="mt-4 grid gap-3">
+        <input required name="name" placeholder="Your name" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" />
+        <input required type="email" name="email" placeholder="Your email" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" />
+        <textarea required name="message" placeholder="Tell us about your request…" rows="5" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2"></textarea>
+        <div class="flex gap-2">
+          <button class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm bg-sky-600 text-white hover:bg-sky-700" type="submit">Send</button>
+          <a href="https://discord.gg/EkUYKmW" class="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800">Join Discord</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- =============== FOOTER =============== -->
+<footer class="py-10 border-t border-slate-200 dark:border-slate-800">
+  <div class="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <img data-eps-logo 
+        src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png"
+        alt="EvolvedPhoenix Studios Logo"
+        class="h-10 w-10 rounded-2xl object-cover"
+        decoding="async"
+        loading="lazy"
+      />
+      <span class="font-extrabold tracking-tight text-lg md:text-xl">EvolvedPhoenix Studios</span>
+    </div>
+    <p class="text-sm text-slate-500 dark:text-slate-400">© <span id="year"></span> EvolvedPhoenix Studios. All rights reserved.</p>
+    <div class="flex gap-3">
+      <a href="https://discord.gg/EkUYKmW" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">Discord</a>
+      <a href="https://www.youtube.com/@EvolvedPhoenix-Studios" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">YouTube</a>
+      <a href="https://x.com/EvolvedPhnixDev" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">X / Twitter</a>
+      <a href="https://github.com/EvolvedPhoenixOfficial" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<!-- =============== DATA + RENDER SCRIPT =============== -->
+<script>
+  // ------- content you can edit easily -------
+  const CONTENT = {
+  "projects": [
+    {
+      "title": "Deltazone Reloaded",
+      "blurb": "DELTAZONE drops players into an unprecedented global conflict that has been going on for a few years. Your mission is to wipe out the opposing team and take back the land that was once yours.",
+      "status": "In Early Access",
+      "cover": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207",
+      "tags": [
+        "FPS",
+        "Multiplayer",
+        "Shooter"
+      ],
+      "links": [
+        {
+          "label": "PLAY NOW!",
+          "href": "https://store.steampowered.com/app/2127310/Deltazone_Reloaded"
+        },
+        {
+          "label": "Devlog",
+          "href": "#news"
+        }
+      ]
+    },
+    {
+      "title": "Gearbound: Odyssey",
+      "blurb": "Fast-paced first-person platformer across vibrant, handcrafted planets.",
+      "status": "In development",
+      "cover": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg",
+      "tags": [
+        "Platformer",
+        "Sci-Fi"
+      ],
+      "links": [
+        {
+          "label": "Wishlist",
+          "href": "https://store.steampowered.com/app/3612790/Gearbound_Odyssey/"
+        },
+        {
+          "label": "Devlog",
+          "href": "#news"
+        }
+      ]
+    },
+    {
+      "title": "Turn&Burn",
+      "blurb": "Skill-based arcade racer with drifting, drafting, and nitro chains.",
+      "status": "In development",
+      "cover": "https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp",
+      "tags": [
+        "Racing",
+        "Multiplayer"
+      ],
+      "links": [
+        {
+          "label": "Wishlist",
+          "href": "https://gamejolt.com/games/turn-and-burn/1012189"
+        },
+        {
+          "label": "Devlog",
+          "href": "#news"
+        }
+      ]
+    },
+    {
+      "title": "Labyrinth: Shadows of the Kingdom",
+      "blurb": "Multiplayer first-person dungeon crawler with melee, magic, and shields.",
+      "status": "Canceled",
+      "cover": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg",
+      "tags": [
+        "FPS",
+        "Co-op",
+        "Dungeon"
+      ],
+      "links": [
+        {
+          "label": "Steam",
+          "href": "https://store.steampowered.com/app/2495490/Labyrinth_Shadows_of_the_Kingdom"
+        },
+        {
+          "label": "Devlog",
+          "href": "#news"
+        }
+      ]
+    }
+  ],
+  "news": [
+    {
+      "date": "2025-08-20",
+      "title": "Labyrinth playtest build hits internal milestone",
+      "body": "New boss AI, tighter melee timing, and synced leaderboard for raids are in. Public playtest sign-ups soon."
+    },
+    {
+      "date": "2025-07-30",
+      "title": "Turn&Burn free-roam netcode alpha",
+      "body": "FishNet open-world tests are stable. Overtake logic & skidmarks syncing under heavy load look solid."
+    },
+    {
+      "date": "2025-06-15",
+      "title": "Gearbound: Odyssey vertical slice",
+      "body": "Three planets playable with traversal gadgets and secret routes. Trailer cut in progress."
+    },
+    {
+      "date": "2025-08-16",
+      "title": "Project Update: Labyrinth: Shadows of the Kingdom",
+      "body": "Today, we have to share some difficult news. After much thought, we’ve made the decision to end development on Labyrinth: Shadows of the Kingdom.\n\nThis was never an easy choice. We’ve spent countless hours building its world — from designing the combat with melee, magic, and shields, to shaping the Witherlings and Rotguards that lurked in the dark. We wanted to give players an atmospheric and challenging experience set deep within a kingdom lost to time."
+    },
+    {
+      "date": "2025-08-24",
+      "title": "Gearbound: Odyssey Level overhaul",
+      "body": "Hello, Today I bring some good new, I'm currently re-doing every level in the game and I now have a level editor so the TEAM can help make levels."
+    },
+    {
+      "date": "2025-08-26",
+      "title": "NEW WEBSITE!!!",
+      "body": "Welcome to the new official website for EvolvedPhoenix Studios!!!"
+    }
+  ],
+  "team": [
+    {
+      "name": "EvolvedPhoenix",
+      "role": "Founder / Game Developer",
+      "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png",
+      "bio": "As the founder of EvolvedPhoenix Studios, I’m dedicated to bringing unique and immersive gaming experiences to life. From crafting complex worlds to refining gameplay mechanics, I focus on delivering games that captivate players and push creative boundaries. This is my passion, and I’m excited to share it with you! \n\n"
+    },
+    {
+      "name": "Monkey_Man",
+      "role": "QA LEAD / STORY WRITER",
+      "avatar": "https://lh6.googleusercontent.com/spTN7TeYInuONn2jlbIrUKWjIjEa1ATA1BntHgRgeQ8Fc00-ApcfY-psbeU7El6UqHu1j7O0M4_uDA9TCV_28es0awkxDWRFeTQZYi9E1X3yY71bek-8cSxpD1aj58dF9N-NuFJMP0JekRIJR0qdC8kxvVRaWQNu77jwZXWiUsV49MdX3IAqjA=w1280",
+      "bio": "Meet Monkey! He might do some wild things in real life, but don't let that fool you his wealth of experience makes him the perfect person to write everything from a high-octane action game to a slow-burning romance horror. The possibilities are limitless with him on board! Plus, he's always available to answer questions in the server just @the monkey, and he’ll be there\n\n"
+    },
+    {
+      "name": "FrameLoss",
+      "role": "QA Tester",
+      "avatar": "https://lh5.googleusercontent.com/Ltb5-mDEQius7rCUs1iBbqyb15C2XkOwFLWvXtVkp7PgpuwKiWK6AJ_nGN4moaDj7Hnov5aDeYHuPr5777e5h2qdtpPUjbBzXJtvma_CwcJyykT2MEOZmsyyMX1lqM844Z--3xu8Z4_Bin8s9x_83J5azEnqmu8dLfrq5UkBj0eJkG-90sdj2A=w1280",
+      "bio": "Halla halla gedolla!\n\n"
+    },
+    {
+      "name": "izKrucker",
+      "role": "QA Tester",
+      "avatar": "https://lh3.googleusercontent.com/kEZChtzn6TFiN31NiBvZAD27xaMpaAy9u5WiNKwc3Ky0_OOV7btLF14IL60JNewd42yymFu0X9SP552TKoDHXSyvhmsKVgC4pVfLt8zZk8sFRoCL7T7ri2xayukSnM5MqF1kQPwR5c0fYEQ3LMWe5q2f8bIlvRJjtjNmxMz0YYl3K2ppX06lGA=w1280",
+      "bio": "Nothing selected as of yet\n\n"
+    },
+    {
+      "name": "MicrosoftWord",
+      "role": "QA Tester",
+      "avatar": "https://lh4.googleusercontent.com/CJUbuPDFzhRLzZjXRjj7ej1XFP7bp1RsfHDPmsSGSBtdzQf9k0ndxRdFAovYOjqvxnV7Yt5E2fbg_Rf_az2I28UajLBfCNsgmPN5X-yITNGvboKLt_Np6-0yJP_J3kGi6UWjklgdIjlmYrPKpT-yqiOR_UTtT9eeXTygEApGhdKXcm4nKPMJig=w1280",
+      "bio": "Nothing selected as of yet\n\n"
+    }
+  ],
+  "specialThanks": [
+    {
+      "name": "SonicboomColt",
+      "tagline": "CEO / FOUND NOT-SO Classic Games / Music Creation",
+      "avatar": "https://lh4.googleusercontent.com/t5HwaJE0QXEeeWwcfuPdqO7igblAGIBdJgy1QgAqjosnfkYQKNEz1xNGrKbMIc72tuZI_D4pnvMuq4QEAQY67KKj2S66hQsRRosmYHqsE-xN2bis6mECkCJABXGOCTyJgDfLvKYBbcc=w1280",
+      "note": "\nNothing selected as of yet\n\n"
+    }
+  ]
+
+};
+
+  // ------- theme toggle -------
+  function setTheme(t){
+    const r=document.documentElement;
+    if(t==='dark'){ r.classList.add('dark'); } else { r.classList.remove('dark'); }
+    localStorage.setItem('eps-theme', t);
+    const icon=document.getElementById('themeIcon');
+    if(icon){
+      icon.innerHTML = (t==='dark')
+        ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+        : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
+  }
+  const saved = localStorage.getItem('eps-theme') || 'dark';
+  setTheme(saved);
+  document.getElementById('themeBtn').onclick = () => setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
+  document.getElementById('themeBtnM').onclick = () => setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
+
+  // ------- mobile menu -------
+  document.getElementById('menuBtn').onclick = () => {
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+  };
+
+  // ------- copy email -------
+  document.getElementById('copyBtn').onclick = async () => {
+    const email = document.getElementById('emailText').textContent;
+    try { await navigator.clipboard.writeText(email); } catch(e){}
+    const old = document.getElementById('emailText').textContent;
+    document.getElementById('emailText').textContent = 'Copied!';
+    setTimeout(()=>document.getElementById('emailText').textContent = old, 1500);
+  };
+
+  // ------- render helpers -------
+  function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
+
+  // Games filter/search
+  const gamesGrid = document.getElementById('gamesGrid');
+  const search = document.getElementById('search');
+  const allTags = ['All', ...Array.from(new Set(CONTENT.projects.flatMap(p=>p.tags)))];
+  let activeTag = 'All';
+
+  function renderTags(){
+    const wrap = document.getElementById('tagButtons');
+    wrap.innerHTML='';
+    allTags.forEach(t=>{
+      const btn = el(`<button class="px-3 py-2 rounded-xl text-sm border ${t===activeTag?'bg-sky-600 text-white border-sky-600':'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-sky-400'}">${t}</button>`);
+      btn.onclick = ()=>{ activeTag=t; renderGames(); renderTags(); };
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderGames(){
+    const q = (search.value||'').toLowerCase();
+    const list = CONTENT.projects.filter(p=>{
+      const tagOk = activeTag==='All' || p.tags.includes(activeTag);
+      const qOk = (p.title+' '+p.blurb+' '+p.tags.join(' ')).toLowerCase().includes(q);
+      return tagOk && qOk;
+    });
+    gamesGrid.innerHTML='';
+    list.forEach(p=>{
+      const card = el(`
+        <article class="group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm hover:shadow-xl transition">
+          <div class="relative">
+            <img src="${p.cover}" alt="${p.title}" class="h-48 w-full object-cover">
+            <div class="absolute left-4 top-4"><span class="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-900/40 dark:text-sky-100">${p.status}</span></div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-lg font-bold tracking-tight">${p.title}</h3>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${p.blurb}</p>
+            <div class="mt-3 flex flex-wrap gap-2">${p.tags.map(t=>`<span class="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">${t}</span>`).join('')}</div>
+            <div class="mt-4 flex flex-wrap gap-2">${(p.links||[]).map(l=>`<a class="inline-flex items-center justify-center rounded-2xl px-3 py-1.5 text-sm font-semibold shadow-sm border border-sky-300 text-sky-800 hover:bg-sky-50 dark:border-sky-700 dark:text-sky-100 dark:hover:bg-slate-800" href="${l.href}">${l.label}</a>`).join('')}</div>
+          </div>
+        </article>
+      `);
+      gamesGrid.appendChild(card);
+    });
+  }
+
+  // News
+  const newsGrid = document.getElementById('newsGrid');
+  function renderNews(){
+    newsGrid.innerHTML = '';
+    CONTENT.news.forEach(n=>{
+      newsGrid.appendChild(el(`
+        <article class="rounded-3xl p-6 bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm">
+          <p class="text-xs font-semibold tracking-widest uppercase text-sky-500">${n.date}</p>
+          <h3 class="mt-2 text-lg font-bold">${n.title}</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">${n.body}</p>
+        </article>
+      `));
+    });
+  }
+
+  // Team
+  const teamGrid = document.getElementById('teamGrid');
+  function renderTeam(){
+    teamGrid.innerHTML='';
+    CONTENT.team.forEach(m=>{
+      teamGrid.appendChild(el(`
+        <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm">
+          <div class="flex items-center gap-4">
+            <img src="${m.avatar}" alt="${m.name}" class="h-16 w-16 rounded-2xl object-cover" />
+            <div>
+              <h3 class="font-bold">${m.name}</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300">${m.role}</p>
+            </div>
+          </div>
+          <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">${m.bio}</p>
+        </div>
+      `));
+    });
+  }
+
+  // Special Thanks
+  const specteamGrid = document.getElementById('specteamGrid');
+  function renderThanks(){
+    specteamGrid.innerHTML='';
+    (CONTENT.specialThanks || []).forEach(m=>{
+      specteamGrid.appendChild(el(`
+        <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm">
+          <div class="flex items-center gap-4">
+            <img src="${m.avatar}" alt="${m.name}" class="h-16 w-16 rounded-2xl object-cover" />
+            <div>
+              <h3 class="font-bold">${m.name}</h3>
+              ${m.tagline ? `<p class="text-sm text-slate-600 dark:text-slate-300">${m.tagline}</p>` : ''}
+            </div>
+          </div>
+          ${m.note ? `<p class="mt-3 text-sm text-slate-600 dark:text-slate-300">${m.note}</p>` : ''}
+        </div>
+      `));
+    });
+  }
+
+  // init
+  renderTags(); renderGames(); renderNews(); renderTeam(); renderThanks();
+  search.addEventListener('input', renderGames);
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
