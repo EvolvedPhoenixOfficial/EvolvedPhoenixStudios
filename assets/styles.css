@@ -1,0 +1,72 @@
+/* Shared site styles (works with or without Tailwind). Keep it simple & portable. */
+:root{
+  --ring: rgba(100,116,139,.25);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+::selection{background:#38bdf8;color:#fff}
+img{max-width:100%;display:block}
+.container{width:100%;max-width:80rem;margin-inline:auto;padding-inline:1rem}
+.navbar{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter: blur(8px);
+  border-bottom:1px solid rgba(100,116,139,.25);
+}
+.navbar-inner{height:4rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:.75rem;text-decoration:none;color:inherit}
+.logo img{height:40px;width:40px;border-radius:14px;object-fit:cover}
+.nav-links{display:none;gap:.25rem}
+.nav-btn{padding:.5rem .75rem;border-radius:.75rem;font:500 0.9rem/1 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+.nav-btn:hover{background:rgba(100,116,139,.14)}
+@media (min-width: 768px){ .nav-links{display:flex} }
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:.5rem .9rem;border-radius:1rem;font:600 0.9rem/1 system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  border:1px solid #7dd3fc33; box-shadow:0 1px 1px rgba(0,0,0,.05);
+}
+.btn-primary{background:#0284c7;color:#fff;border-color:#0284c7}
+.btn-primary:hover{background:#0369a1}
+.btn-ghost{background:transparent;color:#0c4a6e}
+.btn-ghost:hover{background:#e2e8f0}
+
+.grid{display:grid;gap:1.25rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width: 1024px){ .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width: 640px){ .grid-2,.grid-3{grid-template-columns:1fr} }
+
+.card{
+  background:#fff;border:1px solid var(--ring);border-radius:1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);overflow:hidden;
+}
+.card-body{padding:1rem}
+.badge{display:inline-block;padding:.125rem .5rem;border-radius:999px;font:600 .72rem/1.2 system-ui;background:#e0f2fe;color:#075985}
+
+.page-hero{padding:3rem 0}
+.page-hero h1{font:800 clamp(1.6rem,3vw,2.4rem)/1.1 system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:0}
+.page-hero p{color:#475569;margin:.75rem 0 0}
+
+.footer{border-top:1px solid var(--ring);padding:2rem 0;color:#475569}
+.footer a{color:inherit;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+/* Dark mode (toggled by .dark on html) */
+.dark body{background:#0b1220;color:#e5e7eb}
+.dark .navbar{background:rgba(2,6,23,.6);border-bottom-color:#0f172a}
+.dark .card{background:#0b1220;border-color:#0f172a}
+.dark .btn-ghost{color:#cbd5e1}
+.dark .footer{border-top-color:#0f172a;color:#94a3b8}
+
+/* Simple utility */
+.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
+.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}
+.flex{display:flex}.items-center{align-items:center}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.justify-between{justify-content:space-between}
+.rounded{border-radius:.75rem}
+.input{
+  width:100%;padding:.6rem .75rem;border:1px solid #cbd5e1;border-radius:.75rem;
+  background:transparent;color:inherit;
+}
+.dark .input{border-color:#334155}
+.tag{font-size:.7rem;border-radius:999px;padding:.25rem .5rem;background:#f1f5f9;color:#334155;margin-right:.35rem}
+.dark .tag{background:#111827;color:#cbd5e1}

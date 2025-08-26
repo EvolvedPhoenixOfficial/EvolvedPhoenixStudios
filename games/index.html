@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Games & Prototypes — EvolvedPhoenix Studios</title>
+  <meta name="description" content="Play EvolvedPhoenix Studios games and prototypes." />
+  <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <!-- NAV -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="/games/" class="logo">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="EPS Logo">
+        <strong>EvolvedPhoenix Studios</strong>
+      </a>
+      <nav class="nav-links">
+        <a class="nav-btn" href="/games/">Games</a>
+        <a class="nav-btn" href="/news/">News</a>
+        <a class="nav-btn" href="/team/">Team & Thanks</a>
+        <button class="nav-btn" onclick="EPS_toggleTheme()">Toggle Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Games & Prototypes</h1>
+      <p>Fast, punchy, replayable. Filter and jump in.</p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="container mb-6">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center" style="flex:1">
+        <input id="search" class="input" placeholder="Search projects…">
+      </div>
+      <div id="tagBar" class="flex items-center gap-2" style="overflow:auto"></div>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <section class="container">
+    <div id="grid" class="grid grid-3"></div>
+  </section>
+
+  <footer class="footer">
+    <div class="container flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="" style="height:40px;width:40px;border-radius:14px">
+        <strong>EvolvedPhoenix Studios</strong>
+      </div>
+      <div>© <span id="year"></span> EvolvedPhoenix Studios</div>
+      <div class="flex gap-3">
+        <a href="https://discord.gg/EkUYKmW">Discord</a>
+        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
+        <a href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
+        <a href="https://github.com/EvolvedPhoenixOfficial">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/assets/content.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+    const CONTENT = window.EPS_CONTENT;
+    const $grid = $('#grid');
+    const $search = $('#search');
+
+    const allTags = ['All', ...Array.from(new Set(CONTENT.projects.flatMap(p => p.tags)))];
+    let activeTag = 'All';
+
+    function card(p){
+      const tags = (p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+      const links = (p.links||[]).map(l=>`<a class="btn" href="${l.href}">${l.label}</a>`).join(' ');
+      return `
+        <article class="card">
+          <img src="${p.cover}" alt="${p.title}">
+          <div class="card-body">
+            <span class="badge">${p.status||''}</span>
+            <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">${p.title}</h3>
+            <p class="mt-2" style="color:#475569;white-space:pre-line">${p.blurb||''}</p>
+            <div class="mt-3">${tags}</div>
+            <div class="mt-4 flex gap-2">${links}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderTags(){
+      const bar = $('#tagBar'); bar.innerHTML='';
+      allTags.forEach(t=>{
+        const btn = document.createElement('button');
+        btn.className = 'btn' + (t===activeTag ? ' btn-primary' : '');
+        btn.textContent = t;
+        btn.onclick = ()=>{ activeTag = t; render(); renderTags(); };
+        bar.appendChild(btn);
+      });
+    }
+
+    function render(){
+      const q = ($search.value||'').toLowerCase();
+      const list = CONTENT.projects.filter(p=>{
+        const tagOk = activeTag==='All' || p.tags?.includes(activeTag);
+        const qOk = (p.title+' '+p.blurb+' '+(p.tags||[]).join(' ')).toLowerCase().includes(q);
+        return tagOk && qOk;
+      });
+      $grid.innerHTML = list.map(card).join('');
+    }
+
+    $search.addEventListener('input', render);
+    renderTags(); render();
+    $('#year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
