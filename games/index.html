@@ -7,26 +7,24 @@
   <meta name="description" content="Play EvolvedPhoenix Studios games and prototypes." />
   <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
   <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="../assets/styles.css" />
 </head>
 <body>
-  <!-- NAV -->
   <header class="navbar">
     <div class="container navbar-inner">
-      <a href="/games/" class="logo">
+      <a href="../index.html" class="logo">
         <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="EPS Logo">
-        <strong>EvolvedPhoenix Studios</strong>
+        EvolvedPhoenix Studios
       </a>
       <nav class="nav-links">
-        <a class="nav-btn" href="/games/">Games</a>
-        <a class="nav-btn" href="/news/">News</a>
-        <a class="nav-btn" href="/team/">Team & Thanks</a>
-        <button class="nav-btn" onclick="EPS_toggleTheme()">Toggle Theme</button>
+        <a class="nav-btn" href="../games/index.html">Games</a>
+        <a class="nav-btn" href="../news/index.html">News</a>
+        <a class="nav-btn" href="../team/index.html">Team & Thanks</a>
+        <button class="nav-btn" onclick="toggleTheme()">Toggle Theme</button>
       </nav>
     </div>
   </header>
 
-  <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <h1>Games & Prototypes</h1>
@@ -37,16 +35,85 @@
   <!-- Filters -->
   <section class="container mb-6">
     <div class="flex items-center gap-3">
-      <div class="flex items-center" style="flex:1">
-        <input id="search" class="input" placeholder="Search projects…">
+      <input id="search" class="btn" style="flex:1" placeholder="Search projects…">
+      <div id="tagBar" class="flex items-center gap-2" style="overflow:auto">
+        <!-- Static tag set (no external JS) -->
+        <button class="btn btn-primary" data-tag="All">All</button>
+        <button class="btn" data-tag="FPS">FPS</button>
+        <button class="btn" data-tag="Multiplayer">Multiplayer</button>
+        <button class="btn" data-tag="Shooter">Shooter</button>
+        <button class="btn" data-tag="Platformer">Platformer</button>
+        <button class="btn" data-tag="Sci-Fi">Sci-Fi</button>
+        <button class="btn" data-tag="Racing">Racing</button>
+        <button class="btn" data-tag="Co-op">Co-op</button>
+        <button class="btn" data-tag="Dungeon">Dungeon</button>
       </div>
-      <div id="tagBar" class="flex items-center gap-2" style="overflow:auto"></div>
     </div>
   </section>
 
   <!-- Grid -->
   <section class="container">
-    <div id="grid" class="grid grid-3"></div>
+    <div id="grid" class="grid grid-3">
+      <!-- Deltazone -->
+      <article class="card" data-tags="FPS,Multiplayer,Shooter" data-title="Deltazone Reloaded" data-blurb="DELTAZONE drops players into an unprecedented global conflict">
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone Reloaded">
+        <div class="card-body">
+          <span class="badge">In Early Access</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Deltazone Reloaded</h3>
+          <p class="mt-2" style="color:#475569">DELTAZONE drops players into an unprecedented global conflict that has been going on for a few years. Your mission is to wipe out the opposing team and take back the land that was once yours.</p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">PLAY NOW!</a>
+            <a class="btn" href="../news/index.html#deltazone-reloaded">Devlog</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Gearbound -->
+      <article class="card" data-tags="Platformer,Sci-Fi" data-title="Gearbound: Odyssey" data-blurb="Fast-paced first-person platformer">
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound: Odyssey">
+        <div class="card-body">
+          <span class="badge">In development</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Gearbound: Odyssey</h3>
+          <p class="mt-2" style="color:#475569">Fast-paced first-person platformer across vibrant, handcrafted planets.</p>
+          <div class="mt-3"><span class="tag">Platformer</span><span class="tag">Sci-Fi</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn btn-primary" href="https://store.steampowered.com/app/3612790/Gearbound_Odyssey/">Wishlist</a>
+            <a class="btn" href="../news/index.html#gearbound-odyssey-vertical-slice">Devlog</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Turn&Burn -->
+      <article class="card" data-tags="Racing,Multiplayer" data-title="Turn&Burn" data-blurb="Skill-based arcade racer">
+        <img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn">
+        <div class="card-body">
+          <span class="badge">In development</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Turn&Burn</h3>
+          <p class="mt-2" style="color:#475569">Skill-based arcade racer with drifting, drafting, and nitro chains.</p>
+          <div class="mt-3"><span class="tag">Racing</span><span class="tag">Multiplayer</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn btn-primary" href="https://gamejolt.com/games/turn-and-burn/1012189">Wishlist</a>
+            <a class="btn" href="../news/index.html#turnburn-free-roam-netcode-alpha">Devlog</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Labyrinth -->
+      <article class="card" data-tags="FPS,Co-op,Dungeon" data-title="Labyrinth: Shadows of the Kingdom" data-blurb="Multiplayer first-person dungeon crawler">
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth: Shadows of the Kingdom">
+        <div class="card-body">
+          <span class="badge">Canceled</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Labyrinth: Shadows of the Kingdom</h3>
+          <p class="mt-2" style="color:#475569">Multiplayer first-person dungeon crawler with melee, magic, and shields.</p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Co-op</span><span class="tag">Dungeon</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://store.steampowered.com/app/2495490/Labyrinth_Shadows_of_the_Kingdom">Steam</a>
+            <a class="btn" href="../news/index.html#project-update-labyrinth-shadows-of-the-kingdom">Devlog</a>
+          </div>
+        </div>
+      </article>
+    </div>
   </section>
 
   <footer class="footer">
@@ -65,58 +132,41 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="/assets/content.js"></script>
-  <script src="/assets/site.js"></script>
+  <!-- inline scripts (filter + theme + year) -->
   <script>
-    const CONTENT = window.EPS_CONTENT;
-    const $grid = $('#grid');
-    const $search = $('#search');
+    (function(){
+      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
+      const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
+      setTheme(saved);
+      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+      document.getElementById('year').textContent = new Date().getFullYear();
 
-    const allTags = ['All', ...Array.from(new Set(CONTENT.projects.flatMap(p => p.tags)))];
-    let activeTag = 'All';
+      const search = document.getElementById('search');
+      const cards = Array.from(document.querySelectorAll('#grid .card'));
+      let activeTag = 'All';
 
-    function card(p){
-      const tags = (p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
-      const links = (p.links||[]).map(l=>`<a class="btn" href="${l.href}">${l.label}</a>`).join(' ');
-      return `
-        <article class="card">
-          <img src="${p.cover}" alt="${p.title}">
-          <div class="card-body">
-            <span class="badge">${p.status||''}</span>
-            <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">${p.title}</h3>
-            <p class="mt-2" style="color:#475569;white-space:pre-line">${p.blurb||''}</p>
-            <div class="mt-3">${tags}</div>
-            <div class="mt-4 flex gap-2">${links}</div>
-          </div>
-        </article>
-      `;
-    }
-
-    function renderTags(){
-      const bar = $('#tagBar'); bar.innerHTML='';
-      allTags.forEach(t=>{
-        const btn = document.createElement('button');
-        btn.className = 'btn' + (t===activeTag ? ' btn-primary' : '');
-        btn.textContent = t;
-        btn.onclick = ()=>{ activeTag = t; render(); renderTags(); };
-        bar.appendChild(btn);
+      document.getElementById('tagBar').addEventListener('click', e=>{
+        const btn = e.target.closest('button[data-tag]'); if(!btn) return;
+        activeTag = btn.dataset.tag;
+        document.querySelectorAll('#tagBar .btn').forEach(b=>b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+        render();
       });
-    }
+      search.addEventListener('input', render);
 
-    function render(){
-      const q = ($search.value||'').toLowerCase();
-      const list = CONTENT.projects.filter(p=>{
-        const tagOk = activeTag==='All' || p.tags?.includes(activeTag);
-        const qOk = (p.title+' '+p.blurb+' '+(p.tags||[]).join(' ')).toLowerCase().includes(q);
-        return tagOk && qOk;
-      });
-      $grid.innerHTML = list.map(card).join('');
-    }
-
-    $search.addEventListener('input', render);
-    renderTags(); render();
-    $('#year').textContent = new Date().getFullYear();
+      function render(){
+        const q = (search.value||'').toLowerCase();
+        cards.forEach(card=>{
+          const tags = (card.dataset.tags||'').split(',');
+          const title = (card.dataset.title||'').toLowerCase();
+          const blurb = (card.dataset.blurb||'').toLowerCase();
+          const tagOk = activeTag==='All' || tags.includes(activeTag);
+          const qOk = !q || title.includes(q) || blurb.includes(q);
+          card.style.display = (tagOk && qOk) ? '' : 'none';
+        });
+      }
+      render();
+    })();
   </script>
 </body>
 </html>
