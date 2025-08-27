@@ -40,17 +40,37 @@
 
   <section class="container mb-8">
     <div class="grid grid-2">
-      <img class="card" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth header">
+      <div class="carousel" id="lab-carousel" tabindex="0" aria-label="Labyrinth media carousel">
+        <div class="carousel-track">
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth screenshot 1"></figure>
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth screenshot 2"></figure>
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth screenshot 3"></figure>
+        </div>
+        <button class="carousel-prev" aria-label="Previous slide">‹</button>
+        <button class="carousel-next" aria-label="Next slide">›</button>
+        <div class="carousel-dots" aria-label="Carousel pagination"></div>
+      </div>
+
       <div class="card">
         <div class="card-body">
           <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Project</h3>
-          <p>Development has concluded, but we’re keeping this page as an archive of the vision, media, and write-ups.</p>
+          <p>Development has concluded; this page documents the vision, media, and write-ups.</p>
           <div class="mt-3 flex gap-2">
             <a class="btn" href="../../news/#project-update-labyrinth-shadows-of-the-kingdom">Read the update</a>
             <a class="btn" href="https://discord.gg/EkUYKmW">Discord</a>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="container mb-8">
+    <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID_HERE?rel=0"
+              title="Labyrinth: Shadows of the Kingdom Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
     </div>
   </section>
 
@@ -76,6 +96,22 @@
       const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
       window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
       document.getElementById('year').textContent=new Date().getFullYear();
+
+      document.querySelectorAll('.carousel').forEach(setupCarousel);
+      function setupCarousel(car){
+        const track=car.querySelector('.carousel-track');
+        const slides=[...car.querySelectorAll('.carousel-slide')];
+        const prev=car.querySelector('.carousel-prev');
+        const next=car.querySelector('.carousel-next');
+        const dots=car.querySelector('.carousel-dots');
+        let i=0;
+        function go(n){ i=(n+slides.length)%slides.length; track.style.transform=`translateX(${-i*100}%)`; dots?.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current',bi===i?'true':'false')); }
+        if(dots){ dots.innerHTML=''; slides.forEach((_,idx)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Go to slide ${idx+1}`);b.onclick=()=>go(idx);dots.appendChild(b);}); }
+        prev?.addEventListener('click',()=>go(i-1)); next?.addEventListener('click',()=>go(i+1));
+        let sx=0, dx=0; car.addEventListener('pointerdown',e=>{sx=e.clientX;car.setPointerCapture(e.pointerId);}); car.addEventListener('pointermove',e=>{if(!sx)return;dx=e.clientX-sx;}); car.addEventListener('pointerup',()=>{if(Math.abs(dx)>40){dx<0?go(i+1):go(i-1);} sx=0;dx=0;});
+        car.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(i-1);if(e.key==='ArrowRight')go(i+1);});
+        go(0);
+      }
     })();
   </script>
 </body>

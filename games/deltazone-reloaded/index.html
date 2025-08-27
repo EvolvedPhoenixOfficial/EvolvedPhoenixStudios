@@ -29,10 +29,8 @@
     <div class="container">
       <span class="badge">In Early Access</span>
       <h1 class="mt-2">Deltazone Reloaded</h1>
-      <p class="mt-2">DELTAZONE drops players into an unprecedented global conflict. Reclaim your homeland through tight, team-driven combat.</p>
-      <div class="mt-3">
-        <span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span>
-      </div>
+      <p class="mt-2">Objective-driven firefights, class loadouts, and tight team combat. Reclaim your homeland.</p>
+      <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span></div>
       <div class="mt-4 flex gap-3">
         <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">Play on Steam</a>
         <a class="btn" href="../../news/#labyrinth-playtest-build-hits-internal-milestone">Devlogs</a>
@@ -40,13 +38,24 @@
     </div>
   </section>
 
+  <!-- Media: Carousel + About -->
   <section class="container mb-8">
     <div class="grid grid-2">
-      <img class="card" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone header">
+      <div class="carousel" id="dz-carousel" tabindex="0" aria-label="Deltazone media carousel">
+        <div class="carousel-track">
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 1"></figure>
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 2"></figure>
+          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 3"></figure>
+        </div>
+        <button class="carousel-prev" aria-label="Previous slide">‹</button>
+        <button class="carousel-next" aria-label="Next slide">›</button>
+        <div class="carousel-dots" aria-label="Carousel pagination"></div>
+      </div>
+
       <div class="card">
         <div class="card-body">
           <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Game</h3>
-          <p>Objective-driven firefights, class loadouts, and map control define the core loop. Modes include point capture, convoy escort, and last-team-standing.</p>
+          <p>Modes include point capture, convoy escort, and last-team-standing. Squad synergy and map control are key to victory.</p>
           <h4 class="mt-4" style="margin:0 0 .5rem;font:700 1rem/1.2 system-ui">Links</h4>
           <div class="flex gap-2">
             <a class="btn" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">Steam</a>
@@ -56,6 +65,24 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Trailer -->
+  <section class="container mb-8">
+    <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID_HERE?rel=0"
+              title="Deltazone Reloaded Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+    <!-- Or use a local MP4 instead:
+    <div class="ratio" style="margin-top:1rem">
+      <video controls poster="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207">
+        <source src="/media/deltazone-trailer.mp4" type="video/mp4">
+      </video>
+    </div>
+    -->
   </section>
 
   <footer class="footer">
@@ -74,12 +101,60 @@
     </div>
   </footer>
 
+  <!-- tiny inline JS: theme + year + carousel -->
   <script>
     (function(){
       function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
       const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
       window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
       document.getElementById('year').textContent=new Date().getFullYear();
+
+      // Carousel init (works for any .carousel on the page)
+      document.querySelectorAll('.carousel').forEach(setupCarousel);
+      function setupCarousel(car){
+        const track = car.querySelector('.carousel-track');
+        const slides = Array.from(car.querySelectorAll('.carousel-slide'));
+        const prev = car.querySelector('.carousel-prev');
+        const next = car.querySelector('.carousel-next');
+        const dotsWrap = car.querySelector('.carousel-dots');
+        let i = 0;
+
+        function go(n){
+          i = (n + slides.length) % slides.length;
+          track.style.transform = `translateX(${-i*100}%)`;
+          if(dotsWrap){
+            dotsWrap.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i?'true':'false'));
+          }
+        }
+
+        // Build dots
+        if(dotsWrap){
+          dotsWrap.innerHTML = '';
+          slides.forEach((_,idx)=>{
+            const b=document.createElement('button');
+            b.setAttribute('aria-label',`Go to slide ${idx+1}`);
+            b.addEventListener('click',()=>go(idx));
+            dotsWrap.appendChild(b);
+          });
+        }
+
+        prev?.addEventListener('click',()=>go(i-1));
+        next?.addEventListener('click',()=>go(i+1));
+
+        // Keyboard
+        car.addEventListener('keydown',e=>{
+          if(e.key==='ArrowLeft') go(i-1);
+          if(e.key==='ArrowRight') go(i+1);
+        });
+
+        // Swipe / drag
+        let startX=0, dx=0;
+        car.addEventListener('pointerdown',e=>{startX=e.clientX; car.setPointerCapture(e.pointerId);});
+        car.addEventListener('pointermove',e=>{if(!startX) return; dx=e.clientX-startX;});
+        car.addEventListener('pointerup',()=>{ if(Math.abs(dx)>40){ dx<0?go(i+1):go(i-1); } startX=0; dx=0; });
+
+        go(0);
+      }
     })();
   </script>
 </body>

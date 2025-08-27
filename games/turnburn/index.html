@@ -28,7 +28,7 @@
   <section class="page-hero">
     <div class="container">
       <span class="badge">In development</span>
-      <h1 class="mt-2">Turn&Burn</h1>
+      <h1 class="mt-2">Turn&amp;Burn</h1>
       <p class="mt-2">Skill-based arcade racer with drifting, drafting, and nitro chains across tight circuits and free-roam routes.</p>
       <div class="mt-3"><span class="tag">Racing</span><span class="tag">Multiplayer</span></div>
       <div class="mt-4 flex gap-3">
@@ -40,17 +40,37 @@
 
   <section class="container mb-8">
     <div class="grid grid-2">
-      <img class="card" src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn header">
+      <div class="carousel" id="tb-carousel" tabindex="0" aria-label="Turn&Burn media carousel">
+        <div class="carousel-track">
+          <figure class="carousel-slide"><img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn screenshot 1"></figure>
+          <figure class="carousel-slide"><img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn screenshot 2"></figure>
+          <figure class="carousel-slide"><img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn screenshot 3"></figure>
+        </div>
+        <button class="carousel-prev" aria-label="Previous slide">‹</button>
+        <button class="carousel-next" aria-label="Next slide">›</button>
+        <div class="carousel-dots" aria-label="Carousel pagination"></div>
+      </div>
+
       <div class="card">
         <div class="card-body">
           <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Game</h3>
-          <p>Chain slides and boost management to outpace opponents. Physics-first handling, high-speed corners, and overtakes tuned for competitive play.</p>
+          <p>Physics-first handling, high-speed corners, and overtakes tuned for competitive play.</p>
           <div class="mt-3 flex gap-2">
             <a class="btn" href="https://discord.gg/EkUYKmW">Discord</a>
             <a class="btn" href="https://x.com/EvolvedPhnixDev">X/Twitter</a>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="container mb-8">
+    <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID_HERE?rel=0"
+              title="Turn&Burn Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
     </div>
   </section>
 
@@ -76,6 +96,22 @@
       const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
       window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
       document.getElementById('year').textContent=new Date().getFullYear();
+
+      document.querySelectorAll('.carousel').forEach(setupCarousel);
+      function setupCarousel(car){
+        const track=car.querySelector('.carousel-track');
+        const slides=[...car.querySelectorAll('.carousel-slide')];
+        const prev=car.querySelector('.carousel-prev');
+        const next=car.querySelector('.carousel-next');
+        const dots=car.querySelector('.carousel-dots');
+        let i=0;
+        function go(n){ i=(n+slides.length)%slides.length; track.style.transform=`translateX(${-i*100}%)`; dots?.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current',bi===i?'true':'false')); }
+        if(dots){ dots.innerHTML=''; slides.forEach((_,idx)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Go to slide ${idx+1}`);b.onclick=()=>go(idx);dots.appendChild(b);}); }
+        prev?.addEventListener('click',()=>go(i-1)); next?.addEventListener('click',()=>go(i+1));
+        let sx=0, dx=0; car.addEventListener('pointerdown',e=>{sx=e.clientX;car.setPointerCapture(e.pointerId);}); car.addEventListener('pointermove',e=>{if(!sx)return;dx=e.clientX-sx;}); car.addEventListener('pointerup',()=>{if(Math.abs(dx)>40){dx<0?go(i+1):go(i-1);} sx=0;dx=0;});
+        car.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(i-1);if(e.key==='ArrowRight')go(i+1);});
+        go(0);
+      }
     })();
   </script>
 </body>
