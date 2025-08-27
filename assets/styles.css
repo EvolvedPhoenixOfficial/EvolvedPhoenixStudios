@@ -177,53 +177,65 @@ body{
 /* optional: keyboard focus ring on the whole card */
 .stretched-link:focus{ outline:2px solid #38bdf8; outline-offset:3px; border-radius:inherit; }
 
-/* ---------- Media: Carousel (fixed) ---------- */
-figure{ margin:0; } /* reset default figure margin globally */
-
+//* ---------- Media: Carousel (fixed) ---------- */
 .carousel{
-  position:relative; overflow:hidden; border-radius:1rem; background:#000;
-  border:2px solid rgba(0,0,0,0.15); box-shadow:0 4px 8px rgba(0,0,0,0.08);
-  aspect-ratio:16/9; /* gives the carousel height */
+  position:relative;
+  overflow:hidden;
+  border-radius:1rem;
+  background:#000;
+  border:2px solid rgba(0,0,0,0.15);
+  box-shadow:0 4px 8px rgba(0,0,0,0.08);
+  aspect-ratio:16/9;              /* give the carousel a height */
 }
 .carousel-track{
-  display:flex; height:100%; transition:transform .4s ease;
+  display:flex;
+  height:100%;                    /* slides can fill the frame */
+  transition:transform .4s ease;
 }
 .carousel-slide{
-  flex:0 0 100%;          /* <-- one full viewport per slide */
-  height:100%; user-select:none;
+  min-width:100%;
+  height:100%;
+  margin:0;                       /* kill default figure margins */
+  user-select:none;
 }
 .carousel-slide img{
-  width:100%; height:100%; display:block;
-  object-fit:cover; object-position:center;  /* change to contain for no-crop */
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;               /* no letterboxing */
+  object-position:center;
 }
 
 /* Controls */
 .carousel-prev,.carousel-next{
-  position:absolute; top:50%; transform:translateY(-50%);
-  width:40px; height:40px; border-radius:999px;
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:40px;height:40px;border-radius:999px;
   border:2px solid rgba(148,163,184,.35);
-  background:rgba(15,23,42,.6); color:#fff;
-  display:grid; place-items:center; cursor:pointer; z-index:3;
+  background:rgba(15,23,42,.6);color:#fff;
+  display:grid;place-items:center;cursor:pointer;z-index:3
 }
-.carousel-prev{ left:.5rem } .carousel-next{ right:.5rem }
-.carousel-prev:hover,.carousel-next:hover{ background:rgba(15,23,42,.8) }
+.carousel-prev{left:.5rem}
+.carousel-next{right:.5rem}
+.carousel-prev:hover,.carousel-next:hover{background:rgba(15,23,42,.8)}
 
 /* Dots */
 .carousel-dots{
-  position:absolute; left:0; right:0; bottom:.5rem;
-  display:flex; justify-content:center; gap:.35rem; z-index:3;
+  position:absolute;left:0;right:0;bottom:.5rem;
+  display:flex;justify-content:center;gap:.35rem;z-index:3
 }
 .carousel-dots button{
-  width:8px; height:8px; border-radius:999px; border:0; cursor:pointer;
-  background:rgba(148,163,184,.7);
+  width:8px;height:8px;border-radius:999px;border:0;cursor:pointer;
+  background:rgba(148,163,184,.7)
 }
-.carousel-dots button[aria-current="true"]{ background:#38bdf8 }
+.carousel-dots button[aria-current="true"]{background:#38bdf8}
 
-/* Focus ring + dark */
-.carousel{ outline:none }
-.carousel:focus{ box-shadow:0 0 0 3px rgba(56,189,248,.35) }
-.dark .carousel{ border-color:rgba(148,163,184,.25); box-shadow:0 4px 8px rgba(0,0,0,.6) }
-.dark .carousel-prev,.dark .carousel-next{ border-color:rgba(148,163,184,.35) }
+/* Focus ring for a11y */
+.carousel{outline:none}
+.carousel:focus{box-shadow:0 0 0 3px rgba(56,189,248,.35)}
+
+/* Dark mode */
+.dark .carousel{border-color:rgba(148,163,184,.25);box-shadow:0 4px 8px rgba(0,0,0,.6)}
+.dark .carousel-prev,.dark .carousel-next{border-color:rgba(148,163,184,.35)}
 
 /* ---------- Media: Responsive Video ---------- */
 .ratio{position:relative;width:100%}

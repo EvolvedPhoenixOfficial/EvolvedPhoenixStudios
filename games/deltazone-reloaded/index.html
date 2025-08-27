@@ -112,44 +112,49 @@
       // Carousel init (works for any .carousel on the page)
       document.querySelectorAll('.carousel').forEach(setupCarousel);
       function setupCarousel(car){
-	  const track = car.querySelector('.carousel-track');
-	  const slides = [...car.querySelectorAll('.carousel-slide')];
-	  const prev = car.querySelector('.carousel-prev');
-	  const next = car.querySelector('.carousel-next');
-	  const dots = car.querySelector('.carousel-dots');
-	  let i = 0;
+        const track = car.querySelector('.carousel-track');
+        const slides = Array.from(car.querySelectorAll('.carousel-slide'));
+        const prev = car.querySelector('.carousel-prev');
+        const next = car.querySelector('.carousel-next');
+        const dotsWrap = car.querySelector('.carousel-dots');
+        let i = 0;
 
-	  function w(){ return car.clientWidth; }
-	  function go(n){
-		i = (n + slides.length) % slides.length;
-		track.style.transform = `translateX(${-i * w()}px)`;
-		dots?.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i ? 'true' : 'false'));
-	  }
+        function go(n){
+          i = (n + slides.length) % slides.length;
+          track.style.transform = `translateX(${-i*100}%)`;
+          if(dotsWrap){
+            dotsWrap.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i?'true':'false'));
+          }
+        }
 
-	  if(dots){
-		dots.innerHTML = '';
-		slides.forEach((_,idx)=>{
-		  const b = document.createElement('button');
-		  b.setAttribute('aria-label', `Go to slide ${idx+1}`);
-		  b.onclick = ()=>go(idx);
-		  dots.appendChild(b);
-		});
-	  }
+        // Build dots
+        if(dotsWrap){
+          dotsWrap.innerHTML = '';
+          slides.forEach((_,idx)=>{
+            const b=document.createElement('button');
+            b.setAttribute('aria-label',`Go to slide ${idx+1}`);
+            b.addEventListener('click',()=>go(idx));
+            dotsWrap.appendChild(b);
+          });
+        }
 
-	  prev?.addEventListener('click', ()=>go(i-1));
-	  next?.addEventListener('click', ()=>go(i+1));
+        prev?.addEventListener('click',()=>go(i-1));
+        next?.addEventListener('click',()=>go(i+1));
 
-	  // swipe
-	  let sx=0, dx=0;
-	  car.addEventListener('pointerdown', e=>{ sx=e.clientX; car.setPointerCapture(e.pointerId); });
-	  car.addEventListener('pointermove', e=>{ if(!sx) return; dx=e.clientX - sx; });
-	  car.addEventListener('pointerup', ()=>{ if(Math.abs(dx)>40){ dx<0?go(i+1):go(i-1); } sx=0; dx=0; });
+        // Keyboard
+        car.addEventListener('keydown',e=>{
+          if(e.key==='ArrowLeft') go(i-1);
+          if(e.key==='ArrowRight') go(i+1);
+        });
 
-	  // keep aligned on resize
-	  addEventListener('resize', ()=>go(i), { passive:true });
+        // Swipe / drag
+        let startX=0, dx=0;
+        car.addEventListener('pointerdown',e=>{startX=e.clientX; car.setPointerCapture(e.pointerId);});
+        car.addEventListener('pointermove',e=>{if(!startX) return; dx=e.clientX-startX;});
+        car.addEventListener('pointerup',()=>{ if(Math.abs(dx)>40){ dx<0?go(i+1):go(i-1); } startX=0; dx=0; });
 
-	  go(0);
-	}
+        go(0);
+      }
     })();
   </script>
 </body>
