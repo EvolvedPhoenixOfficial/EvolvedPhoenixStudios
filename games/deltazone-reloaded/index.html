@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../../assets/styles.css" />
 </head>
 <body>
-  <!-- =============== NAVBAR =============== -->
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="container navbar-inner">
       <a href="../../" class="logo">
@@ -26,7 +26,7 @@
     </div>
   </header>
 
-  <!-- =============== HERO =============== -->
+  <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <span class="badge">In Early Access</span>
@@ -40,11 +40,11 @@
     </div>
   </section>
 
-  <!-- =============== MEDIA =============== -->
+  <!-- MEDIA -->
   <section class="container mb-8">
     <div class="grid grid-2">
-      <!-- Carousel -->
-      <div class="carousel" id="dz-carousel" tabindex="0" aria-label="Deltazone media carousel">
+      <!-- Carousel (auto-scrolls every 5000ms; change via data-autoplay-ms) -->
+      <div class="carousel" id="dz-carousel" tabindex="0" aria-label="Deltazone media carousel" data-autoplay-ms="5000">
         <div class="carousel-track">
           <figure class="carousel-slide">
             <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 1" loading="lazy">
@@ -57,7 +57,7 @@
           </figure>
         </div>
 
-        <!-- Big visible arrow buttons -->
+        <!-- Arrow buttons -->
         <button class="carousel-prev" type="button" aria-label="Previous slide">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6"/>
@@ -88,7 +88,7 @@
     </div>
   </section>
 
-  <!-- =============== TRAILER =============== -->
+  <!-- TRAILER -->
   <section class="container mb-8">
     <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
     <div class="ratio">
@@ -98,8 +98,9 @@
               allowfullscreen></iframe>
     </div>
   </section>
+	&nbsp;
 
-  <!-- =============== FOOTER =============== -->
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -116,10 +117,10 @@
     </div>
   </footer>
 
-  <!-- =============== INLINE JS (theme + year + buttons-only carousel) =============== -->
+  <!-- INLINE JS: theme + year + buttons-only carousel with autoplay -->
   <script>
     (function(){
-      // Theme toggle
+      // Theme
       function setTheme(t){
         document.documentElement.classList.toggle('dark', t==='dark');
         try{ localStorage.setItem('eps-theme', t);}catch(e){}
@@ -131,7 +132,7 @@
       // Footer year
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      // Init all carousels on the page
+      // Init carousels
       document.querySelectorAll('.carousel').forEach(setupCarousel);
 
       function setupCarousel(car){
@@ -140,7 +141,10 @@
         const prev = car.querySelector('.carousel-prev');
         const next = car.querySelector('.carousel-next');
         const dots = car.querySelector('.carousel-dots');
+
         let i = 0;
+        const speed = Number(car.dataset.autoplayMs || 5000); // ms
+        let timer = null;
 
         function vw(){ return car.clientWidth; }
         function updateDots(){
@@ -149,7 +153,7 @@
         }
         function go(n){
           i = (n + slides.length) % slides.length;
-          track.style.transform = `translateX(${ -i * vw() }px)`; // pixel-based translate
+          track.style.transform = `translateX(${ -i * vw() }px)`;
           updateDots();
         }
 
@@ -159,25 +163,32 @@
           slides.forEach((_,idx)=>{
             const b=document.createElement('button');
             b.setAttribute('aria-label', `Go to slide ${idx+1}`);
-            b.addEventListener('click', ()=>go(idx));
+            b.addEventListener('click', ()=>{ go(idx); restart(); });
             dots.appendChild(b);
           });
         }
 
-        // Buttons only (no swipe)
-        prev && prev.addEventListener('click', ()=>go(i-1));
-        next && next.addEventListener('click', ()=>go(i+1));
+        // Buttons (also restart autoplay)
+        prev && prev.addEventListener('click', ()=>{ go(i-1); restart(); });
+        next && next.addEventListener('click', ()=>{ go(i+1); restart(); });
 
-        // Optional keyboard support
-        car.addEventListener('keydown', e=>{
-          if(e.key==='ArrowLeft') go(i-1);
-          if(e.key==='ArrowRight') go(i+1);
-        });
+        // Autoplay
+        function start(){ stop(); timer = setInterval(()=>go(i+1), speed); }
+        function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+        function restart(){ start(); }
+
+        // Pause on hover/focus and when tab hidden
+        car.addEventListener('mouseenter', stop);
+        car.addEventListener('mouseleave', start);
+        car.addEventListener('focusin', stop);
+        car.addEventListener('focusout', start);
+        document.addEventListener('visibilitychange', ()=>{ document.hidden ? stop() : start(); });
 
         // Keep aligned on resize
         addEventListener('resize', ()=>go(i), { passive:true });
 
         go(0);
+        start();
       }
     })();
   </script>

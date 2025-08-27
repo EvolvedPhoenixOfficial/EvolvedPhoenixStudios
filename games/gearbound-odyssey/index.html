@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../../assets/styles.css" />
 </head>
 <body>
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="container navbar-inner">
       <a href="../../" class="logo">
@@ -25,6 +26,7 @@
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <span class="badge">In development</span>
@@ -38,19 +40,39 @@
     </div>
   </section>
 
+  <!-- MEDIA -->
   <section class="container mb-8">
     <div class="grid grid-2">
-      <div class="carousel" id="gb-carousel" tabindex="0" aria-label="Gearbound media carousel">
+      <!-- Carousel (auto-scrolls; change speed with data-autoplay-ms) -->
+      <div class="carousel" id="gb-carousel" tabindex="0" aria-label="Gearbound media carousel" data-autoplay-ms="5000">
         <div class="carousel-track">
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 1"></figure>
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 2"></figure>
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 3"></figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 1" loading="lazy">
+          </figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 2" loading="lazy">
+          </figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound screenshot 3" loading="lazy">
+          </figure>
         </div>
-        <button class="carousel-prev" aria-label="Previous slide">‹</button>
-        <button class="carousel-next" aria-label="Next slide">›</button>
+
+        <!-- Arrow buttons (visible, no swipe) -->
+        <button class="carousel-prev" type="button" aria-label="Previous slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+        <button class="carousel-next" type="button" aria-label="Next slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </button>
+
         <div class="carousel-dots" aria-label="Carousel pagination"></div>
       </div>
 
+      <!-- About -->
       <div class="card">
         <div class="card-body">
           <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Game</h3>
@@ -65,6 +87,7 @@
     </div>
   </section>
 
+  <!-- TRAILER -->
   <section class="container mb-8">
     <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
     <div class="ratio">
@@ -74,7 +97,9 @@
               allowfullscreen></iframe>
     </div>
   </section>
+	&nbsp;
 
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -91,27 +116,78 @@
     </div>
   </footer>
 
+  <!-- INLINE JS: theme + year + buttons-only carousel with autoplay -->
   <script>
     (function(){
-      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
-      const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
-      window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
-      document.getElementById('year').textContent=new Date().getFullYear();
+      // Theme
+      function setTheme(t){
+        document.documentElement.classList.toggle('dark', t==='dark');
+        try{ localStorage.setItem('eps-theme', t);}catch(e){}
+      }
+      const saved=(typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
+      setTheme(saved);
+      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
 
+      // Footer year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Init carousels
       document.querySelectorAll('.carousel').forEach(setupCarousel);
+
       function setupCarousel(car){
-        const track=car.querySelector('.carousel-track');
-        const slides=[...car.querySelectorAll('.carousel-slide')];
-        const prev=car.querySelector('.carousel-prev');
-        const next=car.querySelector('.carousel-next');
-        const dots=car.querySelector('.carousel-dots');
-        let i=0;
-        function go(n){ i=(n+slides.length)%slides.length; track.style.transform=`translateX(${-i*100}%)`; dots?.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current',bi===i?'true':'false')); }
-        if(dots){ dots.innerHTML=''; slides.forEach((_,idx)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Go to slide ${idx+1}`);b.onclick=()=>go(idx);dots.appendChild(b);}); }
-        prev?.addEventListener('click',()=>go(i-1)); next?.addEventListener('click',()=>go(i+1));
-        let sx=0, dx=0; car.addEventListener('pointerdown',e=>{sx=e.clientX;car.setPointerCapture(e.pointerId);}); car.addEventListener('pointermove',e=>{if(!sx)return;dx=e.clientX-sx;}); car.addEventListener('pointerup',()=>{if(Math.abs(dx)>40){dx<0?go(i+1):go(i-1);} sx=0;dx=0;});
-        car.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(i-1);if(e.key==='ArrowRight')go(i+1);});
+        const track = car.querySelector('.carousel-track');
+        const slides = Array.from(car.querySelectorAll('.carousel-slide'));
+        const prev = car.querySelector('.carousel-prev');
+        const next = car.querySelector('.carousel-next');
+        const dots = car.querySelector('.carousel-dots');
+
+        let i = 0;
+        const speed = Number(car.dataset.autoplayMs || 5000); // ms
+        let timer = null;
+
+        function vw(){ return car.clientWidth; }
+        function updateDots(){
+          if(!dots) return;
+          dots.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i ? 'true' : 'false'));
+        }
+        function go(n){
+          i = (n + slides.length) % slides.length;
+          track.style.transform = `translateX(${ -i * vw() }px)`; // pixel-based translate
+          updateDots();
+        }
+
+        // Build dots
+        if(dots){
+          dots.innerHTML = '';
+          slides.forEach((_,idx)=>{
+            const b=document.createElement('button');
+            b.setAttribute('aria-label', `Go to slide ${idx+1}`);
+            b.addEventListener('click', ()=>{ go(idx); restart(); });
+            dots.appendChild(b);
+          });
+        }
+
+        // Buttons only (no swipe)
+        prev && prev.addEventListener('click', ()=>{ go(i-1); restart(); });
+        next && next.addEventListener('click', ()=>{ go(i+1); restart(); });
+
+        // Autoplay
+        function start(){ stop(); timer = setInterval(()=>go(i+1), speed); }
+        function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+        function restart(){ start(); }
+
+        // Pause on hover/focus and when tab hidden
+        car.addEventListener('mouseenter', stop);
+        car.addEventListener('mouseleave', start);
+        car.addEventListener('focusin', stop);
+        car.addEventListener('focusout', start);
+        document.addEventListener('visibilitychange', ()=>{ document.hidden ? stop() : start(); });
+
+        // Keep aligned on resize
+        addEventListener('resize', ()=>go(i), { passive:true });
+
         go(0);
+        start();
       }
     })();
   </script>
