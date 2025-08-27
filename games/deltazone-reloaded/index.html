@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../../assets/styles.css" />
 </head>
 <body>
+  <!-- =============== NAVBAR =============== -->
   <header class="navbar">
     <div class="container navbar-inner">
       <a href="../../" class="logo">
@@ -25,6 +26,7 @@
     </div>
   </header>
 
+  <!-- =============== HERO =============== -->
   <section class="page-hero">
     <div class="container">
       <span class="badge">In Early Access</span>
@@ -38,20 +40,39 @@
     </div>
   </section>
 
-  <!-- Media: Carousel + About -->
+  <!-- =============== MEDIA =============== -->
   <section class="container mb-8">
     <div class="grid grid-2">
+      <!-- Carousel -->
       <div class="carousel" id="dz-carousel" tabindex="0" aria-label="Deltazone media carousel">
         <div class="carousel-track">
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 1"></figure>
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 2"></figure>
-          <figure class="carousel-slide"><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 3"></figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 1" loading="lazy">
+          </figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 2" loading="lazy">
+          </figure>
+          <figure class="carousel-slide">
+            <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone screenshot 3" loading="lazy">
+          </figure>
         </div>
-        <button class="carousel-prev" aria-label="Previous slide">‹</button>
-        <button class="carousel-next" aria-label="Next slide">›</button>
+
+        <!-- Big visible arrow buttons -->
+        <button class="carousel-prev" type="button" aria-label="Previous slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+        <button class="carousel-next" type="button" aria-label="Next slide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </button>
+
         <div class="carousel-dots" aria-label="Carousel pagination"></div>
       </div>
 
+      <!-- About panel -->
       <div class="card">
         <div class="card-body">
           <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Game</h3>
@@ -67,7 +88,7 @@
     </div>
   </section>
 
-  <!-- Trailer -->
+  <!-- =============== TRAILER =============== -->
   <section class="container mb-8">
     <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">Trailer</h3>
     <div class="ratio">
@@ -76,15 +97,9 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen></iframe>
     </div>
-    <!-- Or use a local MP4 instead:
-    <div class="ratio" style="margin-top:1rem">
-      <video controls poster="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207">
-        <source src="/media/deltazone-trailer.mp4" type="video/mp4">
-      </video>
-    </div>
-    -->
   </section>
 
+  <!-- =============== FOOTER =============== -->
   <footer class="footer">
     <div class="container flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -101,57 +116,66 @@
     </div>
   </footer>
 
-  <!-- tiny inline JS: theme + year + carousel -->
+  <!-- =============== INLINE JS (theme + year + buttons-only carousel) =============== -->
   <script>
     (function(){
-      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
-      const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
-      window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
-      document.getElementById('year').textContent=new Date().getFullYear();
+      // Theme toggle
+      function setTheme(t){
+        document.documentElement.classList.toggle('dark', t==='dark');
+        try{ localStorage.setItem('eps-theme', t);}catch(e){}
+      }
+      const saved=(typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
+      setTheme(saved);
+      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
 
-      // Carousel init (works for any .carousel on the page)
+      // Footer year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Init all carousels on the page
       document.querySelectorAll('.carousel').forEach(setupCarousel);
+
       function setupCarousel(car){
         const track = car.querySelector('.carousel-track');
         const slides = Array.from(car.querySelectorAll('.carousel-slide'));
         const prev = car.querySelector('.carousel-prev');
         const next = car.querySelector('.carousel-next');
-        const dotsWrap = car.querySelector('.carousel-dots');
+        const dots = car.querySelector('.carousel-dots');
         let i = 0;
 
+        function vw(){ return car.clientWidth; }
+        function updateDots(){
+          if(!dots) return;
+          dots.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i ? 'true' : 'false'));
+        }
         function go(n){
           i = (n + slides.length) % slides.length;
-          track.style.transform = `translateX(${-i*100}%)`;
-          if(dotsWrap){
-            dotsWrap.querySelectorAll('button').forEach((b,bi)=>b.setAttribute('aria-current', bi===i?'true':'false'));
-          }
+          track.style.transform = `translateX(${ -i * vw() }px)`; // pixel-based translate
+          updateDots();
         }
 
         // Build dots
-        if(dotsWrap){
-          dotsWrap.innerHTML = '';
+        if(dots){
+          dots.innerHTML = '';
           slides.forEach((_,idx)=>{
             const b=document.createElement('button');
-            b.setAttribute('aria-label',`Go to slide ${idx+1}`);
-            b.addEventListener('click',()=>go(idx));
-            dotsWrap.appendChild(b);
+            b.setAttribute('aria-label', `Go to slide ${idx+1}`);
+            b.addEventListener('click', ()=>go(idx));
+            dots.appendChild(b);
           });
         }
 
-        prev?.addEventListener('click',()=>go(i-1));
-        next?.addEventListener('click',()=>go(i+1));
+        // Buttons only (no swipe)
+        prev && prev.addEventListener('click', ()=>go(i-1));
+        next && next.addEventListener('click', ()=>go(i+1));
 
-        // Keyboard
-        car.addEventListener('keydown',e=>{
+        // Optional keyboard support
+        car.addEventListener('keydown', e=>{
           if(e.key==='ArrowLeft') go(i-1);
           if(e.key==='ArrowRight') go(i+1);
         });
 
-        // Swipe / drag
-        let startX=0, dx=0;
-        car.addEventListener('pointerdown',e=>{startX=e.clientX; car.setPointerCapture(e.pointerId);});
-        car.addEventListener('pointermove',e=>{if(!startX) return; dx=e.clientX-startX;});
-        car.addEventListener('pointerup',()=>{ if(Math.abs(dx)>40){ dx<0?go(i+1):go(i-1); } startX=0; dx=0; });
+        // Keep aligned on resize
+        addEventListener('resize', ()=>go(i), { passive:true });
 
         go(0);
       }
