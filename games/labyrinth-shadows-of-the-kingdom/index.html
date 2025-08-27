@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Labyrinth: Shadows of the Kingdom — EvolvedPhoenix Studios</title>
+  <meta name="description" content="Labyrinth: Shadows of the Kingdom — details, media, and links." />
+  <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="stylesheet" href="../../assets/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="../../" class="logo">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="EPS Logo">
+        EvolvedPhoenix Studios
+      </a>
+      <nav class="nav-links">
+        <a class="nav-btn" href="../">Games</a>
+        <a class="nav-btn" href="../../news/">News</a>
+        <a class="nav-btn" href="../../team/">Team & Thanks</a>
+        <button class="nav-btn" onclick="toggleTheme()">Toggle Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="badge">Canceled</span>
+      <h1 class="mt-2">Labyrinth: Shadows of the Kingdom</h1>
+      <p class="mt-2">Multiplayer first-person dungeon crawler with melee, magic, and shields.</p>
+      <div class="mt-3"><span class="tag">FPS</span><span class="tag">Co-op</span><span class="tag">Dungeon</span></div>
+      <div class="mt-4 flex gap-3">
+        <a class="btn" href="https://store.steampowered.com/app/2495490/Labyrinth_Shadows_of_the_Kingdom">Steam Page</a>
+        <a class="btn" href="../../news/#project-update-labyrinth-shadows-of-the-kingdom">Project Update</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container mb-8">
+    <div class="grid grid-2">
+      <img class="card" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth header">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="mb-3" style="font:800 1.2rem/1.2 system-ui">About the Project</h3>
+          <p>Development has concluded, but we’re keeping this page as an archive of the vision, media, and write-ups.</p>
+          <div class="mt-3 flex gap-2">
+            <a class="btn" href="../../news/#project-update-labyrinth-shadows-of-the-kingdom">Read the update</a>
+            <a class="btn" href="https://discord.gg/EkUYKmW">Discord</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="" style="height:40px;width:40px;border-radius:14px">
+        <strong>EvolvedPhoenix Studios</strong>
+      </div>
+      <div>© <span id="year"></span> EvolvedPhoenix Studios</div>
+      <div class="flex gap-3">
+        <a href="https://discord.gg/EkUYKmW">Discord</a>
+        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
+        <a href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
+        <a href="https://github.com/EvolvedPhoenixOfficial">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
+      const saved=(typeof localStorage!=='undefined'&&localStorage.getItem('eps-theme'))||'dark'; setTheme(saved);
+      window.toggleTheme=()=>setTheme(document.documentElement.classList.contains('dark')?'light':'dark');
+      document.getElementById('year').textContent=new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>

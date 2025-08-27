@@ -37,7 +37,6 @@
     <div class="flex items-center gap-3">
       <input id="search" class="btn" style="flex:1" placeholder="Search projects…">
       <div id="tagBar" class="flex items-center gap-2" style="overflow:auto">
-        <!-- Static tag set (no external JS) -->
         <button class="btn btn-primary" data-tag="All">All</button>
         <button class="btn" data-tag="FPS">FPS</button>
         <button class="btn" data-tag="Multiplayer">Multiplayer</button>
@@ -56,6 +55,9 @@
     <div id="grid" class="grid grid-3">
       <!-- Deltazone -->
       <article class="card" data-tags="FPS,Multiplayer,Shooter" data-title="Deltazone Reloaded" data-blurb="DELTAZONE drops players into an unprecedented global conflict">
+        <!-- NEW: card-wide link -->
+        <a class="stretched-link" href="./deltazone-reloaded/" aria-label="Open Deltazone Reloaded page"></a>
+
         <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone Reloaded">
         <div class="card-body">
           <span class="badge">In Early Access</span>
@@ -64,13 +66,15 @@
           <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span></div>
           <div class="mt-4 flex gap-2">
             <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">PLAY NOW!</a>
-            <a class="btn" href="../news/index.html#deltazone-reloaded">Devlog</a>
+            <a class="btn" href="../news/#labyrinth-playtest-build-hits-internal-milestone">Devlog</a>
           </div>
         </div>
       </article>
 
       <!-- Gearbound -->
       <article class="card" data-tags="Platformer,Sci-Fi" data-title="Gearbound: Odyssey" data-blurb="Fast-paced first-person platformer">
+        <a class="stretched-link" href="./gearbound-odyssey/" aria-label="Open Gearbound: Odyssey page"></a>
+
         <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound: Odyssey">
         <div class="card-body">
           <span class="badge">In development</span>
@@ -79,13 +83,15 @@
           <div class="mt-3"><span class="tag">Platformer</span><span class="tag">Sci-Fi</span></div>
           <div class="mt-4 flex gap-2">
             <a class="btn btn-primary" href="https://store.steampowered.com/app/3612790/Gearbound_Odyssey/">Wishlist</a>
-            <a class="btn" href="../news/index.html#gearbound-odyssey-vertical-slice">Devlog</a>
+            <a class="btn" href="../news/#gearbound-odyssey-vertical-slice">Devlog</a>
           </div>
         </div>
       </article>
 
       <!-- Turn&Burn -->
       <article class="card" data-tags="Racing,Multiplayer" data-title="Turn&Burn" data-blurb="Skill-based arcade racer">
+        <a class="stretched-link" href="./turnburn/" aria-label="Open Turn&Burn page"></a>
+
         <img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn">
         <div class="card-body">
           <span class="badge">In development</span>
@@ -94,13 +100,15 @@
           <div class="mt-3"><span class="tag">Racing</span><span class="tag">Multiplayer</span></div>
           <div class="mt-4 flex gap-2">
             <a class="btn btn-primary" href="https://gamejolt.com/games/turn-and-burn/1012189">Wishlist</a>
-            <a class="btn" href="../news/index.html#turnburn-free-roam-netcode-alpha">Devlog</a>
+            <a class="btn" href="../news/#turnburn-free-roam-netcode-alpha">Devlog</a>
           </div>
         </div>
       </article>
 
       <!-- Labyrinth -->
       <article class="card" data-tags="FPS,Co-op,Dungeon" data-title="Labyrinth: Shadows of the Kingdom" data-blurb="Multiplayer first-person dungeon crawler">
+        <a class="stretched-link" href="./labyrinth-shadows-of-the-kingdom/" aria-label="Open Labyrinth: Shadows of the Kingdom page"></a>
+
         <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth: Shadows of the Kingdom">
         <div class="card-body">
           <span class="badge">Canceled</span>
@@ -109,7 +117,7 @@
           <div class="mt-3"><span class="tag">FPS</span><span class="tag">Co-op</span><span class="tag">Dungeon</span></div>
           <div class="mt-4 flex gap-2">
             <a class="btn" href="https://store.steampowered.com/app/2495490/Labyrinth_Shadows_of_the_Kingdom">Steam</a>
-            <a class="btn" href="../news/index.html#project-update-labyrinth-shadows-of-the-kingdom">Devlog</a>
+            <a class="btn" href="../news/#project-update-labyrinth-shadows-of-the-kingdom">Devlog</a>
           </div>
         </div>
       </article>
@@ -132,7 +140,6 @@
     </div>
   </footer>
 
-  <!-- inline scripts (filter + theme + year) -->
   <script>
     (function(){
       function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
