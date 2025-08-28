@@ -1,4 +1,13 @@
 <script>
+}
+
+
+return el('article', {class:'card', id: post.id || ''}, body);
+}
+
+
+function sectionForCategory(cat, posts){
+const grid = el('div', {class:'grid grid-3'});
 posts.sort(byDateDesc).forEach(p => grid.appendChild(buildCard(p)));
 return el('section', {class:'container', id: cat.id},
 el('h2', {class:'mb-3', style:'font:800 1.4rem/1.2 system-ui'}, cat.title),
