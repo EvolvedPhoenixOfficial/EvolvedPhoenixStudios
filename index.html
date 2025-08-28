@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EvolvedPhoenix Studios — Home</title>
+  <meta name="description" content="Indie games forged with grit, polish, and player-first design." />
+  <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="../" class="logo">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="EPS Logo">
+        EvolvedPhoenix Studios
+      </a>
+      <nav class="nav-links">
+        <a class="nav-btn" href="games/">Games</a>
+        <a class="nav-btn" href="news/">News</a>
+        <a class="nav-btn" href="team/">Team & Thanks</a>
+        <button class="nav-btn" onclick="toggleTheme()">Toggle Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Indie games forged with grit, polish, and player-first design.</h1>
+      <p class="mt-2">From arena racers to sci-fi adventures — built fast, punchy, and highly replayable.</p>
+      <div class="mt-4 flex gap-3">
+        <a class="btn btn-primary" href="games/index.html">Play Our Games</a>
+        <a class="btn" href="https://discord.gg/EkUYKmW">Join the Discord</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container mb-8">
+    <div class="grid grid-3">
+      <a class="card" href="games/index.html">
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Games"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="badge">Play</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Games & Prototypes</h3>
+          <p class="mt-2" style="color:#475569">Dive into builds, vertical slices, and wild experiments.</p>
+        </div>
+      </a>
+      <a class="card" href="news/index.html">
+        <img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="News"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="badge">Read</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">News & Devlogs</h3>
+          <p class="mt-2" style="color:#475569">Milestones and behind-the-scenes notes.</p>
+        </div>
+      </a>
+      <a class="card" href="team/index.html">
+        <img src="https://raw.githubusercontent.com/EvolvedPhoenixOfficial/EvolvedPhoenixStudios/refs/heads/main/Assets/Images/1.jpg" alt="Team"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="badge">Meet</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Team & Special Thanks</h3>
+          <p class="mt-2" style="color:#475569">The crew building it — and the legends supporting it.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="container mb-8">
+    <h2 class="mb-3" style="font:800 1.4rem/1.2 system-ui">Featured Project(s)</h2>
+    <div class="card">
+      <div class="card-body">
+        <div class="grid grid-2">
+          <div><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone Reloaded" style="border-radius:.75rem"></div>
+          <div>
+            <span class="badge">In Early Access</span>
+            <h3 class="mt-3" style="margin:0;font:800 1.3rem/1.15 system-ui">Deltazone Reloaded</h3>
+            <p class="mt-2" style="color:#475569">DELTAZONE drops players into an unprecedented global conflict. Wipe out the opposing team and reclaim your homeland.</p>
+            <div class="mt-3">
+              <span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span>
+            </div>
+            <div class="mt-4 flex gap-3">
+              <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">Play Now</a>
+              <a class="btn" href="news/index.html#deltazone-reloaded">Devlog</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
+	
+	<div class="card">
+      <div class="card-body">
+        <div class="grid grid-2">
+          <div><img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound: Odyssey" style="border-radius:.75rem"></div>
+          <div>
+            <span class="yellowbadge">In Development</span>
+            <h3 class="mt-3" style="margin:0;font:800 1.3rem/1.15 system-ui">Gearbound: Odyssey</h3>
+            <p class="mt-2" style="color:#475569">First-person platformer across vibrant, handcrafted planets. Speed, gadgets, and secret routes.</p>
+            <div class="mt-3">
+              <span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span>
+            </div>
+            <div class="mt-4 flex gap-3">
+              <a class="btn btn-primary" href="https://store.steampowered.com/app/3612790/Gearbound_Odyssey/">Play Now</a>
+              <a class="btn" href="news/index.html#gearbound">Devlog</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest news -->
+  <section class="container mb-8">
+    <div class="flex items-center justify-between">
+      <h2 class="mb-3" style="font:800 1.4rem/1.2 system-ui">Latest News</h2>
+      <a class="btn" href="news/index.html">View all</a>
+    </div>
+    <div class="grid grid-3">
+      <article class="card" id="new-website">
+        <div class="card-body">
+          <span class="badge">2025-08-26</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">NEW WEBSITE!!!</h3>
+          <p class="mt-2" style="white-space:pre-line;color:#475569">Welcome to the new official website for EvolvedPhoenix Studios!!!</p>
+          <div class="mt-3"><a class="btn" href="news/index.html#new-website">Read more</a></div>
+        </div>
+      </article>
+      <article class="card" id="gearbound-overhaul">
+        <div class="card-body">
+          <span class="badge">2025-08-24</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Gearbound: Odyssey Level overhaul</h3>
+          <p class="mt-2" style="white-space:pre-line;color:#475569">Re-doing every level, now with a team-friendly level editor.</p>
+          <div class="mt-3"><a class="btn" href="news/index.html#gearbound-odyssey-level-overhaul">Read more</a></div>
+        </div>
+      </article>
+      <article class="card" id="labyrinth-milestone">
+        <div class="card-body">
+          <span class="badge">2025-08-20</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Labyrinth playtest build hits internal milestone</h3>
+          <p class="mt-2" style="white-space:pre-line;color:#475569">New boss AI, tighter melee timing, and synced leaderboard for raids. Public playtest sign-ups soon.</p>
+          <div class="mt-3"><a class="btn" href="news/index.html#labyrinth-playtest-build-hits-internal-milestone">Read more</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+	&nbsp;
+
+  <footer class="footer">
+    <div class="container flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="" style="height:40px;width:40px;border-radius:14px">
+        <strong>EvolvedPhoenix Studios</strong>
+      </div>
+      <div>© <span id="year"></span> EvolvedPhoenix Studios</div>
+      <div class="flex gap-3">
+        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
+        <a href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
+        <a href="https://github.com/EvolvedPhoenixOfficial">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- tiny inline helpers -->
+  <script>
+    (function(){
+      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
+      const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
+      setTheme(saved);
+      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
