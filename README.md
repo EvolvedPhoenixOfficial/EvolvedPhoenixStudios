@@ -45,7 +45,7 @@ If you are interested in collaboration or licensing, please contact us directly.
 ## 📬 Contact
 
 - 🌍 Website: [https://www.evolvedphoenixstudios.com](https://www.evolvedphoenixstudios.com)  
-- 💬 Discord: [Join our community](https://discord.gg/zej5wD8VMx)  
+- 💬 Discord: [Join our community](https://discord.gg/EkUYKmW)  
 - 🐦 Twitter/X: [@EvolvedPhoenix](https://twitter.com/)  
 
 ---
