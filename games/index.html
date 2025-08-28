@@ -36,7 +36,7 @@
   <section class="container mb-6">
     <div class="flex items-center gap-3">
       <input id="search" class="btn" style="flex:1" placeholder="Search projects…">
-      <div id="tagBar" class="flex items-center gap-2" style="overflow:auto">
+      <div id="tagBar" class="flex items-center gap-2" style="overflow:hidden">
         <button class="btn btn-primary" data-tag="All">All</button>
         <button class="btn" data-tag="FPS">FPS</button>
         <button class="btn" data-tag="Multiplayer">Multiplayer</button>
@@ -46,55 +46,38 @@
         <button class="btn" data-tag="Racing">Racing</button>
         <button class="btn" data-tag="Co-op">Co-op</button>
         <button class="btn" data-tag="Dungeon">Dungeon</button>
-      </div>
+        <button class="btn" data-tag="TP">TP</button>
+        <button class="btn" data-tag="Endless">Endless</button>
+        <button class="btn" data-tag="2D">2D</button>
+      </div>  
+
+	  
     </div>
+		  &nbsp;
+		<div id="yearBar" class="flex items-center gap-2" style="overflow:hidden">
+		<button class="btn btn-primary" data-tag="All">All Years</button>
+        <button class="btn" data-tag="2019">2019</button>
+        <button class="btn" data-tag="2020">2020</button>
+        <button class="btn" data-tag="2021">2021</button>
+        <button class="btn" data-tag="2022">2022</button>
+        <button class="btn" data-tag="2023">2023</button>
+        <button class="btn" data-tag="2024">2024</button>
+        <button class="btn" data-tag="2025">2025</button>
+      </div>
+	  
   </section>
 
   <!-- Grid -->
   <section class="container">
     <div id="grid" class="grid grid-3">
-      <!-- Deltazone -->
-      <article class="card" data-tags="FPS,Multiplayer,Shooter" data-title="Deltazone Reloaded" data-blurb="DELTAZONE drops players into an unprecedented global conflict">
-        <!-- NEW: card-wide link -->
-        <a class="stretched-link" href="./deltazone-reloaded/" aria-label="Open Deltazone Reloaded page"></a>
-
-        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone Reloaded">
-        <div class="card-body">
-          <span class="badge">In Early Access</span>
-          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Deltazone Reloaded</h3>
-          <p class="mt-2" style="color:#475569">DELTAZONE drops players into an unprecedented global conflict that has been going on for a few years. Your mission is to wipe out the opposing team and take back the land that was once yours.</p>
-          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span></div>
-          <div class="mt-4 flex gap-2">
-            <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">PLAY NOW!</a>
-            <a class="btn" href="../news/#labyrinth-playtest-build-hits-internal-milestone">Devlog</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Gearbound -->
-      <article class="card" data-tags="Platformer,Sci-Fi" data-title="Gearbound: Odyssey" data-blurb="Fast-paced first-person platformer">
-        <a class="stretched-link" href="./gearbound-odyssey/" aria-label="Open Gearbound: Odyssey page"></a>
-
-        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound: Odyssey">
-        <div class="card-body">
-          <span class="badge">In development</span>
-          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Gearbound: Odyssey</h3>
-          <p class="mt-2" style="color:#475569">Fast-paced first-person platformer across vibrant, handcrafted planets.</p>
-          <div class="mt-3"><span class="tag">Platformer</span><span class="tag">Sci-Fi</span></div>
-          <div class="mt-4 flex gap-2">
-            <a class="btn btn-primary" href="https://store.steampowered.com/app/3612790/Gearbound_Odyssey/">Wishlist</a>
-            <a class="btn" href="../news/#gearbound-odyssey-vertical-slice">Devlog</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Turn&Burn -->
-      <article class="card" data-tags="Racing,Multiplayer" data-title="Turn&Burn" data-blurb="Skill-based arcade racer">
+	  <!-- Turn&Burn -->
+      <article class="card" data-tags="Racing,Multiplayer,TP,2025" data-title="Turn&Burn" data-blurb="Skill-based arcade racer">
         <a class="stretched-link" href="./turnburn/" aria-label="Open Turn&Burn page"></a>
 
-        <img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn">
+        <img src="https://m.gjcdn.net/game-thumbnail/400/1012189-crop0_80_1536_944-jgqrxudd-v4.webp" alt="Turn&Burn"style="width:460px;height:215px;object-fit:cover;object-position:center;">
         <div class="card-body">
-          <span class="badge">In development</span>
+          <span class="orangebadge">Prototype</span>
+          <span class="whitebadge">2025</span>
           <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Turn&Burn</h3>
           <p class="mt-2" style="color:#475569">Skill-based arcade racer with drifting, drafting, and nitro chains.</p>
           <div class="mt-3"><span class="tag">Racing</span><span class="tag">Multiplayer</span></div>
@@ -105,19 +88,193 @@
         </div>
       </article>
 
+      <!-- Gearbound -->
+      <article class="card" data-tags="Platformer,Sci-Fi,2025" data-title="Gearbound: Odyssey" data-blurb="Fast-paced first-person platformer">
+        <a class="stretched-link" href="./gearbound-odyssey/" aria-label="Open Gearbound: Odyssey page"></a>
+
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3612790/235a97880a37bbf7a7e950cd25a32375af72aa70/header.jpg" alt="Gearbound: Odyssey"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="yellowbadge">In development</span>
+		  <span class="whitebadge">2025</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Gearbound: Odyssey</h3>
+          <p class="mt-2" style="color:#475569">Fast-paced first-person platformer across vibrant, handcrafted planets.</p>
+          <div class="mt-3"><span class="tag">Platformer</span><span class="tag">Sci-Fi</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn btn-primary" href="https://store.steampowered.com/app/3612790/Gearbound_Odyssey/">Wishlist</a>
+            <a class="btn" href="../news/#gearbound-odyssey-vertical-slice">Devlog</a>
+          </div>
+        </div>
+      </article>
+	  
+      <!-- Deltazone -->
+      <article class="card" data-tags="FPS,Multiplayer,Shooter,2022" data-title="Deltazone Reloaded" data-blurb="DELTAZONE drops players into an unprecedented global conflict">
+        <!-- NEW: card-wide link -->
+        <a class="stretched-link" href="./deltazone-reloaded/" aria-label="Open Deltazone Reloaded page"></a>
+
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2127310/header.jpg?t=1740703207" alt="Deltazone Reloaded" style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="badge">In Early Access</span>
+		  <span class="whitebadge">2022</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Deltazone Reloaded</h3>
+          <p class="mt-2" style="color:#475569">DELTAZONE drops players into an unprecedented global conflict that has been going on for a few years. Your mission is to wipe out the opposing team and take back the land that was once yours.</p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Shooter</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn btn-primary" href="https://store.steampowered.com/app/2127310/Deltazone_Reloaded">PLAY NOW!</a>
+            <a class="btn" href="../news/#labyrinth-playtest-build-hits-internal-milestone">Devlog</a>
+          </div>
+        </div>
+      </article>
+	  
       <!-- Labyrinth -->
-      <article class="card" data-tags="FPS,Co-op,Dungeon" data-title="Labyrinth: Shadows of the Kingdom" data-blurb="Multiplayer first-person dungeon crawler">
+      <article class="card" data-tags="FPS,Co-op,Dungeon,2024" data-title="Labyrinth: Shadows of the Kingdom" data-blurb="Multiplayer first-person dungeon crawler">
         <a class="stretched-link" href="./labyrinth-shadows-of-the-kingdom/" aria-label="Open Labyrinth: Shadows of the Kingdom page"></a>
 
-        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth: Shadows of the Kingdom">
+        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2495490/25138df09179d1b92e952905f6b85d3323517829/header.jpg" alt="Labyrinth: Shadows of the Kingdom" style="width:460px;height:215px;object-fit:cover;object-position:center;">
         <div class="card-body">
-          <span class="badge">Canceled</span>
+          <span class="redbadge">Canceled</span>
+		  <span class="whitebadge">2024</span>
           <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Labyrinth: Shadows of the Kingdom</h3>
           <p class="mt-2" style="color:#475569">Multiplayer first-person dungeon crawler with melee, magic, and shields.</p>
           <div class="mt-3"><span class="tag">FPS</span><span class="tag">Co-op</span><span class="tag">Dungeon</span></div>
           <div class="mt-4 flex gap-2">
             <a class="btn" href="https://store.steampowered.com/app/2495490/Labyrinth_Shadows_of_the_Kingdom">Steam</a>
             <a class="btn" href="../news/#project-update-labyrinth-shadows-of-the-kingdom">Devlog</a>
+          </div>
+        </div>
+      </article>
+	  
+	  	  <!-- CLAIM & PERISH -->
+      <article class="card" data-tags="TP,Medieval,Dungeon,2025" data-title="CLAIM & PERISH" data-blurb="In Claim & Perish, every flag you capture is a challenge a test of survival where the dead won’t rest until you fall. Wield your sword, stake your claim, and brace yourself for relentless waves of undead. But beware if you die, your claim is lost, and the undead take control once more.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/claim-and-perish" aria-label="CLAIM & PERISH"></a>
+
+        <img src="https://img.itch.zone/aW1nLzE5ODcxMzAwLnBuZw==/315x250%23c/6jaUYt.png" style="width:460px;height:215px;object-fit:cover;object-position:center;" alt="CLAIM & PERISH">
+        <div class="card-body">
+          <span class="voidbadge">Lost</span>
+		  <span class="whitebadge">2025</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">CLAIM & PERISH</h3>
+          <p class="mt-2" style="color:#475569">In Claim & Perish, every flag you capture is a challenge a test of survival where the dead won’t rest until you fall. Wield your sword, stake your claim, and brace yourself for relentless waves of undead. But beware if you die, your claim is lost, and the undead take control once more.</p>
+          <div class="mt-3"><span class="tag">TP</span><span class="tag">Medieval</span><span class="tag">Dungeon</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/claim-and-perish">Itch.io</a>
+          </div>
+        </div>
+      </article>
+	  	  <!-- Button: The Game -->
+      <article class="card" data-tags="FPS,2024" data-title="Button: The Game" data-blurb="Resist the urge of pressing the button.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/button-the-game" aria-label="Button: The Game"></a>
+		
+		<img src="https://img.itch.zone/aW1hZ2UvMjI0NDg1MS8xOTA2NTE4MC5wbmc=/original/hgkoBO.png" alt="Button: The Game" style="width:460px;height:215px;object-fit:cover;object-position:center;" loading="lazy" decoding="async">
+        <div class="card-body">
+          <span class="greenbadge">Released</span>
+		  <span class="whitebadge">2024</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Button: The Game</h3>
+          <p class="mt-2" style="color:#475569">Resist the urge of pressing the button. If you do press the button, there will be dire consequences.</p>
+          <div class="mt-3"><span class="tag">FPS</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/button-the-game">Itch.io</a>
+          </div>
+        </div>
+      </article>	  
+	  
+	  <!-- Button 2: The Game -->
+      <article class="card" data-tags="FPS,2024" data-title="Button 2: The Game" data-blurb="Resist the urge of pressing the button.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/button-2-the-game" aria-label="Button 2: The Game"></a>
+		
+		<img src="https://img.itch.zone/aW1hZ2UvMzE5MzE0MS8xOTA2NTE4NC5wbmc=/347x500/FippOj.png" alt="Button 2: The Game" style="width:460px;height:215px;object-fit:cover;object-position:center;" loading="lazy" decoding="async">
+        <div class="card-body">
+          <span class="greenbadge">Released</span>
+		  <span class="whitebadge">2024</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Button 2: The Game</h3>
+          <p class="mt-2" style="color:#475569">Resist the urge of pressing the button. If you do press the button, there will be dire consequences.</p>
+          <div class="mt-3"><span class="tag">FPS</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/button-2-the-game">Itch.io</a>
+          </div>
+        </div>
+      </article>
+	  <!-- WarpGate -->
+      <article class="card" data-tags="FPS,Multiplayer,Scifi,2023" data-title="WarpGate" data-blurb="WarpGate is a Openworld Scifi game where you can buy weapons and ships, and explore a solar with multiple planets.">
+        <a class="stretched-link" href="../404.html" aria-label="Open WarpGate page"></a>
+
+        <img src="/assets/images/WarpGate/header.jpg" alt="WarpGate"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="voidbadge">Lost</span>
+		  <span class="whitebadge">2023</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">WarpGate</h3>
+          <p class="mt-2" style="color:#475569">WarpGate is a Openworld Scifi game where you can buy weapons and ships, and explore a solar with multiple planets.</p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Multiplayer</span><span class="tag">Scifi</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="../404.html">GameJolt</a>
+            <a class="btn" href="../404.html">Devlog</a>
+          </div>
+        </div>
+      </article>
+	  
+	  <!-- Planet Defense 1 -->
+      <article class="card" data-tags="2D,Scifi,Endless,2019" data-title="Planet Defense 1" data-blurb="Planet Defense is a top down game where the objective is to protect the planet as long as you can.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/planetdefense" aria-label="Open Planet Defense 1 page"></a>
+
+        <img src="/assets/images/PD1/header.png" alt="Planet Defense 1"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="greenbadge">Released</span>
+		  <span class="whitebadge">2019</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Planet Defense 1</h3>
+          <p class="mt-2" style="color:#475569">Planet Defense is a top down game where the objective is to protect the planet as long as you can.</p>
+          <div class="mt-3"><span class="tag">2D</span><span class="tag">Scifi</span><span class="tag">Endless</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/planetdefense">Itch.io</a>
+          </div>
+        </div>
+      </article>	  
+	  
+	  <!-- Planet Defense 2 -->
+      <article class="card" data-tags="2D,Scifi,Endless,2020" data-title="Planet Defense 2" data-blurb="Planet Defense 2 is a top down game where the objective is to protect the planet as long as you can.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/planetdefense2" aria-label="Open Planet Defense 2 page"></a>
+
+        <img src="/assets/images/PD2/header.png" alt="Planet Defense 2"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="greenbadge">Released</span>
+		  <span class="whitebadge">2020</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Planet Defense 2</h3>
+          <p class="mt-2" style="color:#475569">Planet Defense 2 is a top down game where the objective is to protect the planet as long as you can.</p>
+          <div class="mt-3"><span class="tag">2D</span><span class="tag">Scifi</span><span class="tag">Endless</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/planetdefense2">Itch.io</a>
+          </div>
+        </div>
+      </article>	  
+	  
+	  <!-- Remnants of Paradise -->
+      <article class="card" data-tags="FPS,Scifi,Survival,2022" data-title="Remnants of Paradise" data-blurb="Remnants of Paradise offers an immersive survival experience where strategic planning, resource management, and exploration are vital. Survive the elements, defend against threats, and uncover the mysteries of this lost paradise as you fight for your chance to escape.">
+        <a class="stretched-link" href="https://evolvedphoenix-studios.itch.io/remnants-of-paradise" aria-label="Halo: Fan Game"></a>
+
+		<img src="https://img.itch.zone/aW1nLzE3NzYzMDkwLnBuZw==/347x500/6Fi9wI.png" alt="Remnants of Paradise" style="width:460px;height:215px;object-fit:cover;object-position:center;" loading="lazy" decoding="async">
+        <div class="card-body">
+          <span class="voidbadge">DEV-HELL</span>
+		  <span class="whitebadge">2022</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Remnants of Paradise</h3>
+          <p class="mt-2" style="color:#475569">Remnants of Paradise offers an immersive survival experience where strategic planning, resource management, and exploration are vital. Survive the elements, defend against threats, and uncover the mysteries of this lost paradise as you fight for your chance to escape.p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Scifi</span><span class="tag">Survival</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="https://evolvedphoenix-studios.itch.io/remnants-of-paradise">Itch.io</a>
+          </div>
+        </div>
+      </article>	  
+	  
+	  	  <!-- Halo: Fan Game -->
+      <article class="card" data-tags="FPS,Co-op,Multiplayer,Scifi,TP,2019" data-title="Halo: Fan Game" data-blurb="Multiplayer first / third-person halo fan game.">
+        <a class="stretched-link" href="../404.html" aria-label="Halo: Fan Game"></a>
+
+        <img src="/assets/images/HaloFan/header.png" alt="Halo: Fan Game"style="width:460px;height:215px;object-fit:cover;object-position:center;">
+        <div class="card-body">
+          <span class="voidbadge">Lost</span>
+		  <span class="whitebadge">2019</span>
+          <h3 class="mt-3" style="margin:0;font:700 1.05rem/1.2 system-ui">Halo: Fan Game</h3>
+          <p class="mt-2" style="color:#475569">Multiplayer first / third-person halo fan game.</p>
+          <div class="mt-3"><span class="tag">FPS</span><span class="tag">Co-op</span><span class="tag">Dungeon</span><span class="tag">TP</span><span class="tag">Multiplayer</span></div>
+          <div class="mt-4 flex gap-2">
+            <a class="btn" href="../404.html">GameJolt</a>
+            <a class="btn" href="../404.html">Devlog</a>
           </div>
         </div>
       </article>
@@ -141,40 +298,73 @@
     </div>
   </footer>
 
-  <script>
-    (function(){
-      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
-      const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
-      setTheme(saved);
-      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-      document.getElementById('year').textContent = new Date().getFullYear();
+ <script>
+(function () {
+  // ---------- theme + year in footer ----------
+  function setTheme(t){
+    document.documentElement.classList.toggle('dark', t === 'dark');
+    try { localStorage.setItem('eps-theme', t); } catch(e){}
+  }
+  const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
+  setTheme(saved);
+  window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-      const search = document.getElementById('search');
-      const cards = Array.from(document.querySelectorAll('#grid .card'));
-      let activeTag = 'All';
+  // ---------- filtering ----------
+  const search = document.getElementById('search');
+  const cards  = Array.from(document.querySelectorAll('#grid .card'));
+  const tagBar  = document.getElementById('tagBar');
+  const yearBar = document.getElementById('yearBar');
 
-      document.getElementById('tagBar').addEventListener('click', e=>{
-        const btn = e.target.closest('button[data-tag]'); if(!btn) return;
-        activeTag = btn.dataset.tag;
-        document.querySelectorAll('#tagBar .btn').forEach(b=>b.classList.remove('btn-primary'));
-        btn.classList.add('btn-primary');
-        render();
-      });
-      search.addEventListener('input', render);
+  // independent filters
+  let activeTag  = 'All';
+  let activeYear = 'All';
 
-      function render(){
-        const q = (search.value||'').toLowerCase();
-        cards.forEach(card=>{
-          const tags = (card.dataset.tags||'').split(',');
-          const title = (card.dataset.title||'').toLowerCase();
-          const blurb = (card.dataset.blurb||'').toLowerCase();
-          const tagOk = activeTag==='All' || tags.includes(activeTag);
-          const qOk = !q || title.includes(q) || blurb.includes(q);
-          card.style.display = (tagOk && qOk) ? '' : 'none';
-        });
-      }
-      render();
-    })();
-  </script>
+  function setActiveButton(container, btn){
+    if (!container) return;
+    container.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-primary'));
+    if (btn) btn.classList.add('btn-primary');
+  }
+
+  // tags bar (e.g., FPS, Platformer, All, etc.)
+  tagBar?.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-tag]');
+    if (!btn) return;
+    activeTag = btn.dataset.tag || 'All';
+    setActiveButton(tagBar, btn);
+    render();
+  });
+
+  // year bar (2019..2025). Click same year again to clear year filter.
+  yearBar?.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-tag]');
+    if (!btn) return;
+    const y = btn.dataset.tag || 'All';
+    activeYear = (activeYear === y) ? 'All' : y;
+    setActiveButton(yearBar, activeYear === 'All' ? null : btn);
+    render();
+  });
+
+  search.addEventListener('input', render);
+
+  function render(){
+    const q = (search.value || '').toLowerCase();
+    cards.forEach(card => {
+      const tags  = (card.dataset.tags  || '').split(',');    // includes year tokens like "2025"
+      const title = (card.dataset.title || '').toLowerCase();
+      const blurb = (card.dataset.blurb || '').toLowerCase();
+
+      const tagOk  = (activeTag  === 'All') || tags.includes(activeTag);
+      const yearOk = (activeYear === 'All') || tags.includes(activeYear);
+      const qOk    = !q || title.includes(q) || blurb.includes(q);
+
+      card.style.display = (tagOk && yearOk && qOk) ? '' : 'none';
+    });
+  }
+
+  // initial paint
+  render();
+})();
+</script>
 </body>
 </html>

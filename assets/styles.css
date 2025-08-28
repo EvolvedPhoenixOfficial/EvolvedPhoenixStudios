@@ -69,6 +69,31 @@ body{
   display:inline-block;padding:.125rem .5rem;border-radius:999px;
   font:700 .72rem/1.2 system-ui;
   background:#e0f2fe;color:#075985
+}.redbadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#fee2e2; color:#7f1d1d;
+}.yellowbadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#fef9c3; color:#713f12;
+}.greenbadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#dcfce7; color:#14532d;
+}.voidbadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#0b0f19; color:#e5e7eb;
+}.orangebadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#ffedd5; color:#7c2d12;
+}
+  .whitebadge{
+  display:inline-block;padding:.125rem .5rem;border-radius:999px;
+  font:700 .72rem/1.2 system-ui;
+  background:#ffffff; color:#0f172a; border:1px solid #e5e7eb;
 }
 
 /* GRID LAYOUTS */

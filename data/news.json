@@ -1,0 +1,58 @@
+{
+"categories": [
+{ "id": "gearbound", "title": "Gearbound: Odyssey" },
+{ "id": "turnburn", "title": "Turn&Burn" },
+{ "id": "labyrinth", "title": "Labyrinth: Shadows of the Kingdom" },
+{ "id": "general", "title": "General / Site" }
+],
+"posts": [
+{
+"id": "gearbound-odyssey-level-overhaul",
+"category": "gearbound",
+"date": "2025-08-24",
+"title": "Gearbound: Odyssey Level overhaul",
+"body": "Hello, Today I bring some good new, I'm currently re-doing every level in the game and I now have a level editor so the TEAM can help make levels.",
+"image": ""
+},
+{
+"id": "gearbound-odyssey-vertical-slice",
+"category": "gearbound",
+"date": "2025-06-15",
+"title": "Gearbound: Odyssey vertical slice",
+"body": "Three planets playable with traversal gadgets and secret routes. Trailer cut in progress.",
+"image": ""
+},
+{
+"id": "turnburn-free-roam-netcode-alpha",
+"category": "turnburn",
+"date": "2025-07-30",
+"title": "Turn&Burn free-roam netcode alpha",
+"body": "FishNet open-world tests are stable. Overtake logic & skidmarks syncing under heavy load look solid.",
+"image": ""
+},
+{
+"id": "labyrinth-playtest-build-hits-internal-milestone",
+"category": "labyrinth",
+"date": "2025-08-20",
+"title": "Labyrinth playtest build hits internal milestone",
+"body": "New boss AI, tighter melee timing, and synced leaderboard for raids are in. Public playtest sign-ups soon.",
+"image": ""
+},
+{
+"id": "project-update-labyrinth-shadows-of-the-kingdom",
+"category": "labyrinth",
+"date": "2025-08-16",
+"title": "Project Update: Labyrinth: Shadows of the Kingdom",
+"body": "After much thought, we’ve made the decision to end development on Labyrinth: Shadows of the Kingdom. This was never an easy choice…",
+"image": ""
+},
+{
+"id": "new-website",
+"category": "general",
+"date": "2025-08-26",
+"title": "NEW WEBSITE!!!",
+"body": "Welcome to the new official website for EvolvedPhoenix Studios!!!",
+"image": ""
+}
+]
+}
