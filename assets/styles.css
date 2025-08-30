@@ -247,3 +247,70 @@ figure{ margin:0; } /* reset default figure margin */
 .ratio{position:relative;width:100%}
 .ratio::before{content:"";display:block;padding-top:56.25%} /* 16:9 */
 .ratio > *{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:1rem}
+
+/* One height to rule them all */
+:root { --card-media-h: 260px; } /* set site-wide default (tweak to taste) */
+
+.media {
+  height: var(--card-media-h);
+  border-radius: .75rem;
+  overflow: hidden;
+}
+
+/* Make both <img> and the carousel fill that box */
+.media > img,
+.media > .carousel,
+.media > .carousel .carousel-track,
+.media > .carousel .carousel-slide {
+  width: 78%;
+  height: 100%;
+}
+
+.media .carousel-slide { flex: 0 0 128%; }
+.media img { display: block; object-fit: cover; }
+
+/* Your existing CSS-only autoplay (keep as you had it) */
+.carousel.auto { pointer-events: none; }
+.carousel .carousel-track {
+  display: flex;
+  transform: translateX(0);
+  transition: none !important;
+  animation: carousel-step calc(var(--slides) * var(--autoplay)) steps(var(--slides)) infinite;
+  will-change: transform;
+}
+@keyframes carousel-step {
+  to { transform: translateX(calc(-100% * var(--slides))); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel .carousel-track { animation: none; }
+}
+
+
+:root { --card-media-h: 260px; } /* optional global default */
+
+.media { height: var(--card-media-h); border-radius:.75rem; overflow:hidden; }
+.media > img,
+.media > .carousel,
+.media > .carousel .carousel-track,
+.media > .carousel .carousel-slide { width:78%; height:100%; }
+
+.media .carousel-slide { flex: 0 0 128%; }
+.media img { display:block; object-fit:cover; }
+
+/* CSS-only autoplay with safe fallbacks */
+.carousel.auto { pointer-events:none; }
+.carousel .carousel-track{
+  display:flex;
+  transform: translateX(0);
+  transition: none !important; /* prevent global transform transitions */
+  animation: carousel-step calc(var(--slides, 1) * var(--autoplay, 5s))
+             steps(var(--slides, 1)) infinite;
+  will-change: transform;
+}
+@keyframes carousel-step{
+  to { transform: translateX(calc(-128% * var(--slides, 1))); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .carousel .carousel-track { animation:none; }
+}
