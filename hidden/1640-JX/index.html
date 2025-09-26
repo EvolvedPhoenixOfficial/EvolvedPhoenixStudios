@@ -13,6 +13,7 @@
   <link rel="icon" type="image/png" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
   <link rel="apple-touch-icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" />
   <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/site.js" defer></script>
 
   <!-- Minimal fallbacks if your CSS doesn't already define these -->
   <style>
@@ -28,21 +29,7 @@
   </style>
 </head>
 <body>
-  <!-- Header / Nav (your structure) -->
-  <header class="navbar">
-    <div class="container navbar-inner">
-      <a href="/" class="logo">
-        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="EPS Logo">
-        EvolvedPhoenix Studios
-      </a>
-      <nav class="nav-links">
-        <a class="nav-btn" href="/games/">Games</a>
-        <a class="nav-btn" href="/news/">News</a>
-        <a class="nav-btn" href="/team/">Team & Thanks</a>
-        <button class="nav-btn" onclick="toggleTheme()">Toggle Theme</button>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/header.html"></div>
 
   <!-- Hero -->
   <section class="page-hero">
@@ -88,30 +75,6 @@
   </section>
 
   <!-- Footer (your structure) -->
-  <footer class="footer">
-    <div class="container flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/eed6897e-342d-48ba-b9d0-aa0256278e71-profile_image-300x300.png" alt="" style="height:40px;width:40px;border-radius:14px">
-        <strong>EvolvedPhoenix Studios</strong>
-      </div>
-      <div>© <span id="year"></span> EvolvedPhoenix Studios</div>
-      <div class="flex gap-3">
-        <a href="https://discord.gg/EkUYKmW">Discord</a>
-        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
-        <a href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
-        <a href="https://github.com/EvolvedPhoenixOfficial">GitHub</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    (function(){
-      function setTheme(t){document.documentElement.classList.toggle('dark', t==='dark'); try{localStorage.setItem('eps-theme', t);}catch(e){}}
-      const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
-      setTheme(saved);
-      window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-      document.getElementById('year').textContent = new Date().getFullYear();
-    })();
-  </script>
+  <div data-include="/partials/footer.html"></div>
 </body>
 </html>

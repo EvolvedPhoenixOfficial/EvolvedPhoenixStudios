@@ -8,22 +8,10 @@
   <link rel="icon" type="image/jpg" href="/assets/images/1.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/1.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/site.js" defer></script>
 </head>
 <body>
-  <header class="navbar">
-    <div class="container navbar-inner">
-      <a href="../" class="logo">
-        <img src="/assets/images/1.jpg" alt="EPS Logo">
-        EvolvedPhoenix Studios
-      </a>
-      <nav class="nav-links">
-        <a class="nav-btn" href="../games/">Games</a>
-        <a class="nav-btn" href="../news/">News</a>
-        <a class="nav-btn" href="../team/">Team & Thanks</a>
-        <button class="nav-btn" onclick="toggleTheme()">Toggle Theme</button>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/header.html"></div>
 
   <section class="page-hero">
     <div class="container">
@@ -287,34 +275,10 @@
   </section>
 	&nbsp;
 
-  <footer class="footer">
-    <div class="container flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <img src="/assets/images/1.jpg" alt="" style="height:40px;width:40px;border-radius:14px">
-        <strong>EvolvedPhoenix Studios</strong>
-      </div>
-      <div>© <span id="year"></span> EvolvedPhoenix Studios</div>
-      <div class="flex gap-3">
-        <a href="https://discord.gg/EkUYKmW">Discord</a>
-        <a href="https://www.youtube.com/@EvolvedPhoenix-Studios">YouTube</a>
-        <a href="https://x.com/EvolvedPhnixDev">X / Twitter</a>
-        <a href="https://github.com/EvolvedPhoenixOfficial">GitHub</a>
-      </div>
-    </div>
-  </footer>
+  <div data-include="/partials/footer.html"></div>
 
  <script>
 (function () {
-  // ---------- theme + year in footer ----------
-  function setTheme(t){
-    document.documentElement.classList.toggle('dark', t === 'dark');
-    try { localStorage.setItem('eps-theme', t); } catch(e){}
-  }
-  const saved = (typeof localStorage!=='undefined' && localStorage.getItem('eps-theme')) || 'dark';
-  setTheme(saved);
-  window.toggleTheme = () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-  document.getElementById('year').textContent = new Date().getFullYear();
-
   // ---------- filtering ----------
   const search = document.getElementById('search');
   const cards  = Array.from(document.querySelectorAll('#grid .card'));
