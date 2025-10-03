@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EvolvedPhoenix Studios — Account Login</title>
+  <meta name="description" content="Log in to access member-only features on EvolvedPhoenix Studios." />
+  <link rel="icon" type="image/jpg" href="/assets/images/1.jpg" />
+  <link rel="apple-touch-icon" href="/assets/images/1.jpg" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/site.js" defer></script>
+  <script src="/assets/login.js" defer></script>
+</head>
+<body>
+  <div data-include="/partials/header.html"></div>
+
+  <main class="container" style="max-width:640px;margin-top:4rem;margin-bottom:4rem;">
+    <section class="card">
+      <div class="card-body">
+        <h1 style="margin:0 0 .75rem;font:800 1.8rem/1.2 system-ui">Welcome back</h1>
+        <p style="color:#475569;margin:0 0 1.5rem;">Sign in with your studio account to manage builds, playtests, and community tools.</p>
+        <form id="login-form" class="grid" style="gap:1rem;">
+          <label class="grid" style="gap:.5rem;">
+            <span class="label">Username</span>
+            <input id="username" name="username" type="text" required autocomplete="username" class="input" placeholder="alex.mercer" />
+          </label>
+          <label class="grid" style="gap:.5rem;">
+            <span class="label">Password</span>
+            <input id="password" name="password" type="password" required autocomplete="current-password" class="input" placeholder="••••••••" />
+          </label>
+          <button id="login-submit" type="submit" class="btn btn-primary" style="justify-self:start;">Sign in</button>
+        </form>
+        <div id="login-feedback" role="status" aria-live="polite" style="margin-top:1rem;font:600 0.95rem/1.4 system-ui;"></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:2rem;">
+      <div class="card-body">
+        <h2 style="margin:0 0 .5rem;font:700 1.2rem/1.3 system-ui;">Account security</h2>
+        <p style="color:#475569;margin:0;">Credentials are submitted to our secure authentication service over HTTPS. We never store passwords in the website codebase. If you suspect your account has been compromised, reset it immediately through the account portal.</p>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="/partials/footer.html"></div>
+</body>
+</html>
