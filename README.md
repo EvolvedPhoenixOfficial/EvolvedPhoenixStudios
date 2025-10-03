@@ -1,19 +1,19 @@
-# 🌐 EvolvedPhoenix Studios Website
+# 🌐 Extynct Studios Website
 
 ![Status: Live](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)
 ![License: All Rights Reserved](https://img.shields.io/badge/License-All%20Rights%20Reserved-red?style=for-the-badge)
 ![Not Open Source](https://img.shields.io/badge/Not-Open%20Source-black?style=for-the-badge)
 
-This repository contains the source code for the **official website of EvolvedPhoenix Studios**.  
+This repository contains the source code for the **official website of Extynct Studios**.
 It showcases our projects, news, and updates in one central place.
 
-🔗 [Visit the live site](https://www.evolvedphoenixstudios.com)
+🔗 [Visit the live site](https://www.extynctstudios.com)
 
 ---
 
 ## 📖 About
 
-The EvolvedPhoenix Studios website is the hub for everything related to our games, updates, and announcements.  
+The Extynct Studios website is the hub for everything related to our games, updates, and announcements.
 It is designed and maintained as part of our official online presence.
 
 This repository is made public **for transparency, reference, and version tracking**, **not for reuse**.
@@ -23,7 +23,7 @@ This repository is made public **for transparency, reference, and version tracki
 ## 🚫 License & Usage
 
 ⚠️ **Important Notice**:  
-All code, design, artwork, and content in this repository are **copyright © EvolvedPhoenix Studios**.  
+All code, design, artwork, and content in this repository are **copyright © Extynct Studios**.
 
 - ❌ You may **not** copy, redistribute, or reuse this repository (or parts of it) for your own projects.  
 - ❌ You may **not** republish this content elsewhere, in whole or in part.  
@@ -44,13 +44,13 @@ If you are interested in collaboration or licensing, please contact us directly.
 
 ## 📬 Contact
 
-- 🌍 Website: [https://www.evolvedphoenixstudios.com](https://www.evolvedphoenixstudios.com)  
+- 🌍 Website: [https://www.extynctstudios.com](https://www.extynctstudios.com)
 - 💬 Discord: [Join our community](https://discord.gg/EkUYKmW)  
-- 🐦 Twitter/X: [@EvolvedPhoenix](https://twitter.com/)  
+- 🐦 Twitter/X: [@ExtynctStudios](https://twitter.com/ExtynctStudios)
 
 ---
 
 ## ⚖️ Legal
 
-© EvolvedPhoenix Studios. All rights reserved.  
+© Extynct Studios. All rights reserved.
 This repository is provided publicly for transparency. **It is not open source.**
