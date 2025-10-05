@@ -1,0 +1,13 @@
+{
+  "name": "evolved-phoenix-studios",
+  "version": "1.0.0",
+  "description": "Static site with bundled Express server",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.19.2"
+  }
+}

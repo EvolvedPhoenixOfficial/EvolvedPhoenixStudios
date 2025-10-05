@@ -54,3 +54,44 @@ If you are interested in collaboration or licensing, please contact us directly.
 
 © Extynct Studios. All rights reserved.
 This repository is provided publicly for transparency. **It is not open source.**
+
+---
+
+## 🧪 Local Development
+
+You can run the static site together with a simple API server for local testing.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18 or newer
+- npm (bundled with Node.js)
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running the server
+
+```bash
+npm start
+```
+
+The site and API will be available at [http://localhost:3000](http://localhost:3000).
+
+### Test credentials
+
+| Username | Password |
+| -------- | -------- |
+| admin    | password |
+
+You can override the defaults by creating a `.env` file at the project root:
+
+```ini
+LOGIN_CREDENTIALS=admin:password,anotherUser:anotherSecret
+LOGIN_REDIRECT_URL=/dashboard.html
+PORT=3000
+```
+
+If you change the port or host, update your browser URL accordingly.
