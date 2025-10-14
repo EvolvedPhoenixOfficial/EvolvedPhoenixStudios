@@ -11,6 +11,7 @@
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
   const errorEl = document.getElementById('forum-form-error');
+  const storageWarning = document.getElementById('forum-storage-warning');
   const lockedMessage = document.getElementById('forum-form-locked');
   const sessionStatusEl = document.getElementById('forum-session-status');
   const signOutButton = document.getElementById('forum-signout');
@@ -18,11 +19,24 @@
   let activeAccount = null;
   let posts = [];
 
+  function showStorageWarning(){
+    if(storageWarning){
+      storageWarning.hidden = false;
+    }
+  }
+
+  function hideStorageWarning(){
+    if(storageWarning){
+      storageWarning.hidden = true;
+    }
+  }
+
   function getToken(){
     try{
       return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
     }catch(err){
       console.warn('Unable to access stored token', err);
+      showStorageWarning();
       return '';
     }
   }
@@ -31,11 +45,13 @@
     try{
       if(token){
         localStorage.setItem(TOKEN_STORAGE_KEY, token);
+        hideStorageWarning();
       }else{
         localStorage.removeItem(TOKEN_STORAGE_KEY);
       }
     }catch(err){
       console.warn('Failed to persist token', err);
+      showStorageWarning();
     }
   }
 
@@ -188,8 +204,13 @@
     if(token){
       opts.headers['Authorization'] = `Bearer ${token}`;
     }
-    if(opts.body && !(opts.body instanceof FormData) && !opts.headers['Content-Type']){
-      opts.headers['Content-Type'] = 'application/json';
+    if(opts.body && !(opts.body instanceof FormData)){
+      if(typeof opts.body !== 'string'){
+        opts.body = JSON.stringify(opts.body);
+      }
+      if(!opts.headers['Content-Type']){
+        opts.headers['Content-Type'] = 'application/json';
+      }
     }
     const response = await fetch(`${API_BASE}${path}`, opts);
     const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
@@ -255,6 +276,30 @@
     updateSessionStatus('Signed out.');
   }
 
+  function fileToDataUrl(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Unable to read attachment.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function setSubmitting(isSubmitting){
+    if(!form){
+      return;
+    }
+    const submitButton = form.querySelector('button[type="submit"]');
+    if(submitButton){
+      submitButton.disabled = isSubmitting;
+    }
+    if(isSubmitting){
+      form.classList.add('is-submitting');
+    }else{
+      form.classList.remove('is-submitting');
+    }
+  }
+
   async function handleSubmit(event){
     event.preventDefault();
     clearError();
@@ -269,32 +314,59 @@
     }
 
     const formData = new FormData(form);
-    const token = getToken();
-    if(token){
-      formData.append('token', token);
+    const category = formData.get('category');
+    const title = formData.get('title');
+    const bodyValue = formData.get('body');
+    const mediaLink = formData.get('mediaLink');
+    const mediaFile = formData.get('mediaFile');
+
+    const payload = {
+      category: category && String(category).trim(),
+      title: title && String(title),
+      body: bodyValue && String(bodyValue)
+    };
+
+    if(mediaLink){
+      payload.mediaLink = String(mediaLink).trim();
     }
 
+    if(mediaFile && mediaFile.size){
+      const isImage = /^image\//i.test(mediaFile.type || '');
+      const sizeLimit = isImage ? 5 * 1024 * 1024 : 20 * 1024 * 1024;
+      if(mediaFile.size > sizeLimit){
+        showError(isImage ? 'Images must be 5MB or smaller.' : 'Videos must be 20MB or smaller.');
+        return;
+      }
+      try{
+        const dataUrl = await fileToDataUrl(mediaFile);
+        payload.mediaUpload = {
+          name: mediaFile.name,
+          type: mediaFile.type,
+          dataUrl
+        };
+      }catch(err){
+        console.warn('Failed to encode attachment', err);
+        showError('Unable to read the selected file.');
+        return;
+      }
+    }
+
+    setSubmitting(true);
     try{
-      const response = await fetch(`${API_BASE}/posts`, {
+      const result = await requestJson('/posts', {
         method: 'POST',
-        body: formData,
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        body: payload
       });
 
-      const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
-      const payload = isJson ? await response.json().catch(() => null) : null;
-      if(!response.ok){
-        const message = payload && payload.message ? payload.message : `Request failed with status ${response.status}`;
-        throw new Error(message);
-      }
-
-      if(payload && payload.post){
-        posts.unshift(payload.post);
+      if(result && result.post){
+        posts.unshift(result.post);
         renderPosts();
       }
       form.reset();
     }catch(err){
       showError(err.message || 'Unable to create post.');
+    }finally{
+      setSubmitting(false);
     }
   }
 
