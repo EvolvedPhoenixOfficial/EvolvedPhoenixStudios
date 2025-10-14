@@ -37,8 +37,22 @@ If you are interested in collaboration or licensing, please contact us directly.
 ## 🛠️ Tech Stack
 
 - **HTML5, CSS3, JavaScript**  
-- **TailwindCSS** for styling  
-- **Static Hosting** (GitHub Pages / external server)  
+- **TailwindCSS** inspired utility styles
+- **Static Hosting** (GitHub Pages / external server)
+- **GitHub REST API** calls from the browser to persist forum data
+
+---
+
+## 🧪 Local development & GitHub persistence
+
+The site runs entirely on static hosting. Forum posts, uploads, and account records are written straight into this repository through the GitHub REST API. To test the workflow locally or on GitHub Pages:
+
+1. [Create a GitHub personal access token](https://github.com/settings/tokens) with **repo** scope.
+2. Visit the `/account/` page, open the **Connect to GitHub** card, and enter the repository owner, repository name, branch (defaults to `main`), and your token.
+3. Create an account and sign in. The credentials are hashed in the browser, then appended to `data/accounts.json` via the GitHub API.
+4. Head to `/forums/` while signed in to publish posts. Text content is saved into `data/posts.json`, and any uploads are committed under `uploads/forum/` with unique filenames.
+
+Tokens and active-account details live in the browser's local storage. If storage is blocked (e.g., incognito with hardened privacy), you will need to re-enter settings whenever you refresh the page.
 
 ---
 

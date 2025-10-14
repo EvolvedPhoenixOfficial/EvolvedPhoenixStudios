@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Community Forum — Extynct Studios</title>
+  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved to repository data through the GitHub API." />
+  <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
+  <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/site.js" defer></script>
+  <script src="/assets/repo-storage.js" defer></script>
+  <script src="/assets/forum.js" defer></script>
+</head>
+<body>
+  <div data-include="/partials/header.html"></div>
+
+  <main id="forum-root" class="forum" data-owner="ExtynctStudios" data-repo="ExtynctStudios" data-branch="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Community Forum</h1>
+        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Posts and uploads are committed directly to this repository through the GitHub API.</p>
+        <a class="btn forum-hero-action" href="/account/">Manage your account</a>
+      </div>
+    </section>
+
+    <section class="container forum-layout">
+      <div class="forum-main">
+        <article class="card forum-session-card" aria-labelledby="forum-session-heading">
+          <div class="card-body">
+            <h2 id="forum-session-heading" class="forum-session-title">Forum access</h2>
+            <p id="forum-session-status" class="forum-session-status" aria-live="polite">Checking your sign-in status…</p>
+            <div class="forum-session-actions">
+              <a id="forum-manage-account" class="btn" href="/account/">Account settings</a>
+              <button type="button" id="forum-signout" class="btn" hidden>Sign out</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card forum-form-card">
+          <div class="card-body">
+            <h2 class="forum-form-title">Create a post</h2>
+            <p class="forum-storage-note">Everything you share here is written to JSON data inside this repository using your GitHub access token. Attachments are saved to <code>uploads/forum</code> so they publish with the site.</p>
+            <form id="forum-form" class="forum-form" novalidate>
+              <p id="forum-form-locked" class="forum-locked" hidden>You need to sign in before posting. <a href="/account/">Create or sign in to an account</a> and then return to the forum.</p>
+
+              <div class="forum-field">
+                <label for="forum-category">Channel</label>
+                <select id="forum-category" name="category">
+                  <option value="General">General</option>
+                  <option value="Showcase">Showcase</option>
+                  <option value="Feedback">Feedback</option>
+                  <option value="Support">Support</option>
+                  <option value="Off Topic">Off Topic</option>
+                </select>
+              </div>
+
+              <div class="forum-field">
+                <label for="forum-title">Post title <span aria-hidden="true">*</span></label>
+                <input id="forum-title" name="title" type="text" maxlength="120" required placeholder="What's on your mind?" />
+              </div>
+
+              <div class="forum-field">
+                <label for="forum-body">Details <span aria-hidden="true">*</span></label>
+                <textarea id="forum-body" name="body" rows="5" maxlength="2000" required placeholder="Share context, progress, or questions…"></textarea>
+              </div>
+
+              <fieldset class="forum-field">
+                <legend>Media (optional)</legend>
+                <p class="forum-field-help">Attach a file (images up to 5&nbsp;MB, videos up to 20&nbsp;MB) or drop in a direct link. You can showcase screenshots, gifs, or clips.</p>
+                <label class="forum-sublabel" for="forum-media-file">Upload from device</label>
+                <input id="forum-media-file" name="mediaFile" type="file" accept="image/*,video/*" />
+                <label class="forum-sublabel" for="forum-media-link">Or paste a media link</label>
+                <input id="forum-media-link" name="mediaLink" type="url" placeholder="https://example.com/clip.mp4" inputmode="url" />
+              </fieldset>
+
+              <p id="forum-form-error" class="forum-error" role="alert" hidden></p>
+              <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: Your browser blocked local storage, so your sign-in will reset after refreshing.</p>
+
+              <button type="submit" class="btn btn-primary forum-submit">Share post</button>
+            </form>
+          </div>
+        </article>
+
+        <section class="forum-threads">
+          <header class="forum-threads-header">
+            <h2>Latest activity</h2>
+          </header>
+          <p id="forum-empty" class="forum-empty" hidden>No posts yet. Be the first to start a conversation!</p>
+          <div id="forum-posts" class="forum-thread-list" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <aside class="forum-sidebar">
+        <article class="card">
+          <div class="card-body">
+            <h2 class="forum-sidebar-title">Posting guidelines</h2>
+            <ul class="forum-guidelines">
+              <li>Keep feedback constructive and actionable.</li>
+              <li>Tag spoilers and major plot beats.</li>
+              <li>Credit artists if you share fan work.</li>
+              <li>Use the Support channel for bug reports or tech issues.</li>
+              <li>Flag anything unsafe via <a href="mailto:hello@extynctstudios.com">hello@extynctstudios.com</a>.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-body">
+            <h2 class="forum-sidebar-title">Quick links</h2>
+            <ul class="forum-links">
+              <li><a href="https://discord.extynctstudios.com/" target="_blank" rel="noopener">Official Discord</a></li>
+              <li><a href="/news/">Latest devlogs</a></li>
+              <li><a href="/games/">Playtest builds</a></li>
+              <li><a href="/privacy-policy.html">Privacy policy</a></li>
+            </ul>
+          </div>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <div data-include="/partials/footer.html"></div>
+</body>
+</html>
