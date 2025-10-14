@@ -4,111 +4,54 @@
     return;
   }
 
-  const STORAGE_KEY = 'extynct-forum-posts';
-  const ACCOUNT_STORAGE_KEY = 'extynct-accounts';
-  const LEGACY_ACCOUNT_STORAGE_KEY = 'extynct-forum-accounts';
-  const ACTIVE_ACCOUNT_KEY = 'extynct-active-account';
+  const TOKEN_STORAGE_KEY = 'extynct-auth-token';
+  const API_BASE = '/api';
 
   const form = document.getElementById('forum-form');
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
   const errorEl = document.getElementById('forum-form-error');
-  const storageWarning = document.getElementById('forum-storage-warning');
   const lockedMessage = document.getElementById('forum-form-locked');
   const sessionStatusEl = document.getElementById('forum-session-status');
   const signOutButton = document.getElementById('forum-signout');
 
-  let storageAvailable = true;
+  let activeAccount = null;
   let posts = [];
-  let accounts = [];
-  let activeAccountId = null;
 
-  function safeCall(fn){
-    if(!storageAvailable){
-      return null;
-    }
-
+  function getToken(){
     try{
-      return fn();
+      return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
     }catch(err){
-      console.warn('Forum storage unavailable:', err);
-      storageAvailable = false;
-      if(storageWarning){
-        storageWarning.hidden = false;
-      }
-      if(typeof updateSessionStatus === 'function'){
-        try{
-          updateSessionStatus('Local storage is disabled, so posting is locked.');
-        }catch(updateErr){
-          console.warn('Unable to update session status after storage failure', updateErr);
-        }
-      }
-      return null;
+      console.warn('Unable to access stored token', err);
+      return '';
     }
   }
 
-  function clearLegacyAccountStorage(){
-    safeCall(() => localStorage.removeItem(LEGACY_ACCOUNT_STORAGE_KEY));
-  }
-
-  function readStoredPosts(){
-    const raw = safeCall(() => localStorage.getItem(STORAGE_KEY));
-    if(!raw){
-      return [];
-    }
-
+  function setToken(token){
     try{
-      const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed)){
-        return parsed;
+      if(token){
+        localStorage.setItem(TOKEN_STORAGE_KEY, token);
+      }else{
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
       }
     }catch(err){
-      console.warn('Failed to parse forum posts', err);
+      console.warn('Failed to persist token', err);
     }
-    return [];
   }
 
-  function savePosts(list){
-    if(!Array.isArray(list)){
+  function clearError(){
+    if(errorEl){
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+    }
+  }
+
+  function showError(message){
+    if(!errorEl){
       return;
     }
-    safeCall(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(list)));
-  }
-
-  function readAccounts(){
-    const raw = safeCall(() => localStorage.getItem(ACCOUNT_STORAGE_KEY));
-    if(!raw){
-      return [];
-    }
-
-    try{
-      const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed)){
-        return parsed;
-      }
-    }catch(err){
-      console.warn('Failed to parse account list', err);
-    }
-    return [];
-  }
-
-  function readActiveAccountId(){
-    return safeCall(() => localStorage.getItem(ACTIVE_ACCOUNT_KEY));
-  }
-
-  function saveActiveAccountId(id){
-    if(id){
-      safeCall(() => localStorage.setItem(ACTIVE_ACCOUNT_KEY, id));
-    }else{
-      safeCall(() => localStorage.removeItem(ACTIVE_ACCOUNT_KEY));
-    }
-  }
-
-  function getActiveAccount(){
-    if(!Array.isArray(accounts) || !activeAccountId){
-      return null;
-    }
-    return accounts.find((acct) => acct && acct.id === activeAccountId) || null;
+    errorEl.textContent = message;
+    errorEl.hidden = false;
   }
 
   function setFormEnabled(enabled){
@@ -122,403 +65,246 @@
       }
       element.disabled = !enabled && element.type !== 'button';
     });
-    form.classList.toggle('forum-form-disabled', !enabled);
     if(lockedMessage){
       lockedMessage.hidden = enabled;
     }
   }
 
-  function updateSessionStatus(message){
-    let activeAccount = getActiveAccount();
+  function escapeHtml(value){
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
-    if(activeAccountId && !activeAccount){
-      activeAccountId = null;
-      saveActiveAccountId(null);
-      activeAccount = null;
+  function renderMedia(media){
+    if(!media){
+      return '';
+    }
+    let content = '';
+    if(media.type === 'file'){
+      const isVideo = /^video\//i.test(media.mimeType || '');
+      if(isVideo){
+        content = `
+          <div class="forum-media">
+            <video controls preload="metadata">
+              <source src="${media.url}" type="${media.mimeType || 'video/mp4'}" />
+              Your browser does not support the video tag.
+            </video>
+          </div>`;
+      }else{
+        content = `
+          <div class="forum-media">
+            <img src="${media.url}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
+          </div>`;
+      }
+    }else if(media.type === 'link'){
+      const safeUrl = media.url ? media.url : '#';
+      content = `
+        <div class="forum-media">
+          <a class="forum-media-link" href="${safeUrl}" target="_blank" rel="noopener">View attached media</a>
+        </div>`;
     }
 
+    if(!content){
+      return '';
+    }
+    return `
+      <div class="forum-media-group">${content}
+      </div>`;
+  }
+
+  function renderPosts(){
+    if(!postsContainer){
+      return;
+    }
+
+    if(!Array.isArray(posts) || posts.length === 0){
+      if(emptyState){
+        emptyState.hidden = false;
+      }
+      postsContainer.innerHTML = '';
+      return;
+    }
+
+    if(emptyState){
+      emptyState.hidden = true;
+    }
+
+    const markup = posts.map((post) => {
+      const created = new Date(post.createdAt);
+      const formattedDate = created.toLocaleString(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+      const title = escapeHtml(post.title || 'Untitled post');
+      const paragraphs = String(post.body || '').split(/\n+/).map((line) => escapeHtml(line.trim())).filter(Boolean);
+      const bodyContent = paragraphs.length > 0
+        ? paragraphs.map((text) => `<p>${text}</p>`).join('')
+        : '<p>No content provided.</p>';
+
+      return `
+        <article class="card forum-thread" data-post-id="${escapeHtml(post.id || '')}">
+          <div class="card-body forum-thread-body">
+            <header class="forum-thread-header">
+              <h3 class="forum-thread-title">${title}</h3>
+              <div class="forum-thread-meta">
+                <span class="forum-pill">${escapeHtml(post.category || 'General')}</span>
+                <span class="forum-thread-author">@${escapeHtml(post.authorName || 'unknown')}</span>
+                <time datetime="${escapeHtml(post.createdAt || '')}">${formattedDate}</time>
+              </div>
+            </header>
+            ${bodyContent}
+            ${renderMedia(post.media)}
+          </div>
+        </article>`;
+    }).join('\n');
+
+    postsContainer.innerHTML = markup;
+  }
+
+  function updateSessionStatus(message){
     if(sessionStatusEl){
       if(message){
         sessionStatusEl.textContent = message;
       }else if(activeAccount){
-        sessionStatusEl.textContent = `Signed in as @${activeAccount.username}.`;
+        sessionStatusEl.textContent = `Signed in as @${activeAccount.username}`;
       }else{
         sessionStatusEl.textContent = 'Not signed in. Visit the account page to create or sign in.';
       }
     }
-
     if(signOutButton){
       signOutButton.hidden = !activeAccount;
     }
-
-    const canPost = Boolean(activeAccount) && storageAvailable;
-    setFormEnabled(canPost);
-
-    if(!storageAvailable && storageWarning){
-      storageWarning.hidden = false;
-    }
+    setFormEnabled(Boolean(activeAccount));
   }
 
-  function showError(message){
-    if(!errorEl){
-      return;
+  async function requestJson(path, options){
+    const opts = Object.assign({}, options || {});
+    opts.headers = Object.assign({ 'Accept': 'application/json' }, opts.headers || {});
+    const token = getToken();
+    if(token){
+      opts.headers['Authorization'] = `Bearer ${token}`;
     }
-    errorEl.textContent = message;
-    errorEl.hidden = false;
+    if(opts.body && !(opts.body instanceof FormData) && !opts.headers['Content-Type']){
+      opts.headers['Content-Type'] = 'application/json';
+    }
+    const response = await fetch(`${API_BASE}${path}`, opts);
+    const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
+    const payload = isJson ? await response.json().catch(() => null) : null;
+    if(!response.ok){
+      const errorMessage = payload && payload.message ? payload.message : `Request failed with status ${response.status}`;
+      throw new Error(errorMessage);
+    }
+    return payload;
   }
 
-  function clearError(){
-    if(!errorEl){
-      return;
-    }
-    errorEl.hidden = true;
-    errorEl.textContent = '';
-  }
-
-  function ensureStorage(){
-    if(storageAvailable){
-      return true;
-    }
-    showError('Local storage is disabled, so posts cannot be saved.');
-    return false;
-  }
-
-  function formatDate(value){
+  async function fetchPosts(){
     try{
-      return new Date(value).toLocaleString([], {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      const result = await requestJson('/posts', { method: 'GET' });
+      posts = Array.isArray(result && result.posts) ? result.posts : [];
+    }catch(err){
+      console.warn('Failed to load posts', err);
+      posts = [];
+    }
+    renderPosts();
+  }
+
+  async function refreshSession(){
+    const token = getToken();
+    if(!token){
+      activeAccount = null;
+      updateSessionStatus();
+      return;
+    }
+
+    try{
+      const result = await requestJson('/auth/session', { method: 'GET' });
+      activeAccount = result && result.account ? result.account : null;
+    }catch(err){
+      console.warn('Unable to refresh session', err);
+      activeAccount = null;
+      setToken('');
+    }
+    updateSessionStatus();
+  }
+
+  async function handleSignOut(){
+    const token = getToken();
+    if(!token){
+      activeAccount = null;
+      setToken('');
+      updateSessionStatus('Signed out.');
+      return;
+    }
+
+    try{
+      await requestJson('/auth/signout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
       });
     }catch(err){
-      return value;
+      console.warn('Sign-out failed', err);
     }
+
+    activeAccount = null;
+    setToken('');
+    updateSessionStatus('Signed out.');
   }
 
-  function createId(prefix = 'post'){
-    if(typeof crypto !== 'undefined' && crypto.randomUUID){
-      const uuid = crypto.randomUUID();
-      return prefix ? `${prefix}-${uuid}` : uuid;
-    }
-    const fallback = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    return prefix ? `${prefix}-${fallback}` : fallback;
-  }
+  async function handleSubmit(event){
+    event.preventDefault();
+    clearError();
 
-  function parseMediaLink(value){
-    if(!value){
-      return null;
-    }
-    let parsed;
-    try{
-      parsed = new URL(value);
-    }catch(err){
-      return null;
-    }
-
-    const pathname = parsed.pathname.toLowerCase();
-    const ext = pathname.split('.').pop();
-    const imageExt = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'];
-    const videoExt = ['mp4', 'webm', 'ogg', 'mov'];
-
-    if(imageExt.includes(ext)){
-      return { type: 'image', src: parsed.href };
-    }
-    if(videoExt.includes(ext)){
-      return { type: 'video', src: parsed.href };
-    }
-
-    if(parsed.hostname.includes('youtube.com') || parsed.hostname.includes('youtu.be')){
-      const videoId = parsed.searchParams.get('v') || pathname.replace('/', '');
-      if(videoId){
-        return {
-          type: 'embed',
-          provider: 'youtube',
-          src: `https://www.youtube.com/embed/${videoId}`
-        };
-      }
-    }
-
-    return {
-      type: 'link',
-      src: parsed.href
-    };
-  }
-
-  function readFileAsDataUrl(file){
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function extractMedia(fileInput, linkInput){
-    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-    const link = linkInput ? linkInput.value.trim() : '';
-
-    if(file){
-      const isImage = file.type.startsWith('image/');
-      const isVideo = file.type.startsWith('video/');
-      const maxImageSize = 5 * 1024 * 1024;
-      const maxVideoSize = 20 * 1024 * 1024;
-
-      if(isImage && file.size > maxImageSize){
-        throw new Error('Images must be 5 MB or smaller.');
-      }
-      if(isVideo && file.size > maxVideoSize){
-        throw new Error('Videos must be 20 MB or smaller.');
-      }
-
-      const dataUrl = await readFileAsDataUrl(file);
-      return [
-        {
-          type: isVideo ? 'video' : 'image',
-          src: dataUrl,
-          name: file.name
-        }
-      ];
-    }
-
-    const parsed = parseMediaLink(link);
-    if(parsed){
-      return [parsed];
-    }
-
-    return [];
-  }
-
-  function renderBody(body){
-    const container = document.createElement('div');
-    const paragraphs = body.split(/\n{2,}/).filter(Boolean);
-
-    if(paragraphs.length === 0){
-      const line = document.createElement('p');
-      line.textContent = body.trim();
-      container.appendChild(line);
-      return container;
-    }
-
-    paragraphs.forEach((chunk) => {
-      const p = document.createElement('p');
-      p.textContent = chunk.trim();
-      container.appendChild(p);
-    });
-
-    return container;
-  }
-
-  function renderMedia(media){
-    const wrapper = document.createElement('div');
-    wrapper.className = 'forum-media-group';
-
-    media.forEach((item) => {
-      const mediaContainer = document.createElement('div');
-      mediaContainer.className = 'forum-media';
-
-      if(item.type === 'image'){
-        const img = document.createElement('img');
-        img.src = item.src;
-        img.alt = item.name ? `${item.name} attachment` : 'Post attachment';
-        img.loading = 'lazy';
-        mediaContainer.appendChild(img);
-      }else if(item.type === 'video'){
-        const video = document.createElement('video');
-        video.controls = true;
-        video.src = item.src;
-        video.preload = 'metadata';
-        mediaContainer.appendChild(video);
-      }else if(item.type === 'embed' && item.provider === 'youtube'){
-        const iframe = document.createElement('iframe');
-        iframe.src = item.src;
-        iframe.width = '560';
-        iframe.height = '315';
-        iframe.loading = 'lazy';
-        iframe.allowFullscreen = true;
-        iframe.setAttribute('title', 'Embedded video');
-        mediaContainer.appendChild(iframe);
-      }else if(item.type === 'link'){
-        const link = document.createElement('a');
-        link.href = item.src;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        link.className = 'forum-media-link';
-        link.textContent = 'Open attached link';
-        mediaContainer.appendChild(link);
-      }
-
-      wrapper.appendChild(mediaContainer);
-    });
-
-    return wrapper;
-  }
-
-  function renderPosts(list){
-    if(!postsContainer || !emptyState){
-      return;
-    }
-
-    postsContainer.innerHTML = '';
-
-    if(!Array.isArray(list) || list.length === 0){
-      emptyState.hidden = false;
-      return;
-    }
-
-    emptyState.hidden = true;
-
-    const sorted = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    sorted.forEach((post) => {
-      const article = document.createElement('article');
-      article.className = 'card forum-thread';
-      article.setAttribute('data-post-id', post.id);
-
-      const body = document.createElement('div');
-      body.className = 'card-body forum-thread-body';
-
-      const header = document.createElement('header');
-      header.className = 'forum-thread-header';
-
-      const title = document.createElement('h3');
-      title.className = 'forum-thread-title';
-      title.textContent = post.title;
-
-      const meta = document.createElement('div');
-      meta.className = 'forum-thread-meta';
-
-      const pill = document.createElement('span');
-      pill.className = 'forum-pill';
-      pill.textContent = post.category || 'General';
-
-      const author = document.createElement('span');
-      author.className = 'forum-thread-author';
-      author.textContent = post.author ? `@${post.author}` : 'Anonymous player';
-
-      const date = document.createElement('time');
-      date.dateTime = post.createdAt;
-      date.textContent = formatDate(post.createdAt);
-
-      meta.appendChild(pill);
-      meta.appendChild(author);
-      meta.appendChild(date);
-
-      header.appendChild(title);
-      header.appendChild(meta);
-
-      body.appendChild(header);
-      body.appendChild(renderBody(post.body));
-
-      if(post.media && post.media.length > 0){
-        body.appendChild(renderMedia(post.media));
-      }
-
-      article.appendChild(body);
-      postsContainer.appendChild(article);
-    });
-  }
-
-  function clearForm(){
     if(!form){
       return;
     }
-    form.reset();
-  }
 
-  function readState(){
-    posts = readStoredPosts();
-    accounts = readAccounts();
-    activeAccountId = readActiveAccountId();
-  }
-
-  clearLegacyAccountStorage();
-  readState();
-  renderPosts(posts);
-  updateSessionStatus();
-
-  if(form){
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      clearError();
-
-      if(!ensureStorage()){
-        return;
-      }
-
-      const activeAccount = getActiveAccount();
-      if(!activeAccount){
-        updateSessionStatus('You must sign in before posting.');
-        showError('Please sign in on the account page before posting.');
-        return;
-      }
-
-      const formData = new FormData(form);
-      const title = (formData.get('title') || '').toString().trim();
-      const bodyValue = (formData.get('body') || '').toString().trim();
-
-      if(!title){
-        showError('Please add a title before posting.');
-        return;
-      }
-      if(!bodyValue){
-        showError('Please share a bit more detail so people can help.');
-        return;
-      }
-
-      try{
-        const media = await extractMedia(
-          document.getElementById('forum-media-file'),
-          document.getElementById('forum-media-link')
-        );
-
-        const newPost = {
-          id: createId(),
-          title,
-          body: bodyValue,
-          author: activeAccount.username,
-          category: (formData.get('category') || 'General').toString(),
-          createdAt: new Date().toISOString(),
-          media
-        };
-
-        posts.push(newPost);
-        savePosts(posts);
-        if(!storageAvailable){
-          posts.pop();
-          showError('Local storage is disabled, so posts cannot be saved.');
-          return;
-        }
-        renderPosts(posts);
-        clearForm();
-      }catch(err){
-        showError(err.message || 'Something went wrong while attaching your media.');
-      }
-    });
-  }
-
-  if(signOutButton){
-    signOutButton.addEventListener('click', () => {
-      clearError();
-      activeAccountId = null;
-      saveActiveAccountId(null);
-      updateSessionStatus('Signed out.');
-    });
-  }
-
-  window.addEventListener('storage', (event) => {
-    if(!event){
+    if(!activeAccount){
+      showError('Sign in before creating a post.');
       return;
     }
-    if(event.key === STORAGE_KEY){
-      posts = readStoredPosts();
-      renderPosts(posts);
-    }else if(event.key === ACCOUNT_STORAGE_KEY){
-      accounts = readAccounts();
-      updateSessionStatus();
-    }else if(event.key === ACTIVE_ACCOUNT_KEY){
-      activeAccountId = readActiveAccountId();
-      updateSessionStatus();
+
+    const formData = new FormData(form);
+    const token = getToken();
+    if(token){
+      formData.append('token', token);
     }
-  });
+
+    try{
+      const response = await fetch(`${API_BASE}/posts`, {
+        method: 'POST',
+        body: formData,
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+
+      const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
+      const payload = isJson ? await response.json().catch(() => null) : null;
+      if(!response.ok){
+        const message = payload && payload.message ? payload.message : `Request failed with status ${response.status}`;
+        throw new Error(message);
+      }
+
+      if(payload && payload.post){
+        posts.unshift(payload.post);
+        renderPosts();
+      }
+      form.reset();
+    }catch(err){
+      showError(err.message || 'Unable to create post.');
+    }
+  }
+
+  if(form){
+    form.addEventListener('submit', handleSubmit);
+  }
+  if(signOutButton){
+    signOutButton.addEventListener('click', handleSignOut);
+  }
+
+  refreshSession();
+  fetchPosts();
 })();

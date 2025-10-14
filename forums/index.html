@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Community Forum — Extynct Studios</title>
-  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community." />
+  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved to repository data through the local server." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
@@ -18,7 +18,7 @@
     <section class="page-hero">
       <div class="container">
         <h1>Community Forum</h1>
-        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Everything remains stored locally in your browser.</p>
+        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Posts and uploads are written directly to the repository so they persist for everyone running the site.</p>
         <a class="btn forum-hero-action" href="/account/">Manage your account</a>
       </div>
     </section>
@@ -39,7 +39,7 @@
         <article class="card forum-form-card">
           <div class="card-body">
             <h2 class="forum-form-title">Create a post</h2>
-            <p class="forum-storage-note">Everything you share here is saved in your browser using local storage. Clear your cache to wipe the slate.</p>
+            <p class="forum-storage-note">Everything you share here is written to JSON data inside this repository. Attachments are saved to <code>uploads/forum</code> so you can commit them.</p>
             <form id="forum-form" class="forum-form" novalidate>
               <p id="forum-form-locked" class="forum-locked" hidden>You need to sign in before posting. <a href="/account/">Create or sign in to an account</a> and then return to the forum.</p>
 
@@ -74,7 +74,7 @@
               </fieldset>
 
               <p id="forum-form-error" class="forum-error" role="alert" hidden></p>
-              <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: Your browser blocked local storage, so new posts will only live until you refresh.</p>
+                <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: Your browser blocked local storage, so your session token can't be saved. You'll need to sign in again after refreshing.</p>
 
               <button type="submit" class="btn btn-primary forum-submit">Share post</button>
             </form>

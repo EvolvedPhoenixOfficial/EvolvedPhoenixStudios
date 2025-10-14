@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Account Manager — Extynct Studios</title>
-  <meta name="description" content="Create and manage your Extynct Studios forum account. Accounts are stored locally in your browser." />
+  <meta name="description" content="Create and manage your Extynct Studios forum account. Accounts are stored in repository data so they can be shared across browsers." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
@@ -18,7 +18,7 @@
     <section class="page-hero">
       <div class="container">
         <h1>Manage your account</h1>
-        <p class="account-subtitle">Create a sign-in you can use for the community forum on this device. All data is stored locally and never leaves your browser.</p>
+        <p class="account-subtitle">Create a sign-in you can use for the community forum. Accounts and sessions are stored in this repository's data files via the local server.</p>
       </div>
     </section>
 
@@ -26,7 +26,7 @@
       <article class="card account-card" aria-labelledby="account-create-heading">
         <div class="card-body">
           <h2 id="account-create-heading" class="account-card-title">Create a new account</h2>
-          <p class="account-card-intro">Use a unique username and a password with at least eight characters. Your email helps identify the account if you create more than one.</p>
+          <p class="account-card-intro">Use a unique username and a password with at least eight characters. Your email helps identify the account in the saved repository data.</p>
 
           <form id="account-create-form" class="account-form" novalidate>
             <div class="account-field">
@@ -60,7 +60,7 @@
       <article class="card account-card" aria-labelledby="account-signin-heading">
         <div class="card-body">
           <h2 id="account-signin-heading" class="account-card-title">Sign in</h2>
-          <p class="account-card-intro">Already created an account on this device? Sign in with your email or username and password.</p>
+          <p class="account-card-intro">Already created an account? Sign in with your email or username and password. Your credentials are validated against the repository data store.</p>
 
           <form id="account-signin-form" class="account-form" novalidate>
             <div class="account-field">
