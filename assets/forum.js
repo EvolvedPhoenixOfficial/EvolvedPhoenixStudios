@@ -5,28 +5,23 @@
   }
 
   const STORAGE_KEY = 'extynct-forum-posts';
-  const ACCOUNT_STORAGE_KEY = 'extynct-forum-accounts';
+  const ACCOUNT_STORAGE_KEY = 'extynct-accounts';
+  const LEGACY_ACCOUNT_STORAGE_KEY = 'extynct-forum-accounts';
   const ACTIVE_ACCOUNT_KEY = 'extynct-active-account';
+
   const form = document.getElementById('forum-form');
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
   const errorEl = document.getElementById('forum-form-error');
   const storageWarning = document.getElementById('forum-storage-warning');
-  const resetButton = document.getElementById('forum-reset');
-  const accountForm = document.getElementById('forum-account-form');
-  const accountErrorEl = document.getElementById('forum-account-error');
-  const accountSuccessEl = document.getElementById('forum-account-success');
-  const accountStatusEl = document.getElementById('forum-account-status');
-  const accountPickerWrapper = document.querySelector('.forum-account-select');
-  const accountPicker = document.getElementById('forum-account-picker');
-  const accountSignOut = document.getElementById('forum-account-signout');
-  const authorInput = document.getElementById('forum-author');
-
-  if(!form || !postsContainer || !emptyState || !resetButton){
-    return;
-  }
+  const lockedMessage = document.getElementById('forum-form-locked');
+  const sessionStatusEl = document.getElementById('forum-session-status');
+  const signOutButton = document.getElementById('forum-signout');
 
   let storageAvailable = true;
+  let posts = [];
+  let accounts = [];
+  let activeAccountId = null;
 
   function safeCall(fn){
     if(!storageAvailable){
@@ -41,72 +36,64 @@
       if(storageWarning){
         storageWarning.hidden = false;
       }
+      if(typeof updateSessionStatus === 'function'){
+        try{
+          updateSessionStatus('Local storage is disabled, so posting is locked.');
+        }catch(updateErr){
+          console.warn('Unable to update session status after storage failure', updateErr);
+        }
+      }
       return null;
     }
   }
 
-  function clearAccountAlerts(){
-    if(accountErrorEl){
-      accountErrorEl.hidden = true;
-      accountErrorEl.textContent = '';
-    }
-    if(accountSuccessEl){
-      accountSuccessEl.hidden = true;
-      accountSuccessEl.textContent = '';
-    }
+  function clearLegacyAccountStorage(){
+    safeCall(() => localStorage.removeItem(LEGACY_ACCOUNT_STORAGE_KEY));
   }
 
-  function showAccountError(message){
-    if(!accountErrorEl){
-      return;
-    }
-    accountErrorEl.textContent = message;
-    accountErrorEl.hidden = false;
-    if(accountSuccessEl){
-      accountSuccessEl.hidden = true;
-      accountSuccessEl.textContent = '';
-    }
-  }
-
-  function showAccountSuccess(message){
-    if(!accountSuccessEl){
-      return;
-    }
-    accountSuccessEl.textContent = message;
-    accountSuccessEl.hidden = false;
-    if(accountErrorEl){
-      accountErrorEl.hidden = true;
-      accountErrorEl.textContent = '';
-    }
-  }
-
-  function readStoredAccounts(){
-    const value = safeCall(() => localStorage.getItem(ACCOUNT_STORAGE_KEY));
-    if(!value){
+  function readStoredPosts(){
+    const raw = safeCall(() => localStorage.getItem(STORAGE_KEY));
+    if(!raw){
       return [];
     }
 
     try{
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(raw);
       if(Array.isArray(parsed)){
         return parsed;
       }
     }catch(err){
-      console.warn('Unable to parse stored account data', err);
+      console.warn('Failed to parse forum posts', err);
     }
     return [];
   }
 
-  function saveAccounts(list){
+  function savePosts(list){
     if(!Array.isArray(list)){
       return;
     }
-    safeCall(() => localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(list)));
+    safeCall(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(list)));
+  }
+
+  function readAccounts(){
+    const raw = safeCall(() => localStorage.getItem(ACCOUNT_STORAGE_KEY));
+    if(!raw){
+      return [];
+    }
+
+    try{
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed)){
+        return parsed;
+      }
+    }catch(err){
+      console.warn('Failed to parse account list', err);
+    }
+    return [];
   }
 
   function readActiveAccountId(){
-    const value = safeCall(() => localStorage.getItem(ACTIVE_ACCOUNT_KEY));
-    return value || null;
+    return safeCall(() => localStorage.getItem(ACTIVE_ACCOUNT_KEY));
   }
 
   function saveActiveAccountId(id){
@@ -117,102 +104,83 @@
     }
   }
 
-  async function hashPassword(password){
-    if(typeof password !== 'string'){
-      return '';
+  function getActiveAccount(){
+    if(!Array.isArray(accounts) || !activeAccountId){
+      return null;
     }
+    return accounts.find((acct) => acct && acct.id === activeAccountId) || null;
+  }
 
-    if(typeof crypto !== 'undefined' && crypto.subtle && typeof TextEncoder !== 'undefined'){
-      const encoder = new TextEncoder();
-      const data = encoder.encode(password);
-      const digest = await crypto.subtle.digest('SHA-256', data);
-      const bytes = Array.from(new Uint8Array(digest));
-      return bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  function setFormEnabled(enabled){
+    if(!form){
+      return;
     }
-
-    try{
-      return btoa(unescape(encodeURIComponent(password)));
-    }catch(err){
-      return password;
+    const elements = form.querySelectorAll('input, textarea, select, button');
+    elements.forEach((element) => {
+      if(element === lockedMessage){
+        return;
+      }
+      element.disabled = !enabled && element.type !== 'button';
+    });
+    form.classList.toggle('forum-form-disabled', !enabled);
+    if(lockedMessage){
+      lockedMessage.hidden = enabled;
     }
   }
 
-  function ensureStorageEnabled(){
+  function updateSessionStatus(message){
+    let activeAccount = getActiveAccount();
+
+    if(activeAccountId && !activeAccount){
+      activeAccountId = null;
+      saveActiveAccountId(null);
+      activeAccount = null;
+    }
+
+    if(sessionStatusEl){
+      if(message){
+        sessionStatusEl.textContent = message;
+      }else if(activeAccount){
+        sessionStatusEl.textContent = `Signed in as @${activeAccount.username}.`;
+      }else{
+        sessionStatusEl.textContent = 'Not signed in. Visit the account page to create or sign in.';
+      }
+    }
+
+    if(signOutButton){
+      signOutButton.hidden = !activeAccount;
+    }
+
+    const canPost = Boolean(activeAccount) && storageAvailable;
+    setFormEnabled(canPost);
+
+    if(!storageAvailable && storageWarning){
+      storageWarning.hidden = false;
+    }
+  }
+
+  function showError(message){
+    if(!errorEl){
+      return;
+    }
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  }
+
+  function clearError(){
+    if(!errorEl){
+      return;
+    }
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  }
+
+  function ensureStorage(){
     if(storageAvailable){
       return true;
     }
-    showAccountError('Local storage is disabled, so accounts cannot be saved.');
+    showError('Local storage is disabled, so posts cannot be saved.');
     return false;
-  }
-
-  function readStoredPosts(){
-    const value = safeCall(() => localStorage.getItem(STORAGE_KEY));
-    if(!value){
-      return null;
-    }
-
-    try{
-      const parsed = JSON.parse(value);
-      if(Array.isArray(parsed)){
-        return parsed;
-      }
-    }catch(err){
-      console.warn('Unable to parse stored forum data', err);
-    }
-    return null;
-  }
-
-  function savePosts(posts){
-    safeCall(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)));
-  }
-
-  function createDemoPosts(){
-    const now = new Date();
-    const iso = (offsetHours) => new Date(now.getTime() - offsetHours * 3600 * 1000).toISOString();
-    return [
-      {
-        id: 'demo-1',
-        title: 'Show us your best Turn & Burn drift!',
-        body: 'Drop a clip of your cleanest drift lines or photo-finish wins. Bonus points for camera shake and neon trails.',
-        author: 'ExtynctMod',
-        category: 'Showcase',
-        createdAt: iso(18),
-        media: [
-          {
-            type: 'image',
-            src: '/assets/images/turnandburn/header.jpg'
-          }
-        ]
-      },
-      {
-        id: 'demo-2',
-        title: 'IonCore alpha build feedback thread',
-        body: 'We pushed a patch with new dash timing. Let us know how it feels and if the cooldown creates any weird loops.',
-        author: 'GearboundDev',
-        category: 'Feedback',
-        createdAt: iso(36),
-        media: [
-          {
-            type: 'video',
-            src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
-          }
-        ]
-      },
-      {
-        id: 'demo-3',
-        title: 'Fan art: WarpGate sunset concept',
-        body: 'Tried pushing the color palette into warmer territory while keeping the synthwave skyline vibe. Thoughts?',
-        author: 'NovaRacer',
-        category: 'General',
-        createdAt: iso(60),
-        media: [
-          {
-            type: 'image',
-            src: '/assets/images/warpgate/header.jpg'
-          }
-        ]
-      }
-    ];
   }
 
   function formatDate(value){
@@ -387,97 +355,21 @@
     return wrapper;
   }
 
-  function getActiveAccount(){
-    if(!Array.isArray(accounts)){
-      return null;
-    }
-    return accounts.find((acct) => acct.id === activeAccountId) || null;
-  }
-
-  function updateAuthorField(){
-    if(!authorInput){
+  function renderPosts(list){
+    if(!postsContainer || !emptyState){
       return;
     }
-    const activeAccount = getActiveAccount();
-    if(activeAccount){
-      authorInput.value = activeAccount.displayName;
-      authorInput.disabled = true;
-      authorInput.setAttribute('data-locked', 'true');
-      authorInput.title = 'Using display name from your forum account';
-    }else{
-      if(authorInput.getAttribute('data-locked')){
-        authorInput.value = '';
-        authorInput.removeAttribute('data-locked');
-      }
-      authorInput.disabled = false;
-      authorInput.removeAttribute('title');
-    }
-  }
 
-  function updateAccountUI(){
-    if(!Array.isArray(accounts)){
-      accounts = [];
-    }
-
-    let activeAccount = getActiveAccount();
-    if(activeAccountId && !activeAccount){
-      activeAccountId = null;
-      saveActiveAccountId(null);
-    }
-
-    activeAccount = getActiveAccount();
-
-    if(accountStatusEl){
-      if(activeAccount){
-        accountStatusEl.textContent = `Signed in as @${activeAccount.displayName}`;
-      }else if(accounts.length > 0){
-        accountStatusEl.textContent = 'Select an account to sign in.';
-      }else{
-        accountStatusEl.textContent = 'No account selected';
-      }
-    }
-
-    if(accountPicker && accountPickerWrapper){
-      accountPicker.innerHTML = '';
-      const placeholder = document.createElement('option');
-      placeholder.value = '';
-      placeholder.textContent = accounts.length > 0 ? 'Choose an account' : 'No saved accounts yet';
-      accountPicker.appendChild(placeholder);
-
-      accounts.forEach((acct) => {
-        const option = document.createElement('option');
-        option.value = acct.id;
-        option.textContent = `@${acct.displayName}`;
-        accountPicker.appendChild(option);
-      });
-
-      accountPickerWrapper.hidden = accounts.length === 0;
-      accountPicker.value = activeAccount ? activeAccount.id : '';
-    }
-
-    if(accountSignOut){
-      accountSignOut.hidden = !activeAccount;
-    }
-
-    updateAuthorField();
-  }
-
-  function setActiveAccount(id){
-    activeAccountId = id || null;
-    saveActiveAccountId(activeAccountId);
-    updateAccountUI();
-  }
-
-  function renderPosts(posts){
     postsContainer.innerHTML = '';
-    if(!posts || posts.length === 0){
+
+    if(!Array.isArray(list) || list.length === 0){
       emptyState.hidden = false;
       return;
     }
 
     emptyState.hidden = true;
 
-    const sorted = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sorted = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     sorted.forEach((post) => {
       const article = document.createElement('article');
       article.className = 'card forum-thread';
@@ -528,189 +420,105 @@
   }
 
   function clearForm(){
+    if(!form){
+      return;
+    }
     form.reset();
-    updateAuthorField();
   }
 
-  function showError(message){
-    if(!errorEl){
-      return;
-    }
-    errorEl.textContent = message;
-    errorEl.hidden = false;
+  function readState(){
+    posts = readStoredPosts();
+    accounts = readAccounts();
+    activeAccountId = readActiveAccountId();
   }
 
-  function clearError(){
-    if(!errorEl){
-      return;
-    }
-    errorEl.hidden = true;
-    errorEl.textContent = '';
-  }
-
-  let accounts = readStoredAccounts();
-  let activeAccountId = readActiveAccountId();
-  updateAccountUI();
-
-  let posts = readStoredPosts();
-  if(!posts){
-    posts = createDemoPosts();
-    savePosts(posts);
-  }
+  clearLegacyAccountStorage();
+  readState();
   renderPosts(posts);
+  updateSessionStatus();
 
-  if(accountForm){
-    accountForm.addEventListener('submit', async (event) => {
+  if(form){
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      clearAccountAlerts();
+      clearError();
 
-      if(!ensureStorageEnabled()){
+      if(!ensureStorage()){
         return;
       }
 
-      const formData = new FormData(accountForm);
-      const displayName = (formData.get('displayName') || '').toString().trim();
-      const emailRaw = (formData.get('email') || '').toString().trim();
-      const password = (formData.get('password') || '').toString();
-      const confirm = (formData.get('confirm') || '').toString();
-
-      if(displayName.length < 3){
-        showAccountError('Display name must be at least 3 characters long.');
+      const activeAccount = getActiveAccount();
+      if(!activeAccount){
+        updateSessionStatus('You must sign in before posting.');
+        showError('Please sign in on the account page before posting.');
         return;
       }
 
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if(!emailPattern.test(emailRaw)){
-        showAccountError('Please enter a valid email address.');
+      const formData = new FormData(form);
+      const title = (formData.get('title') || '').toString().trim();
+      const bodyValue = (formData.get('body') || '').toString().trim();
+
+      if(!title){
+        showError('Please add a title before posting.');
         return;
       }
-
-      if(password.length < 8){
-        showAccountError('Passwords must be at least 8 characters long.');
-        return;
-      }
-
-      if(password !== confirm){
-        showAccountError('Passwords do not match.');
-        return;
-      }
-
-      const normalizedEmail = emailRaw.toLowerCase();
-      const normalizedName = displayName.toLowerCase();
-
-      if(accounts.some((acct) => acct.displayName.toLowerCase() === normalizedName)){
-        showAccountError('That display name is already used by another local account.');
-        return;
-      }
-
-      if(accounts.some((acct) => acct.email === normalizedEmail)){
-        showAccountError('That email is already connected to a local account.');
+      if(!bodyValue){
+        showError('Please share a bit more detail so people can help.');
         return;
       }
 
       try{
-        const passwordHash = await hashPassword(password);
-        const account = {
-          id: createId('acct'),
-          displayName,
-          email: normalizedEmail,
-          passwordHash,
-          createdAt: new Date().toISOString()
+        const media = await extractMedia(
+          document.getElementById('forum-media-file'),
+          document.getElementById('forum-media-link')
+        );
+
+        const newPost = {
+          id: createId(),
+          title,
+          body: bodyValue,
+          author: activeAccount.username,
+          category: (formData.get('category') || 'General').toString(),
+          createdAt: new Date().toISOString(),
+          media
         };
 
-        accounts.push(account);
-        saveAccounts(accounts);
-
-        if(!ensureStorageEnabled()){
-          accounts.pop();
+        posts.push(newPost);
+        savePosts(posts);
+        if(!storageAvailable){
+          posts.pop();
+          showError('Local storage is disabled, so posts cannot be saved.');
           return;
         }
-
-        setActiveAccount(account.id);
-        accountForm.reset();
-        showAccountSuccess(`Account @${account.displayName} saved. You're signed in!`);
+        renderPosts(posts);
+        clearForm();
       }catch(err){
-        console.error('Failed to save forum account', err);
-        showAccountError('Something went wrong while saving your account. Please try again.');
+        showError(err.message || 'Something went wrong while attaching your media.');
       }
     });
   }
 
-  if(accountPicker){
-    accountPicker.addEventListener('change', () => {
-      clearAccountAlerts();
-      const selected = accountPicker.value;
-
-      if(!selected){
-        setActiveAccount(null);
-        showAccountSuccess('Signed out.');
-        return;
-      }
-
-      const match = accounts.find((acct) => acct.id === selected);
-      if(match){
-        setActiveAccount(match.id);
-        showAccountSuccess(`Signed in as @${match.displayName}.`);
-      }else{
-        setActiveAccount(null);
-      }
+  if(signOutButton){
+    signOutButton.addEventListener('click', () => {
+      clearError();
+      activeAccountId = null;
+      saveActiveAccountId(null);
+      updateSessionStatus('Signed out.');
     });
   }
 
-  if(accountSignOut){
-    accountSignOut.addEventListener('click', () => {
-      clearAccountAlerts();
-      setActiveAccount(null);
-      showAccountSuccess('Signed out.');
-    });
-  }
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    clearError();
-
-    const formData = new FormData(form);
-    const title = (formData.get('title') || '').toString().trim();
-    const bodyValue = (formData.get('body') || '').toString().trim();
-
-    if(!title){
-      showError('Please add a title before posting.');
+  window.addEventListener('storage', (event) => {
+    if(!event){
       return;
     }
-    if(!bodyValue){
-      showError('Please share a bit more detail so people can help.');
-      return;
-    }
-
-    try{
-      const media = await extractMedia(
-        document.getElementById('forum-media-file'),
-        document.getElementById('forum-media-link')
-      );
-
-      const activeAccount = getActiveAccount();
-      const newPost = {
-        id: createId(),
-        title,
-        body: bodyValue,
-        author: activeAccount ? activeAccount.displayName : (formData.get('author') || '').toString().trim(),
-        category: (formData.get('category') || 'General').toString(),
-        createdAt: new Date().toISOString(),
-        media
-      };
-
-      posts.push(newPost);
-      savePosts(posts);
+    if(event.key === STORAGE_KEY){
+      posts = readStoredPosts();
       renderPosts(posts);
-      clearForm();
-    }catch(err){
-      showError(err.message || 'Something went wrong while attaching your media.');
+    }else if(event.key === ACCOUNT_STORAGE_KEY){
+      accounts = readAccounts();
+      updateSessionStatus();
+    }else if(event.key === ACTIVE_ACCOUNT_KEY){
+      activeAccountId = readActiveAccountId();
+      updateSessionStatus();
     }
-  });
-
-  resetButton.addEventListener('click', () => {
-    posts = createDemoPosts();
-    savePosts(posts);
-    renderPosts(posts);
   });
 })();

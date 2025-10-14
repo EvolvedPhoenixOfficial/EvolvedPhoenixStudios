@@ -18,52 +18,21 @@
     <section class="page-hero">
       <div class="container">
         <h1>Community Forum</h1>
-        <p class="forum-subtitle">Swap tips, showcase progress, and connect with fellow Extynct Studios players. Everything is stored locally, and you can add an optional demo account to reuse your display name.</p>
+        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Everything remains stored locally in your browser.</p>
+        <a class="btn forum-hero-action" href="/account/">Manage your account</a>
       </div>
     </section>
 
     <section class="container forum-layout">
       <div class="forum-main">
-        <article class="card forum-account-card" aria-labelledby="forum-account-heading">
+        <article class="card forum-session-card" aria-labelledby="forum-session-heading">
           <div class="card-body">
-            <h2 id="forum-account-heading" class="forum-account-title">Create a forum account</h2>
-            <p class="forum-account-intro">Set up a local demo account to autofill your posts. Accounts live only in this browser so you can experiment without sharing personal data.</p>
-
-            <form id="forum-account-form" class="forum-account-form" novalidate>
-              <div class="forum-field">
-                <label for="forum-account-name">Display name <span aria-hidden="true">*</span></label>
-                <input id="forum-account-name" name="displayName" type="text" maxlength="40" autocomplete="nickname" required placeholder="Ex: DriftPilot" />
-              </div>
-
-              <div class="forum-field">
-                <label for="forum-account-email">Email <span aria-hidden="true">*</span></label>
-                <input id="forum-account-email" name="email" type="email" maxlength="120" autocomplete="email" required placeholder="you@example.com" />
-              </div>
-
-              <div class="forum-field">
-                <label for="forum-account-password">Password <span aria-hidden="true">*</span></label>
-                <input id="forum-account-password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="At least 8 characters" />
-              </div>
-
-              <div class="forum-field">
-                <label for="forum-account-confirm">Confirm password <span aria-hidden="true">*</span></label>
-                <input id="forum-account-confirm" name="confirm" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="Re-enter password" />
-              </div>
-
-              <p id="forum-account-error" class="forum-error" role="alert" hidden></p>
-              <p id="forum-account-success" class="forum-success" role="status" hidden></p>
-
-              <button type="submit" class="btn btn-primary">Save account</button>
-            </form>
-
-            <section class="forum-account-manage" aria-live="polite">
-              <h3 id="forum-account-status" class="forum-account-status">No account selected</h3>
-              <div class="forum-field forum-account-select" hidden>
-                <label for="forum-account-picker">Switch account</label>
-                <select id="forum-account-picker" name="account"></select>
-              </div>
-              <button type="button" id="forum-account-signout" class="btn forum-account-signout" hidden>Sign out</button>
-            </section>
+            <h2 id="forum-session-heading" class="forum-session-title">Forum access</h2>
+            <p id="forum-session-status" class="forum-session-status" aria-live="polite">Checking your sign-in status…</p>
+            <div class="forum-session-actions">
+              <a id="forum-manage-account" class="btn" href="/account/">Account settings</a>
+              <button type="button" id="forum-signout" class="btn" hidden>Sign out</button>
+            </div>
           </div>
         </article>
 
@@ -72,10 +41,7 @@
             <h2 class="forum-form-title">Create a post</h2>
             <p class="forum-storage-note">Everything you share here is saved in your browser using local storage. Clear your cache to wipe the slate.</p>
             <form id="forum-form" class="forum-form" novalidate>
-              <div class="forum-field">
-                <label for="forum-author">Display name</label>
-                <input id="forum-author" name="author" type="text" maxlength="40" placeholder="Ex: NovaRacer" autocomplete="nickname" />
-              </div>
+              <p id="forum-form-locked" class="forum-locked" hidden>You need to sign in before posting. <a href="/account/">Create or sign in to an account</a> and then return to the forum.</p>
 
               <div class="forum-field">
                 <label for="forum-category">Channel</label>
@@ -118,10 +84,7 @@
         <section class="forum-threads">
           <header class="forum-threads-header">
             <h2>Latest activity</h2>
-            <button type="button" class="btn forum-reset" id="forum-reset" aria-describedby="forum-reset-hint">Reset demo posts</button>
           </header>
-          <p id="forum-reset-hint" class="forum-reset-hint">Use this to restore the starter threads if you cleared them.</p>
-
           <p id="forum-empty" class="forum-empty" hidden>No posts yet. Be the first to start a conversation!</p>
           <div id="forum-posts" class="forum-thread-list" aria-live="polite"></div>
         </section>
