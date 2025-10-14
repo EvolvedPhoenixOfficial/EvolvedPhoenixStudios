@@ -4,70 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Account Manager — Extynct Studios</title>
-  <meta name="description" content="Create and manage your Extynct Studios forum account. Accounts are stored in repository data so they can be shared across browsers." />
+  <meta name="description" content="Create an Extynct Studios forum account and manage your sign-in directly from this site." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/site.js" defer></script>
-  <script src="/assets/repo-storage.js" defer></script>
+  <script src="/assets/community-storage.js" defer></script>
   <script src="/assets/account.js" defer></script>
 </head>
 <body>
   <div data-include="/partials/header.html"></div>
 
-  <main id="account-root" class="account" data-owner="ExtynctStudios" data-repo="ExtynctStudios" data-branch="main">
+  <main id="account-root" class="account">
     <section class="page-hero">
       <div class="container">
         <h1>Manage your account</h1>
-        <p class="account-subtitle">Create a sign-in you can use for the community forum. Accounts and sessions are stored directly in this repository through the GitHub API.</p>
+        <p class="account-subtitle">Create a sign-in you can use for the community forum. Everything is stored right in this browser, so your details stay on this device.</p>
       </div>
     </section>
 
     <section class="container account-layout">
-      <article class="card account-card" aria-labelledby="account-github-heading">
-        <div class="card-body">
-          <h2 id="account-github-heading" class="account-card-title">Connect to GitHub</h2>
-          <p class="account-card-intro">GitHub Pages is static, so writing data requires a personal access token with <code>repo</code> scope. The token is only stored in your browser and used to commit account and forum changes.</p>
-
-          <form id="account-github-form" class="account-form" novalidate>
-            <div class="account-config-grid">
-              <div class="account-field">
-                <label for="account-github-owner">Repository owner <span aria-hidden="true">*</span></label>
-                <input id="account-github-owner" name="owner" type="text" maxlength="100" required placeholder="ExtynctStudios" />
-              </div>
-
-              <div class="account-field">
-                <label for="account-github-repo">Repository name <span aria-hidden="true">*</span></label>
-                <input id="account-github-repo" name="repo" type="text" maxlength="100" required placeholder="ExtynctStudios" />
-              </div>
-
-              <div class="account-field">
-                <label for="account-github-branch">Branch <span aria-hidden="true">*</span></label>
-                <input id="account-github-branch" name="branch" type="text" maxlength="100" required placeholder="main" />
-              </div>
-            </div>
-
-            <div class="account-field">
-              <label for="account-github-token">GitHub personal access token</label>
-              <input id="account-github-token" name="token" type="password" autocomplete="off" placeholder="ghp_example..." />
-              <p id="account-github-token-status" class="account-token-status" aria-live="polite"></p>
-            </div>
-
-            <p id="account-github-error" class="account-error" role="alert" hidden></p>
-            <p id="account-github-success" class="account-success" role="status" hidden></p>
-
-            <div class="account-config-actions">
-              <button type="submit" class="btn btn-primary">Save settings</button>
-              <button type="button" id="account-github-clear-token" class="btn">Remove saved token</button>
-            </div>
-          </form>
-        </div>
-      </article>
-
       <article class="card account-card" aria-labelledby="account-create-heading">
         <div class="card-body">
           <h2 id="account-create-heading" class="account-card-title">Create a new account</h2>
-          <p class="account-card-intro">Use a unique username and a password with at least eight characters. Your email helps identify the account in the saved repository data.</p>
+          <p class="account-card-intro">Use a unique username and a password with at least eight characters. Your email helps identify the account if you ever need to reset it.</p>
 
           <form id="account-create-form" class="account-form" novalidate>
             <div class="account-field">
@@ -101,7 +61,7 @@
       <article class="card account-card" aria-labelledby="account-signin-heading">
         <div class="card-body">
           <h2 id="account-signin-heading" class="account-card-title">Sign in</h2>
-          <p class="account-card-intro">Already created an account? Sign in with your email or username and password. Your credentials are validated against the repository data store.</p>
+          <p class="account-card-intro">Already created an account? Sign in with your email or username and password. Once signed in you can post on the community forum.</p>
 
           <form id="account-signin-form" class="account-form" novalidate>
             <div class="account-field">
@@ -124,6 +84,15 @@
           <p id="account-storage-warning" class="account-warning" hidden>Heads up: your browser blocked local storage, so your sign-in will reset after you close this tab.</p>
 
           <p class="account-hint">Need to start posting? Head back to the <a href="/forums/">community forum</a>.</p>
+        </div>
+      </article>
+
+      <article class="card account-card" aria-labelledby="account-info-heading">
+        <div class="card-body">
+          <h2 id="account-info-heading" class="account-card-title">How storage works</h2>
+          <p class="account-card-intro">Accounts live entirely in your browser using local storage. That keeps everything on this device—no servers or uploads required.</p>
+          <p class="account-card-intro">If your browser clears site data or blocks storage, your saved accounts will disappear and you’ll need to recreate them.</p>
+          <p class="account-hint">To post on the forum, create an account here, sign in, and then visit the <a href="/forums/">Community Forum</a> page.</p>
         </div>
       </article>
     </section>

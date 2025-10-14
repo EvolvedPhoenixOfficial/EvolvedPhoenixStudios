@@ -39,20 +39,19 @@ If you are interested in collaboration or licensing, please contact us directly.
 - **HTML5, CSS3, JavaScript**  
 - **TailwindCSS** inspired utility styles
 - **Static Hosting** (GitHub Pages / external server)
-- **GitHub REST API** calls from the browser to persist forum data
+- **Client-side local storage** for forum persistence
 
 ---
 
-## 🧪 Local development & GitHub persistence
+## 🧪 Local development & storage
 
-The site runs entirely on static hosting. Forum posts, uploads, and account records are written straight into this repository through the GitHub REST API. To test the workflow locally or on GitHub Pages:
+The site runs entirely on static hosting. Forum accounts and posts are saved with the visitor's browser storage, so nothing is synced or committed back to the repository.
 
-1. [Create a GitHub personal access token](https://github.com/settings/tokens) with **repo** scope.
-2. Visit the `/account/` page, open the **Connect to GitHub** card, and enter the repository owner, repository name, branch (defaults to `main`), and your token.
-3. Create an account and sign in. The credentials are hashed in the browser, then appended to `data/accounts.json` via the GitHub API.
-4. Head to `/forums/` while signed in to publish posts. Text content is saved into `data/posts.json`, and any uploads are committed under `uploads/forum/` with unique filenames.
+1. Open `/account/` to create a username, email, and password. Passwords are hashed before they are stored locally.
+2. Sign in on the same page—once signed in, your status is remembered in this browser so you can post on `/forums/`.
+3. Share text, images (up to 2&nbsp;MB), short video clips (up to 6&nbsp;MB), or links on the forum. Attachments are stored as data URLs inside the same local storage bucket.
 
-Tokens and active-account details live in the browser's local storage. If storage is blocked (e.g., incognito with hardened privacy), you will need to re-enter settings whenever you refresh the page.
+If the browser blocks local storage (e.g., strict privacy or incognito modes), accounts and posts will only last for the current session.
 
 ---
 

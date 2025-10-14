@@ -1,16 +1,17 @@
 (function(){
   const ROOT = document.getElementById('forum-root');
-  if(!ROOT || !window.repoStorage){
+  if(!ROOT || !window.communityStorage){
     return;
   }
 
-  const client = repoStorage.createClient(ROOT);
+  const storage = window.communityStorage;
 
   const form = document.getElementById('forum-form');
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
   const lockedMessage = document.getElementById('forum-form-locked');
   const errorEl = document.getElementById('forum-form-error');
+  const successEl = document.getElementById('forum-form-success');
   const storageWarning = document.getElementById('forum-storage-warning');
   const sessionStatusEl = document.getElementById('forum-session-status');
   const signOutButton = document.getElementById('forum-signout');
@@ -20,8 +21,11 @@
 
   const defaultEmptyMessage = emptyState ? emptyState.textContent : '';
 
-  let posts = [];
-  let activeAccount = client.getActiveAccount();
+  const IMAGE_LIMIT = 2 * 1024 * 1024; // 2 MB
+  const VIDEO_LIMIT = 6 * 1024 * 1024; // 6 MB
+
+  let posts = storage.getPosts();
+  let activeAccount = storage.getActiveAccount();
   let isSubmitting = false;
 
   function escapeHtml(value){
@@ -33,10 +37,14 @@
       .replace(/'/g, '&#39;');
   }
 
-  function clearError(){
+  function clearMessages(){
     if(errorEl){
       errorEl.hidden = true;
       errorEl.textContent = '';
+    }
+    if(successEl){
+      successEl.hidden = true;
+      successEl.textContent = '';
     }
   }
 
@@ -46,15 +54,35 @@
     }
     errorEl.textContent = message;
     errorEl.hidden = false;
+    if(successEl){
+      successEl.hidden = true;
+      successEl.textContent = '';
+    }
+  }
+
+  function showSuccess(message){
+    if(!successEl){
+      return;
+    }
+    successEl.textContent = message;
+    successEl.hidden = false;
+    if(errorEl){
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+    }
   }
 
   function setFormEnabled(enabled){
     if(!form){
       return;
     }
+    form.classList.toggle('forum-form-disabled', !enabled);
     const fields = form.querySelectorAll('input, textarea, select, button');
     fields.forEach((field) => {
-      field.disabled = !enabled && field.type !== 'button';
+      if(field.type === 'button'){
+        return;
+      }
+      field.disabled = !enabled;
     });
     if(lockedMessage){
       lockedMessage.hidden = enabled;
@@ -68,27 +96,26 @@
     }
     const submitButton = form.querySelector('button[type="submit"]');
     if(submitButton){
-      submitButton.disabled = state;
+      submitButton.disabled = state || !activeAccount;
       submitButton.textContent = state ? 'Sharing…' : 'Share post';
     }
   }
 
-  function updateStorageWarning(){
-    if(storageWarning){
-      storageWarning.hidden = client.hasStorage();
+  function updateStorageWarning(forceShow){
+    if(!storageWarning){
+      return;
     }
+    const shouldShow = Boolean(forceShow) || !storage.hasStorage();
+    storageWarning.hidden = !shouldShow;
   }
 
-  function updateSessionStatus(message){
+  function updateSessionStatus(customMessage){
+    activeAccount = storage.getActiveAccount();
     if(sessionStatusEl){
-      if(message){
-        sessionStatusEl.textContent = message;
+      if(customMessage){
+        sessionStatusEl.textContent = customMessage;
       }else if(activeAccount){
-        let text = `Signed in as @${activeAccount.username}.`;
-        if(!client.getToken()){
-          text += ' Add your GitHub token on the account page before posting.';
-        }
-        sessionStatusEl.textContent = text;
+        sessionStatusEl.textContent = 'Signed in as @' + activeAccount.username + '. Posts stay on this device.';
       }else{
         sessionStatusEl.textContent = 'Not signed in. Visit the account page to create or sign in.';
       }
@@ -99,30 +126,35 @@
     setFormEnabled(Boolean(activeAccount));
   }
 
-  function getMediaUrl(media){
-    if(!media){
-      return '';
+  function validateLink(url){
+    if(!url){
+      return false;
     }
-    if(media.rawUrl){
-      return media.rawUrl;
+    try{
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    }catch(err){
+      return false;
     }
-    if(media.url){
-      return media.url;
-    }
-    if(media.path){
-      const normalized = String(media.path).replace(/^\//, '');
-      return `/${normalized}`;
-    }
-    return '';
+  }
+
+  function readFileAsDataUrl(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('Unable to read the selected file.'));
+      reader.readAsDataURL(file);
+    });
   }
 
   function renderMedia(media){
     if(!media){
       return '';
     }
+
     if(media.type === 'file'){
-      const url = getMediaUrl(media);
-      if(!url){
+      const dataUrl = media.dataUrl || '';
+      if(!dataUrl){
         return '';
       }
       const isVideo = /^video\//i.test(media.mimeType || '');
@@ -131,7 +163,7 @@
           <div class="forum-media-group">
             <div class="forum-media">
               <video controls preload="metadata">
-                <source src="${escapeHtml(url)}" type="${escapeHtml(media.mimeType || 'video/mp4')}" />
+                <source src="${escapeHtml(dataUrl)}" type="${escapeHtml(media.mimeType || 'video/mp4')}" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -140,7 +172,7 @@
       return `
         <div class="forum-media-group">
           <div class="forum-media">
-            <img src="${escapeHtml(url)}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
+            <img src="${escapeHtml(dataUrl)}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
           </div>
         </div>`;
     }
@@ -196,6 +228,8 @@
         .map((line) => `<p>${escapeHtml(line)}</p>`)
         .join('');
 
+      const authorName = post.author && post.author.username ? post.author.username : post.authorName || 'unknown';
+
       return `
         <article class="card forum-thread" data-post-id="${escapeHtml(post.id || '')}">
           <div class="card-body forum-thread-body">
@@ -203,7 +237,7 @@
               <h3 class="forum-thread-title">${escapeHtml(post.title || 'Untitled post')}</h3>
               <div class="forum-thread-meta">
                 <span class="forum-pill">${escapeHtml(post.category || 'General')}</span>
-                <span class="forum-thread-author">@${escapeHtml(post.authorName || 'unknown')}</span>
+                <span class="forum-thread-author">@${escapeHtml(authorName || 'unknown')}</span>
                 <time datetime="${escapeHtml(post.createdAt || '')}">${escapeHtml(formattedDate)}</time>
               </div>
             </header>
@@ -216,30 +250,9 @@
     postsContainer.innerHTML = markup;
   }
 
-  async function loadPosts(){
-    try{
-      posts = await client.fetchJson('data/posts.json', []);
-      renderPosts();
-    }catch(err){
-      console.error('Unable to load posts from GitHub.', err);
-      posts = [];
-      if(emptyState){
-        emptyState.textContent = 'Unable to load posts from the repository right now.';
-        emptyState.hidden = false;
-      }
-    }
-  }
-
-  function validateLink(url){
-    if(!url){
-      return false;
-    }
-    try{
-      const parsed = new URL(url);
-      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-    }catch(err){
-      return false;
-    }
+  function refreshPosts(){
+    posts = storage.getPosts();
+    renderPosts();
   }
 
   async function handleSubmit(event){
@@ -247,21 +260,16 @@
     if(isSubmitting){
       return;
     }
-    clearError();
 
+    clearMessages();
+
+    activeAccount = storage.getActiveAccount();
     if(!activeAccount){
       showError('Sign in before posting.');
       return;
     }
 
-    if(!client.getToken()){
-      showError('Add your GitHub personal access token on the account page before posting.');
-      return;
-    }
-
-    const config = client.getConfig();
-    if(!config.owner || !config.repo){
-      showError('Update the repository settings on the account page before posting.');
+    if(!form){
       return;
     }
 
@@ -284,7 +292,6 @@
       showError('Please choose either an upload or a link, not both.');
       return;
     }
-
     if(linkValue && !validateLink(linkValue)){
       showError('Enter a valid media link that starts with http:// or https://.');
       return;
@@ -293,9 +300,9 @@
     let media = null;
     if(file){
       const isVideo = /^video\//i.test(file.type || '');
-      const sizeLimit = isVideo ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+      const sizeLimit = isVideo ? VIDEO_LIMIT : IMAGE_LIMIT;
       if(file.size > sizeLimit){
-        showError(isVideo ? 'Video uploads must be 20 MB or smaller.' : 'Image uploads must be 5 MB or smaller.');
+        showError(isVideo ? 'Video uploads must be 6 MB or smaller.' : 'Image uploads must be 2 MB or smaller.');
         return;
       }
     }
@@ -304,15 +311,10 @@
 
     try{
       if(file){
-        const safeName = client.slugifyFileName(file.name || 'upload');
-        const uniqueName = `${repoStorage.createUid('upload')}-${safeName}`;
-        const path = `uploads/forum/${uniqueName}`;
-        const uploadResult = await client.uploadFile(path, file, `Add forum upload ${safeName}`);
+        const dataUrl = await readFileAsDataUrl(file);
         media = {
           type: 'file',
-          path: uploadResult.path,
-          url: uploadResult.url,
-          rawUrl: uploadResult.rawUrl,
+          dataUrl,
           mimeType: file.type,
           originalName: file.name
         };
@@ -324,41 +326,51 @@
       }
 
       const newPost = {
-        id: repoStorage.createUid('post'),
+        id: storage.createUid('post'),
         title,
         body,
         category,
-        authorName: activeAccount.username,
-        authorEmail: activeAccount.email || '',
+        author: {
+          username: activeAccount.username,
+          email: activeAccount.email || ''
+        },
         createdAt: new Date().toISOString(),
         media
       };
 
-      posts = await client.updateJson('data/posts.json', (data) => {
-        const existing = Array.isArray(data) ? data.slice() : [];
-        existing.push(newPost);
-        return existing;
-      }, `Add forum post ${title.slice(0, 60)}`, []);
+      const updatedPosts = storage.getPosts();
+      updatedPosts.push(newPost);
+      const stored = storage.savePosts(updatedPosts);
+
+      refreshPosts();
 
       if(form){
         form.reset();
       }
-      renderPosts();
-      updateSessionStatus('Post saved to the repository.');
-      window.setTimeout(() => updateSessionStatus(), 3000);
+      if(mediaFileInput){
+        mediaFileInput.value = '';
+      }
+
+      if(stored && storage.hasStorage()){
+        showSuccess('Post shared! It will stick around on this device.');
+      }else{
+        showSuccess('Post shared for this session. Enable local storage to keep it after closing the tab.');
+        updateStorageWarning(true);
+      }
     }catch(err){
       console.error('Failed to submit forum post.', err);
-      showError(err.message || 'Unable to save the post to GitHub.');
+      showError(err.message || 'Unable to save the post.');
     }finally{
       setSubmitting(false);
     }
   }
 
   function handleSignOut(){
-    client.clearActiveAccount();
+    storage.clearActiveAccount();
     activeAccount = null;
+    clearMessages();
     updateSessionStatus('Signed out.');
-    updateStorageWarning();
+    updateStorageWarning(!storage.hasStorage());
   }
 
   if(form){
@@ -368,8 +380,8 @@
     signOutButton.addEventListener('click', handleSignOut);
   }
 
-  updateStorageWarning();
+  updateStorageWarning(!storage.hasStorage() && !activeAccount);
   updateSessionStatus();
   setFormEnabled(Boolean(activeAccount));
-  loadPosts();
+  renderPosts();
 })();
