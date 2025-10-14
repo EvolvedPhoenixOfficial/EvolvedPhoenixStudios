@@ -13,6 +13,7 @@
   const errorEl = document.getElementById('forum-form-error');
   const successEl = document.getElementById('forum-form-success');
   const storageWarning = document.getElementById('forum-storage-warning');
+  const configWarning = document.getElementById('forum-config-warning');
   const sessionStatusEl = document.getElementById('forum-session-status');
   const signOutButton = document.getElementById('forum-signout');
 
@@ -21,12 +22,14 @@
 
   const defaultEmptyMessage = emptyState ? emptyState.textContent : '';
 
-  const IMAGE_LIMIT = 2 * 1024 * 1024; // 2 MB
-  const VIDEO_LIMIT = 6 * 1024 * 1024; // 6 MB
+  const IMAGE_LIMIT = 2 * 1024 * 1024;
+  const VIDEO_LIMIT = 6 * 1024 * 1024;
 
-  let posts = storage.getPosts();
+  let posts = [];
+  let postsSha = null;
   let activeAccount = storage.getActiveAccount();
   let isSubmitting = false;
+  let isLoadingPosts = false;
 
   function escapeHtml(value){
     return String(value || '')
@@ -96,17 +99,20 @@
     }
     const submitButton = form.querySelector('button[type="submit"]');
     if(submitButton){
-      submitButton.disabled = state || !activeAccount;
+      submitButton.disabled = state || !activeAccount || !storage.isConfigured();
       submitButton.textContent = state ? 'Sharing…' : 'Share post';
     }
   }
 
-  function updateStorageWarning(forceShow){
-    if(!storageWarning){
-      return;
+  function updateStorageWarning(force){
+    if(storageWarning){
+      const shouldShow = force || !storage.hasStorage();
+      storageWarning.hidden = !shouldShow;
     }
-    const shouldShow = Boolean(forceShow) || !storage.hasStorage();
-    storageWarning.hidden = !shouldShow;
+    if(configWarning){
+      const shouldShow = !storage.isConfigured();
+      configWarning.hidden = !shouldShow;
+    }
   }
 
   function updateSessionStatus(customMessage){
@@ -114,8 +120,10 @@
     if(sessionStatusEl){
       if(customMessage){
         sessionStatusEl.textContent = customMessage;
+      }else if(!storage.isConfigured()){
+        sessionStatusEl.textContent = 'Shared storage is offline. Posts cannot be saved right now.';
       }else if(activeAccount){
-        sessionStatusEl.textContent = 'Signed in as @' + activeAccount.username + '. Posts stay on this device.';
+        sessionStatusEl.textContent = `Signed in as @${activeAccount.username}. Posts are saved to the repository.`;
       }else{
         sessionStatusEl.textContent = 'Not signed in. Visit the account page to create or sign in.';
       }
@@ -123,7 +131,7 @@
     if(signOutButton){
       signOutButton.hidden = !activeAccount;
     }
-    setFormEnabled(Boolean(activeAccount));
+    setFormEnabled(Boolean(activeAccount) && storage.isConfigured());
   }
 
   function validateLink(url){
@@ -138,32 +146,26 @@
     }
   }
 
-  function readFileAsDataUrl(file){
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ''));
-      reader.onerror = () => reject(new Error('Unable to read the selected file.'));
-      reader.readAsDataURL(file);
-    });
-  }
-
   function renderMedia(media){
     if(!media){
       return '';
     }
 
     if(media.type === 'file'){
-      const dataUrl = media.dataUrl || '';
-      if(!dataUrl){
+      const source = media.url || media.path || '';
+      if(!source){
         return '';
       }
       const isVideo = /^video\//i.test(media.mimeType || '');
+      const safeSrc = escapeHtml(source);
+      const alt = escapeHtml(media.originalName || 'attachment');
       if(isVideo){
+        const type = escapeHtml(media.mimeType || 'video/mp4');
         return `
           <div class="forum-media-group">
             <div class="forum-media">
               <video controls preload="metadata">
-                <source src="${escapeHtml(dataUrl)}" type="${escapeHtml(media.mimeType || 'video/mp4')}" />
+                <source src="${safeSrc}" type="${type}" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -172,7 +174,7 @@
       return `
         <div class="forum-media-group">
           <div class="forum-media">
-            <img src="${escapeHtml(dataUrl)}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
+            <img src="${safeSrc}" alt="Attachment from ${alt}" loading="lazy" />
           </div>
         </div>`;
     }
@@ -195,6 +197,14 @@
 
   function renderPosts(){
     if(!postsContainer){
+      return;
+    }
+
+    if(isLoadingPosts){
+      postsContainer.innerHTML = '<p class="forum-empty">Loading posts…</p>';
+      if(emptyState){
+        emptyState.hidden = true;
+      }
       return;
     }
 
@@ -250,9 +260,40 @@
     postsContainer.innerHTML = markup;
   }
 
-  function refreshPosts(){
-    posts = storage.getPosts();
+  async function loadPosts(){
+    updateStorageWarning(false);
+    if(!storage.isConfigured()){
+      posts = [];
+      postsSha = null;
+      renderPosts();
+      return;
+    }
+
+    isLoadingPosts = true;
     renderPosts();
+
+    try{
+      const { items, sha } = await storage.fetchPosts();
+      posts = Array.isArray(items) ? items : [];
+      postsSha = sha || null;
+      if(posts.length === 0 && emptyState){
+        emptyState.textContent = 'No posts yet. Be the first to start a conversation!';
+        emptyState.hidden = false;
+      }
+    }catch(err){
+      showError(err.message || 'Unable to load posts from the repository.');
+    }finally{
+      isLoadingPosts = false;
+      updateStorageWarning(false);
+      renderPosts();
+    }
+  }
+
+  async function ensurePosts(){
+    if(posts && posts.length){
+      return;
+    }
+    await loadPosts();
   }
 
   async function handleSubmit(event){
@@ -262,6 +303,11 @@
     }
 
     clearMessages();
+
+    if(!storage.isConfigured()){
+      showError('Shared storage is offline. Wait for an administrator to restore access before posting.');
+      return;
+    }
 
     activeAccount = storage.getActiveAccount();
     if(!activeAccount){
@@ -297,7 +343,6 @@
       return;
     }
 
-    let media = null;
     if(file){
       const isVideo = /^video\//i.test(file.type || '');
       const sizeLimit = isVideo ? VIDEO_LIMIT : IMAGE_LIMIT;
@@ -310,14 +355,11 @@
     setSubmitting(true);
 
     try{
+      await ensurePosts();
+
+      let media = null;
       if(file){
-        const dataUrl = await readFileAsDataUrl(file);
-        media = {
-          type: 'file',
-          dataUrl,
-          mimeType: file.type,
-          originalName: file.name
-        };
+        media = await storage.uploadMedia(file);
       }else if(linkValue){
         media = {
           type: 'link',
@@ -338,11 +380,14 @@
         media
       };
 
-      const updatedPosts = storage.getPosts();
+      const updatedPosts = Array.isArray(posts) ? posts.slice() : [];
       updatedPosts.push(newPost);
-      const stored = storage.savePosts(updatedPosts);
 
-      refreshPosts();
+      const result = await storage.savePosts(updatedPosts, postsSha, `Add forum post ${title.slice(0, 40)}`);
+      posts = updatedPosts;
+      postsSha = result && result.sha ? result.sha : postsSha;
+
+      renderPosts();
 
       if(form){
         form.reset();
@@ -351,12 +396,7 @@
         mediaFileInput.value = '';
       }
 
-      if(stored && storage.hasStorage()){
-        showSuccess('Post shared! It will stick around on this device.');
-      }else{
-        showSuccess('Post shared for this session. Enable local storage to keep it after closing the tab.');
-        updateStorageWarning(true);
-      }
+      showSuccess('Post shared and saved to the repository.');
     }catch(err){
       console.error('Failed to submit forum post.', err);
       showError(err.message || 'Unable to save the post.');
@@ -370,7 +410,6 @@
     activeAccount = null;
     clearMessages();
     updateSessionStatus('Signed out.');
-    updateStorageWarning(!storage.hasStorage());
   }
 
   if(form){
@@ -380,8 +419,8 @@
     signOutButton.addEventListener('click', handleSignOut);
   }
 
-  updateStorageWarning(!storage.hasStorage() && !activeAccount);
+  updateStorageWarning(false);
   updateSessionStatus();
-  setFormEnabled(Boolean(activeAccount));
   renderPosts();
+  loadPosts();
 })();

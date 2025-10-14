@@ -202,6 +202,7 @@ body{
 .account-card-title{margin:0;font:700 1.1rem/1.25 system-ui}
 .account-card-intro{margin:0;color:#475569;font-size:.95rem}
 .account-form{display:grid;gap:1rem}
+.account-config-actions{display:flex;flex-wrap:wrap;gap:.75rem}
 .account-field{display:flex;flex-direction:column;gap:.5rem}
 .account-error{margin:0;color:#dc2626;font-weight:600}
 .account-success{margin:0;color:#047857;font-weight:600}
@@ -210,6 +211,7 @@ body{
 .account-hint{margin:1rem 0 0;color:#475569;font-size:.95rem}
 .account-hint a{font-weight:600;color:#0f172a;text-decoration:none}
 .account-hint a:hover{text-decoration:underline}
+.account-card-intro code,.account-hint code,.forum-field-help code{display:inline-block;padding:.1rem .35rem;border-radius:.5rem;background:#e0f2fe;color:#075985;font:600 .85rem/1.2 ui-monospace,Menlo,Consolas,monospace}
 
 @media (max-width:1024px){
   .forum-layout{grid-template-columns:1fr}
@@ -251,6 +253,7 @@ body{
 .dark .forum-pill{background:rgba(56,189,248,0.2);color:#bae6fd}
 .dark .forum-media-link{color:#bae6fd}
 .dark .forum-links a,.dark .account-hint a{color:#bae6fd}
+.dark .account-card-intro code,.dark .account-hint code,.dark .forum-field-help code{background:rgba(56,189,248,0.2);color:#e0f2fe}
 .dark .account-active-status{color:#e2e8f0}
 .dark .account-warning{color:#fbbf24}
 .dark .card:hover{

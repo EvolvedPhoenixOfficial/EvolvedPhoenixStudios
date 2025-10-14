@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Community Forum — Extynct Studios</title>
-  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved in your browser." />
+  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved back into this repository." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/community-config.js" defer></script>
   <script src="/assets/community-storage.js" defer></script>
   <script src="/assets/forum.js" defer></script>
 </head>
@@ -19,7 +20,7 @@
     <section class="page-hero">
       <div class="container">
         <h1>Community Forum</h1>
-        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Everything you post is stored locally in this browser.</p>
+        <p class="forum-subtitle">Sign in and start sharing updates. Everything you publish is written back into this website’s repository.</p>
         <a class="btn forum-hero-action" href="/account/">Manage your account</a>
       </div>
     </section>
@@ -40,7 +41,7 @@
         <article class="card forum-form-card">
           <div class="card-body">
             <h2 class="forum-form-title">Create a post</h2>
-            <p class="forum-storage-note">Posts and attachments live on this device using your browser’s local storage. They won’t sync across devices or other visitors.</p>
+            <p class="forum-storage-note">Posts and attachments are committed to this repository through the GitHub REST API whenever storage is available.</p>
             <form id="forum-form" class="forum-form" novalidate>
               <p id="forum-form-locked" class="forum-locked" hidden>You need to sign in before posting. <a href="/account/">Create or sign in to an account</a> and then return to the forum.</p>
 
@@ -67,7 +68,7 @@
 
               <fieldset class="forum-field">
                 <legend>Media (optional)</legend>
-                <p class="forum-field-help">Attach a file (images up to 2&nbsp;MB, videos up to 6&nbsp;MB) or drop in a direct link. Everything stays on this device.</p>
+                <p class="forum-field-help">Attach a file (images up to 2&nbsp;MB, videos up to 6&nbsp;MB) or drop in a direct link. Uploaded files are stored in <code>uploads/community/</code>.</p>
                 <label class="forum-sublabel" for="forum-media-file">Upload from device</label>
                 <input id="forum-media-file" name="mediaFile" type="file" accept="image/*,video/*" />
                 <label class="forum-sublabel" for="forum-media-link">Or paste a media link</label>
@@ -76,7 +77,8 @@
 
               <p id="forum-form-error" class="forum-error" role="alert" hidden></p>
               <p id="forum-form-success" class="forum-success" role="status" hidden></p>
-              <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: your browser blocked local storage, so posts and sign-ins will disappear after you close this tab.</p>
+              <p id="forum-config-warning" class="forum-warning" hidden>Shared storage is currently offline. An administrator will need to restore repository access before posts can be saved.</p>
+              <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: your browser blocked local storage, so we can’t remember your sign-in after you close this tab.</p>
 
               <button type="submit" class="btn btn-primary forum-submit">Share post</button>
             </form>

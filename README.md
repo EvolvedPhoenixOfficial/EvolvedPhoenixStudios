@@ -39,19 +39,21 @@ If you are interested in collaboration or licensing, please contact us directly.
 - **HTML5, CSS3, JavaScript**  
 - **TailwindCSS** inspired utility styles
 - **Static Hosting** (GitHub Pages / external server)
-- **Client-side local storage** for forum persistence
+- **GitHub REST API** commits triggered from the browser for forum persistence
 
 ---
 
 ## 🧪 Local development & storage
 
-The site runs entirely on static hosting. Forum accounts and posts are saved with the visitor's browser storage, so nothing is synced or committed back to the repository.
+The site still runs on static hosting, but forum activity is committed back to the repository with the GitHub REST API.
 
-1. Open `/account/` to create a username, email, and password. Passwords are hashed before they are stored locally.
-2. Sign in on the same page—once signed in, your status is remembered in this browser so you can post on `/forums/`.
-3. Share text, images (up to 2&nbsp;MB), short video clips (up to 6&nbsp;MB), or links on the forum. Attachments are stored as data URLs inside the same local storage bucket.
+1. Update `assets/community-config.js` with your repository owner, repo name, branch, and a personal access token that has `repo` scope. The site reads this configuration automatically at runtime.
+2. Create an account on `/account/`. Passwords are hashed before they leave the browser, then saved to `hidden/community/accounts.json` in the repo.
+3. Sign in and post on `/forums/`. Posts update `hidden/community/posts.json`, while uploads land in `uploads/community/` using API commits.
 
-If the browser blocks local storage (e.g., strict privacy or incognito modes), accounts and posts will only last for the current session.
+If the browser blocks local storage the site cannot remember your sign-in, so you'll need to log in again whenever the tab reloads.
+
+> ⚠️ Because the configuration script ships with the site, use a fine-grained token that is limited to this repository and rotate it regularly.
 
 ---
 

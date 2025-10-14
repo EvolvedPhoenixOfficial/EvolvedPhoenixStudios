@@ -6,14 +6,13 @@
 
   const storage = window.communityStorage;
 
+  const configAlert = document.getElementById('account-config-alert');
   const createForm = document.getElementById('account-create-form');
   const createErrorEl = document.getElementById('account-create-error');
   const createSuccessEl = document.getElementById('account-create-success');
-
   const signInForm = document.getElementById('account-signin-form');
   const signInErrorEl = document.getElementById('account-signin-error');
   const signInSuccessEl = document.getElementById('account-signin-success');
-
   const activeStatusEl = document.getElementById('account-active-status');
   const signOutButton = document.getElementById('account-signout');
   const storageWarningEl = document.getElementById('account-storage-warning');
@@ -37,19 +36,43 @@
   }
 
   function clearFormMessages(){
-    [createErrorEl, createSuccessEl, signInErrorEl, signInSuccessEl].forEach(hideMessage);
+    [
+      createErrorEl,
+      createSuccessEl,
+      signInErrorEl,
+      signInSuccessEl
+    ].forEach(hideMessage);
   }
 
   function normalize(value){
     return String(value || '').trim();
   }
 
-  function normalizeIdentifier(value){
-    return String(value || '').trim();
-  }
-
   function normalizeEmail(value){
     return String(value || '').trim().toLowerCase();
+  }
+
+  function updateConfigAlert(){
+    if(!configAlert){
+      return;
+    }
+    if(storage.isConfigured()){
+      configAlert.hidden = false;
+      configAlert.classList.remove('account-warning');
+      configAlert.classList.add('account-success');
+      configAlert.textContent = 'Repository syncing is active. Accounts you create are saved alongside the site.';
+    }else{
+      configAlert.hidden = false;
+      configAlert.classList.remove('account-success');
+      configAlert.classList.add('account-warning');
+      configAlert.textContent = 'Shared storage is not configured. Ask an administrator to update assets/community-config.js with repository credentials.';
+    }
+  }
+
+  function updateStorageWarning(){
+    if(storageWarningEl){
+      storageWarningEl.hidden = storage.hasStorage();
+    }
   }
 
   function updateActiveStatus(customMessage){
@@ -67,153 +90,148 @@
     }
   }
 
-  function updateStorageWarning(forceShow){
-    if(!storageWarningEl){
+  function setFormDisabled(form, disabled){
+    if(!form){
       return;
     }
-    const shouldShow = Boolean(forceShow) || !storage.hasStorage();
-    storageWarningEl.hidden = !shouldShow;
-  }
-
-  function resetForms(){
-    if(createForm){
-      createForm.reset();
-    }
-    if(signInForm){
-      signInForm.reset();
-    }
+    const fields = form.querySelectorAll('input, button');
+    fields.forEach((field) => {
+      field.disabled = disabled;
+    });
   }
 
   async function handleCreate(event){
     event.preventDefault();
     clearFormMessages();
 
+    if(!storage.isConfigured()){
+      showMessage(createErrorEl, 'Shared storage is currently unavailable. Contact an administrator for help.');
+      return;
+    }
+
     if(!createForm){
       return;
     }
 
-    const formData = new FormData(createForm);
-    const username = normalize(formData.get('username'));
-    const emailRaw = String(formData.get('email') || '').trim();
-    const email = normalizeEmail(emailRaw);
-    const password = String(formData.get('password') || '');
-    const confirm = String(formData.get('confirm') || '');
+    setFormDisabled(createForm, true);
 
-    if(!username || !emailRaw){
-      showMessage(createErrorEl, 'Username and email are required.');
-      return;
-    }
-
-    if(password.length < 8){
-      showMessage(createErrorEl, 'Use a password with at least eight characters.');
-      return;
-    }
-
-    if(password !== confirm){
-      showMessage(createErrorEl, 'Passwords do not match.');
-      return;
-    }
-
-    let accounts = storage.getAccounts();
-    const usernameLower = username.toLowerCase();
-    const emailLower = email;
-
-    if(accounts.some((account) => String(account.username || '').toLowerCase() === usernameLower)){
-      showMessage(createErrorEl, 'That username is already taken.');
-      return;
-    }
-
-    if(accounts.some((account) => String(account.email || '').toLowerCase() === emailLower)){
-      showMessage(createErrorEl, 'That email already has an account.');
-      return;
-    }
-
-    let passwordHash;
     try{
-      passwordHash = await storage.hashPassword(password);
+      const formData = new FormData(createForm);
+      const username = normalize(formData.get('username'));
+      const emailRaw = String(formData.get('email') || '').trim();
+      const email = normalizeEmail(emailRaw);
+      const password = String(formData.get('password') || '');
+      const confirm = String(formData.get('confirm') || '');
+
+      if(!username || !emailRaw){
+        throw new Error('Username and email are required.');
+      }
+      if(password.length < 8){
+        throw new Error('Use a password with at least eight characters.');
+      }
+      if(password !== confirm){
+        throw new Error('Passwords do not match.');
+      }
+
+      const { items: accounts, sha } = await storage.fetchAccounts();
+      const usernameLower = username.toLowerCase();
+      const emailLower = email;
+
+      if(accounts.some((account) => String(account.username || '').toLowerCase() === usernameLower)){
+        throw new Error('That username is already taken.');
+      }
+      if(accounts.some((account) => String(account.email || '').toLowerCase() === emailLower)){
+        throw new Error('That email already has an account.');
+      }
+
+      const passwordHash = await storage.hashPassword(password);
+      const newAccount = {
+        id: storage.createUid('acct'),
+        username,
+        email,
+        passwordHash,
+        createdAt: new Date().toISOString()
+      };
+
+      const updatedAccounts = Array.isArray(accounts) ? accounts.slice() : [];
+      updatedAccounts.push(newAccount);
+
+      await storage.saveAccounts(updatedAccounts, sha, `Add forum account ${username}`);
+      activeAccount = { username, email: emailRaw };
+      storage.setActiveAccount(activeAccount);
+
+      if(createForm){
+        createForm.reset();
+      }
+
+      showMessage(createSuccessEl, 'Account created and stored in the repository. You are signed in.');
+      updateActiveStatus();
     }catch(err){
-      showMessage(createErrorEl, 'Unable to process the password in this browser.');
-      return;
+      showMessage(createErrorEl, err.message || 'Unable to create the account.');
+    }finally{
+      setFormDisabled(createForm, false);
     }
-
-    const newAccount = {
-      id: storage.createUid('acct'),
-      username,
-      email,
-      passwordHash,
-      createdAt: new Date().toISOString()
-    };
-
-    accounts.push(newAccount);
-    const accountsStored = storage.saveAccounts(accounts);
-
-    activeAccount = { username, email: emailRaw };
-    const sessionStored = storage.setActiveAccount(activeAccount);
-
-    const persistent = accountsStored && sessionStored && storage.hasStorage();
-
-    showMessage(createSuccessEl, persistent ? 'Account created and saved to this browser.' : 'Account created for this session. Enable local storage to keep it after you close the tab.');
-
-    resetForms();
-    updateActiveStatus();
-    updateStorageWarning(!(accountsStored && sessionStored));
   }
 
   async function handleSignIn(event){
     event.preventDefault();
     clearFormMessages();
 
+    if(!storage.isConfigured()){
+      showMessage(signInErrorEl, 'Shared storage is currently unavailable. Contact an administrator for help.');
+      return;
+    }
+
     if(!signInForm){
       return;
     }
 
-    const formData = new FormData(signInForm);
-    const identifierRaw = normalizeIdentifier(formData.get('identifier'));
-    const password = String(formData.get('password') || '');
+    setFormDisabled(signInForm, true);
 
-    if(!identifierRaw || !password){
-      showMessage(signInErrorEl, 'Enter your email or username and password.');
-      return;
-    }
-
-    const accounts = storage.getAccounts();
-    if(!Array.isArray(accounts) || accounts.length === 0){
-      showMessage(signInErrorEl, 'No accounts exist yet. Create one first.');
-      return;
-    }
-
-    const identifierLower = identifierRaw.toLowerCase();
-    const match = accounts.find((account) => {
-      const usernameMatch = String(account.username || '').toLowerCase() === identifierLower;
-      const emailMatch = String(account.email || '').toLowerCase() === identifierLower;
-      return usernameMatch || emailMatch;
-    });
-
-    if(!match){
-      showMessage(signInErrorEl, 'No account found for that email or username.');
-      return;
-    }
-
-    let hashedInput;
     try{
-      hashedInput = await storage.hashPassword(password);
+      const formData = new FormData(signInForm);
+      const identifierRaw = normalize(formData.get('identifier'));
+      const password = String(formData.get('password') || '');
+
+      if(!identifierRaw || !password){
+        throw new Error('Enter your email or username and password.');
+      }
+
+      const { items: accounts } = await storage.fetchAccounts();
+      if(!Array.isArray(accounts) || accounts.length === 0){
+        throw new Error('No accounts exist yet. Create one first.');
+      }
+
+      const identifierLower = identifierRaw.toLowerCase();
+      const match = accounts.find((account) => {
+        const usernameMatch = String(account.username || '').toLowerCase() === identifierLower;
+        const emailMatch = String(account.email || '').toLowerCase() === identifierLower;
+        return usernameMatch || emailMatch;
+      });
+
+      if(!match){
+        throw new Error('No account found for that email or username.');
+      }
+
+      const hashedInput = await storage.hashPassword(password);
+      if(hashedInput !== match.passwordHash){
+        throw new Error('Incorrect password.');
+      }
+
+      activeAccount = { username: match.username, email: match.email || '' };
+      storage.setActiveAccount(activeAccount);
+
+      if(signInForm){
+        signInForm.reset();
+      }
+
+      showMessage(signInSuccessEl, 'Signed in successfully.');
+      updateActiveStatus();
     }catch(err){
-      showMessage(signInErrorEl, 'Unable to process the password in this browser.');
-      return;
+      showMessage(signInErrorEl, err.message || 'Unable to sign in.');
+    }finally{
+      setFormDisabled(signInForm, false);
     }
-
-    if(hashedInput !== match.passwordHash){
-      showMessage(signInErrorEl, 'Incorrect password.');
-      return;
-    }
-
-    activeAccount = { username: match.username, email: match.email || '' };
-    const sessionStored = storage.setActiveAccount(activeAccount);
-    showMessage(signInSuccessEl, sessionStored && storage.hasStorage() ? 'Signed in successfully.' : 'Signed in for this session. Enable local storage to stay signed in.');
-
-    signInForm.reset();
-    updateActiveStatus();
-    updateStorageWarning(!sessionStored);
   }
 
   function handleSignOut(){
@@ -221,8 +239,11 @@
     storage.clearActiveAccount();
     activeAccount = null;
     updateActiveStatus('Signed out.');
-    updateStorageWarning(!storage.hasStorage());
   }
+
+  updateConfigAlert();
+  updateStorageWarning();
+  updateActiveStatus();
 
   if(createForm){
     createForm.addEventListener('submit', handleCreate);
@@ -233,7 +254,4 @@
   if(signOutButton){
     signOutButton.addEventListener('click', handleSignOut);
   }
-
-  updateActiveStatus();
-  updateStorageWarning(!storage.hasStorage() && !activeAccount);
 })();

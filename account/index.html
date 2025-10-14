@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Account Manager — Extynct Studios</title>
-  <meta name="description" content="Create an Extynct Studios forum account and manage your sign-in directly from this site." />
+  <meta name="description" content="Configure repository-backed accounts for the Extynct Studios forum." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/community-config.js" defer></script>
   <script src="/assets/community-storage.js" defer></script>
   <script src="/assets/account.js" defer></script>
 </head>
@@ -19,7 +20,7 @@
     <section class="page-hero">
       <div class="container">
         <h1>Manage your account</h1>
-        <p class="account-subtitle">Create a sign-in you can use for the community forum. Everything is stored right in this browser, so your details stay on this device.</p>
+        <p class="account-subtitle">Create an account you can use across the community forum. Accounts are saved directly into this website’s repository so they work wherever you sign in.</p>
       </div>
     </section>
 
@@ -27,7 +28,7 @@
       <article class="card account-card" aria-labelledby="account-create-heading">
         <div class="card-body">
           <h2 id="account-create-heading" class="account-card-title">Create a new account</h2>
-          <p class="account-card-intro">Use a unique username and a password with at least eight characters. Your email helps identify the account if you ever need to reset it.</p>
+          <p class="account-card-intro">New accounts are committed to the repository so everyone can sign in from any device.</p>
 
           <form id="account-create-form" class="account-form" novalidate>
             <div class="account-field">
@@ -61,7 +62,7 @@
       <article class="card account-card" aria-labelledby="account-signin-heading">
         <div class="card-body">
           <h2 id="account-signin-heading" class="account-card-title">Sign in</h2>
-          <p class="account-card-intro">Already created an account? Sign in with your email or username and password. Once signed in you can post on the community forum.</p>
+          <p class="account-card-intro">After your account exists in the repository, sign in with your email or username and password. Once signed in you can post on the community forum.</p>
 
           <form id="account-signin-form" class="account-form" novalidate>
             <div class="account-field">
@@ -89,10 +90,11 @@
 
       <article class="card account-card" aria-labelledby="account-info-heading">
         <div class="card-body">
-          <h2 id="account-info-heading" class="account-card-title">How storage works</h2>
-          <p class="account-card-intro">Accounts live entirely in your browser using local storage. That keeps everything on this device—no servers or uploads required.</p>
-          <p class="account-card-intro">If your browser clears site data or blocks storage, your saved accounts will disappear and you’ll need to recreate them.</p>
-          <p class="account-hint">To post on the forum, create an account here, sign in, and then visit the <a href="/forums/">Community Forum</a> page.</p>
+          <h2 id="account-info-heading" class="account-card-title">How it works</h2>
+          <p id="account-config-alert" class="account-warning" role="status"></p>
+          <p class="account-card-intro">Account details are hashed in your browser and saved to <code>hidden/community/accounts.json</code> within this repository using the GitHub REST API.</p>
+          <p class="account-card-intro">Forum sessions are stored locally so the site knows who you are, while passwords never leave the browser unhashed.</p>
+          <p class="account-hint">When you’re ready to post, visit the <a href="/forums/">Community Forum</a>. Attachments upload into <code>uploads/community/</code> alongside the site.</p>
         </div>
       </article>
     </section>
