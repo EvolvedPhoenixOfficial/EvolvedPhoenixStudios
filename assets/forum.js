@@ -1,58 +1,36 @@
 (function(){
   const ROOT = document.getElementById('forum-root');
-  if(!ROOT){
+  if(!ROOT || !window.repoStorage){
     return;
   }
 
-  const TOKEN_STORAGE_KEY = 'extynct-auth-token';
-  const API_BASE = '/api';
+  const client = repoStorage.createClient(ROOT);
 
   const form = document.getElementById('forum-form');
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
+  const lockedMessage = document.getElementById('forum-form-locked');
   const errorEl = document.getElementById('forum-form-error');
   const storageWarning = document.getElementById('forum-storage-warning');
-  const lockedMessage = document.getElementById('forum-form-locked');
   const sessionStatusEl = document.getElementById('forum-session-status');
   const signOutButton = document.getElementById('forum-signout');
 
-  let activeAccount = null;
+  const mediaFileInput = document.getElementById('forum-media-file');
+  const mediaLinkInput = document.getElementById('forum-media-link');
+
+  const defaultEmptyMessage = emptyState ? emptyState.textContent : '';
+
   let posts = [];
+  let activeAccount = client.getActiveAccount();
+  let isSubmitting = false;
 
-  function showStorageWarning(){
-    if(storageWarning){
-      storageWarning.hidden = false;
-    }
-  }
-
-  function hideStorageWarning(){
-    if(storageWarning){
-      storageWarning.hidden = true;
-    }
-  }
-
-  function getToken(){
-    try{
-      return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
-    }catch(err){
-      console.warn('Unable to access stored token', err);
-      showStorageWarning();
-      return '';
-    }
-  }
-
-  function setToken(token){
-    try{
-      if(token){
-        localStorage.setItem(TOKEN_STORAGE_KEY, token);
-        hideStorageWarning();
-      }else{
-        localStorage.removeItem(TOKEN_STORAGE_KEY);
-      }
-    }catch(err){
-      console.warn('Failed to persist token', err);
-      showStorageWarning();
-    }
+  function escapeHtml(value){
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   function clearError(){
@@ -74,111 +52,31 @@
     if(!form){
       return;
     }
-    const elements = form.querySelectorAll('input, textarea, select, button');
-    elements.forEach((element) => {
-      if(element === lockedMessage){
-        return;
-      }
-      element.disabled = !enabled && element.type !== 'button';
+    const fields = form.querySelectorAll('input, textarea, select, button');
+    fields.forEach((field) => {
+      field.disabled = !enabled && field.type !== 'button';
     });
     if(lockedMessage){
       lockedMessage.hidden = enabled;
     }
   }
 
-  function escapeHtml(value){
-    return String(value || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function renderMedia(media){
-    if(!media){
-      return '';
-    }
-    let content = '';
-    if(media.type === 'file'){
-      const isVideo = /^video\//i.test(media.mimeType || '');
-      if(isVideo){
-        content = `
-          <div class="forum-media">
-            <video controls preload="metadata">
-              <source src="${media.url}" type="${media.mimeType || 'video/mp4'}" />
-              Your browser does not support the video tag.
-            </video>
-          </div>`;
-      }else{
-        content = `
-          <div class="forum-media">
-            <img src="${media.url}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
-          </div>`;
-      }
-    }else if(media.type === 'link'){
-      const safeUrl = media.url ? media.url : '#';
-      content = `
-        <div class="forum-media">
-          <a class="forum-media-link" href="${safeUrl}" target="_blank" rel="noopener">View attached media</a>
-        </div>`;
-    }
-
-    if(!content){
-      return '';
-    }
-    return `
-      <div class="forum-media-group">${content}
-      </div>`;
-  }
-
-  function renderPosts(){
-    if(!postsContainer){
+  function setSubmitting(state){
+    isSubmitting = state;
+    if(!form){
       return;
     }
-
-    if(!Array.isArray(posts) || posts.length === 0){
-      if(emptyState){
-        emptyState.hidden = false;
-      }
-      postsContainer.innerHTML = '';
-      return;
+    const submitButton = form.querySelector('button[type="submit"]');
+    if(submitButton){
+      submitButton.disabled = state;
+      submitButton.textContent = state ? 'Sharing…' : 'Share post';
     }
+  }
 
-    if(emptyState){
-      emptyState.hidden = true;
+  function updateStorageWarning(){
+    if(storageWarning){
+      storageWarning.hidden = client.hasStorage();
     }
-
-    const markup = posts.map((post) => {
-      const created = new Date(post.createdAt);
-      const formattedDate = created.toLocaleString(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-      });
-      const title = escapeHtml(post.title || 'Untitled post');
-      const paragraphs = String(post.body || '').split(/\n+/).map((line) => escapeHtml(line.trim())).filter(Boolean);
-      const bodyContent = paragraphs.length > 0
-        ? paragraphs.map((text) => `<p>${text}</p>`).join('')
-        : '<p>No content provided.</p>';
-
-      return `
-        <article class="card forum-thread" data-post-id="${escapeHtml(post.id || '')}">
-          <div class="card-body forum-thread-body">
-            <header class="forum-thread-header">
-              <h3 class="forum-thread-title">${title}</h3>
-              <div class="forum-thread-meta">
-                <span class="forum-pill">${escapeHtml(post.category || 'General')}</span>
-                <span class="forum-thread-author">@${escapeHtml(post.authorName || 'unknown')}</span>
-                <time datetime="${escapeHtml(post.createdAt || '')}">${formattedDate}</time>
-              </div>
-            </header>
-            ${bodyContent}
-            ${renderMedia(post.media)}
-          </div>
-        </article>`;
-    }).join('\n');
-
-    postsContainer.innerHTML = markup;
   }
 
   function updateSessionStatus(message){
@@ -186,7 +84,11 @@
       if(message){
         sessionStatusEl.textContent = message;
       }else if(activeAccount){
-        sessionStatusEl.textContent = `Signed in as @${activeAccount.username}`;
+        let text = `Signed in as @${activeAccount.username}.`;
+        if(!client.getToken()){
+          text += ' Add your GitHub token on the account page before posting.';
+        }
+        sessionStatusEl.textContent = text;
       }else{
         sessionStatusEl.textContent = 'Not signed in. Visit the account page to create or sign in.';
       }
@@ -197,177 +99,266 @@
     setFormEnabled(Boolean(activeAccount));
   }
 
-  async function requestJson(path, options){
-    const opts = Object.assign({}, options || {});
-    opts.headers = Object.assign({ 'Accept': 'application/json' }, opts.headers || {});
-    const token = getToken();
-    if(token){
-      opts.headers['Authorization'] = `Bearer ${token}`;
+  function getMediaUrl(media){
+    if(!media){
+      return '';
     }
-    if(opts.body && !(opts.body instanceof FormData)){
-      if(typeof opts.body !== 'string'){
-        opts.body = JSON.stringify(opts.body);
-      }
-      if(!opts.headers['Content-Type']){
-        opts.headers['Content-Type'] = 'application/json';
-      }
+    if(media.rawUrl){
+      return media.rawUrl;
     }
-    const response = await fetch(`${API_BASE}${path}`, opts);
-    const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
-    const payload = isJson ? await response.json().catch(() => null) : null;
-    if(!response.ok){
-      const errorMessage = payload && payload.message ? payload.message : `Request failed with status ${response.status}`;
-      throw new Error(errorMessage);
+    if(media.url){
+      return media.url;
     }
-    return payload;
+    if(media.path){
+      const normalized = String(media.path).replace(/^\//, '');
+      return `/${normalized}`;
+    }
+    return '';
   }
 
-  async function fetchPosts(){
-    try{
-      const result = await requestJson('/posts', { method: 'GET' });
-      posts = Array.isArray(result && result.posts) ? result.posts : [];
-    }catch(err){
-      console.warn('Failed to load posts', err);
-      posts = [];
+  function renderMedia(media){
+    if(!media){
+      return '';
     }
-    renderPosts();
+    if(media.type === 'file'){
+      const url = getMediaUrl(media);
+      if(!url){
+        return '';
+      }
+      const isVideo = /^video\//i.test(media.mimeType || '');
+      if(isVideo){
+        return `
+          <div class="forum-media-group">
+            <div class="forum-media">
+              <video controls preload="metadata">
+                <source src="${escapeHtml(url)}" type="${escapeHtml(media.mimeType || 'video/mp4')}" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>`;
+      }
+      return `
+        <div class="forum-media-group">
+          <div class="forum-media">
+            <img src="${escapeHtml(url)}" alt="Attachment from ${escapeHtml(media.originalName || 'post')}" loading="lazy" />
+          </div>
+        </div>`;
+    }
+
+    if(media.type === 'link'){
+      const safeUrl = escapeHtml(media.url || '');
+      if(!safeUrl){
+        return '';
+      }
+      return `
+        <div class="forum-media-group">
+          <div class="forum-media">
+            <a class="forum-media-link" href="${safeUrl}" target="_blank" rel="noopener">View attached media</a>
+          </div>
+        </div>`;
+    }
+
+    return '';
   }
 
-  async function refreshSession(){
-    const token = getToken();
-    if(!token){
-      activeAccount = null;
-      updateSessionStatus();
+  function renderPosts(){
+    if(!postsContainer){
       return;
     }
 
-    try{
-      const result = await requestJson('/auth/session', { method: 'GET' });
-      activeAccount = result && result.account ? result.account : null;
-    }catch(err){
-      console.warn('Unable to refresh session', err);
-      activeAccount = null;
-      setToken('');
-    }
-    updateSessionStatus();
-  }
-
-  async function handleSignOut(){
-    const token = getToken();
-    if(!token){
-      activeAccount = null;
-      setToken('');
-      updateSessionStatus('Signed out.');
+    const list = Array.isArray(posts) ? posts.slice() : [];
+    if(list.length === 0){
+      if(emptyState){
+        emptyState.textContent = defaultEmptyMessage;
+        emptyState.hidden = false;
+      }
+      postsContainer.innerHTML = '';
       return;
     }
 
-    try{
-      await requestJson('/auth/signout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
-    }catch(err){
-      console.warn('Sign-out failed', err);
-    }
-
-    activeAccount = null;
-    setToken('');
-    updateSessionStatus('Signed out.');
-  }
-
-  function fileToDataUrl(file){
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Unable to read attachment.'));
-      reader.readAsDataURL(file);
+    list.sort((a, b) => {
+      const aTime = new Date(a && a.createdAt ? a.createdAt : 0).getTime();
+      const bTime = new Date(b && b.createdAt ? b.createdAt : 0).getTime();
+      return bTime - aTime;
     });
+
+    if(emptyState){
+      emptyState.hidden = true;
+    }
+
+    const markup = list.map((post) => {
+      const created = new Date(post.createdAt || Date.now());
+      const formattedDate = created.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+      const paragraphs = String(post.body || '')
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => `<p>${escapeHtml(line)}</p>`)
+        .join('');
+
+      return `
+        <article class="card forum-thread" data-post-id="${escapeHtml(post.id || '')}">
+          <div class="card-body forum-thread-body">
+            <header class="forum-thread-header">
+              <h3 class="forum-thread-title">${escapeHtml(post.title || 'Untitled post')}</h3>
+              <div class="forum-thread-meta">
+                <span class="forum-pill">${escapeHtml(post.category || 'General')}</span>
+                <span class="forum-thread-author">@${escapeHtml(post.authorName || 'unknown')}</span>
+                <time datetime="${escapeHtml(post.createdAt || '')}">${escapeHtml(formattedDate)}</time>
+              </div>
+            </header>
+            ${paragraphs || '<p>No content provided.</p>'}
+            ${renderMedia(post.media)}
+          </div>
+        </article>`;
+    }).join('\n');
+
+    postsContainer.innerHTML = markup;
   }
 
-  function setSubmitting(isSubmitting){
-    if(!form){
-      return;
+  async function loadPosts(){
+    try{
+      posts = await client.fetchJson('data/posts.json', []);
+      renderPosts();
+    }catch(err){
+      console.error('Unable to load posts from GitHub.', err);
+      posts = [];
+      if(emptyState){
+        emptyState.textContent = 'Unable to load posts from the repository right now.';
+        emptyState.hidden = false;
+      }
     }
-    const submitButton = form.querySelector('button[type="submit"]');
-    if(submitButton){
-      submitButton.disabled = isSubmitting;
+  }
+
+  function validateLink(url){
+    if(!url){
+      return false;
     }
-    if(isSubmitting){
-      form.classList.add('is-submitting');
-    }else{
-      form.classList.remove('is-submitting');
+    try{
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    }catch(err){
+      return false;
     }
   }
 
   async function handleSubmit(event){
     event.preventDefault();
+    if(isSubmitting){
+      return;
+    }
     clearError();
 
-    if(!form){
+    if(!activeAccount){
+      showError('Sign in before posting.');
       return;
     }
 
-    if(!activeAccount){
-      showError('Sign in before creating a post.');
+    if(!client.getToken()){
+      showError('Add your GitHub personal access token on the account page before posting.');
+      return;
+    }
+
+    const config = client.getConfig();
+    if(!config.owner || !config.repo){
+      showError('Update the repository settings on the account page before posting.');
       return;
     }
 
     const formData = new FormData(form);
-    const category = formData.get('category');
-    const title = formData.get('title');
-    const bodyValue = formData.get('body');
-    const mediaLink = formData.get('mediaLink');
-    const mediaFile = formData.get('mediaFile');
+    const category = String(formData.get('category') || 'General');
+    const title = String(formData.get('title') || '').trim();
+    const body = String(formData.get('body') || '').trim();
+    const file = mediaFileInput && mediaFileInput.files ? mediaFileInput.files[0] : null;
+    const linkValue = mediaLinkInput ? String(mediaLinkInput.value || '').trim() : '';
 
-    const payload = {
-      category: category && String(category).trim(),
-      title: title && String(title),
-      body: bodyValue && String(bodyValue)
-    };
-
-    if(mediaLink){
-      payload.mediaLink = String(mediaLink).trim();
+    if(!title){
+      showError('Give your post a title.');
+      return;
+    }
+    if(!body){
+      showError('Share some details in the body field.');
+      return;
+    }
+    if(file && linkValue){
+      showError('Please choose either an upload or a link, not both.');
+      return;
     }
 
-    if(mediaFile && mediaFile.size){
-      const isImage = /^image\//i.test(mediaFile.type || '');
-      const sizeLimit = isImage ? 5 * 1024 * 1024 : 20 * 1024 * 1024;
-      if(mediaFile.size > sizeLimit){
-        showError(isImage ? 'Images must be 5MB or smaller.' : 'Videos must be 20MB or smaller.');
-        return;
-      }
-      try{
-        const dataUrl = await fileToDataUrl(mediaFile);
-        payload.mediaUpload = {
-          name: mediaFile.name,
-          type: mediaFile.type,
-          dataUrl
-        };
-      }catch(err){
-        console.warn('Failed to encode attachment', err);
-        showError('Unable to read the selected file.');
+    if(linkValue && !validateLink(linkValue)){
+      showError('Enter a valid media link that starts with http:// or https://.');
+      return;
+    }
+
+    let media = null;
+    if(file){
+      const isVideo = /^video\//i.test(file.type || '');
+      const sizeLimit = isVideo ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+      if(file.size > sizeLimit){
+        showError(isVideo ? 'Video uploads must be 20 MB or smaller.' : 'Image uploads must be 5 MB or smaller.');
         return;
       }
     }
 
     setSubmitting(true);
-    try{
-      const result = await requestJson('/posts', {
-        method: 'POST',
-        body: payload
-      });
 
-      if(result && result.post){
-        posts.unshift(result.post);
-        renderPosts();
+    try{
+      if(file){
+        const safeName = client.slugifyFileName(file.name || 'upload');
+        const uniqueName = `${repoStorage.createUid('upload')}-${safeName}`;
+        const path = `uploads/forum/${uniqueName}`;
+        const uploadResult = await client.uploadFile(path, file, `Add forum upload ${safeName}`);
+        media = {
+          type: 'file',
+          path: uploadResult.path,
+          url: uploadResult.url,
+          rawUrl: uploadResult.rawUrl,
+          mimeType: file.type,
+          originalName: file.name
+        };
+      }else if(linkValue){
+        media = {
+          type: 'link',
+          url: linkValue
+        };
       }
-      form.reset();
+
+      const newPost = {
+        id: repoStorage.createUid('post'),
+        title,
+        body,
+        category,
+        authorName: activeAccount.username,
+        authorEmail: activeAccount.email || '',
+        createdAt: new Date().toISOString(),
+        media
+      };
+
+      posts = await client.updateJson('data/posts.json', (data) => {
+        const existing = Array.isArray(data) ? data.slice() : [];
+        existing.push(newPost);
+        return existing;
+      }, `Add forum post ${title.slice(0, 60)}`, []);
+
+      if(form){
+        form.reset();
+      }
+      renderPosts();
+      updateSessionStatus('Post saved to the repository.');
+      window.setTimeout(() => updateSessionStatus(), 3000);
     }catch(err){
-      showError(err.message || 'Unable to create post.');
+      console.error('Failed to submit forum post.', err);
+      showError(err.message || 'Unable to save the post to GitHub.');
     }finally{
       setSubmitting(false);
     }
+  }
+
+  function handleSignOut(){
+    client.clearActiveAccount();
+    activeAccount = null;
+    updateSessionStatus('Signed out.');
+    updateStorageWarning();
   }
 
   if(form){
@@ -377,6 +368,8 @@
     signOutButton.addEventListener('click', handleSignOut);
   }
 
-  refreshSession();
-  fetchPosts();
+  updateStorageWarning();
+  updateSessionStatus();
+  setFormEnabled(Boolean(activeAccount));
+  loadPosts();
 })();

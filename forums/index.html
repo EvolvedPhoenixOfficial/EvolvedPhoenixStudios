@@ -4,21 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Community Forum — Extynct Studios</title>
-  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved to repository data through the local server." />
+  <meta name="description" content="Share your builds, feedback, and fan creations with the Extynct Studios community. Posts are saved to repository data through the GitHub API." />
   <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/repo-storage.js" defer></script>
   <script src="/assets/forum.js" defer></script>
 </head>
 <body>
   <div data-include="/partials/header.html"></div>
 
-  <main id="forum-root" class="forum">
+  <main id="forum-root" class="forum" data-owner="ExtynctStudios" data-repo="ExtynctStudios" data-branch="main">
     <section class="page-hero">
       <div class="container">
         <h1>Community Forum</h1>
-        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Posts and uploads are written directly to the repository so they persist for everyone running the site.</p>
+        <p class="forum-subtitle">Sign in with your Extynct Studios account to join conversations, share feedback, and showcase your creations. Posts and uploads are committed directly to this repository through the GitHub API.</p>
         <a class="btn forum-hero-action" href="/account/">Manage your account</a>
       </div>
     </section>
@@ -39,7 +40,7 @@
         <article class="card forum-form-card">
           <div class="card-body">
             <h2 class="forum-form-title">Create a post</h2>
-            <p class="forum-storage-note">Everything you share here is written to JSON data inside this repository. Attachments are saved to <code>uploads/forum</code> so you can commit them.</p>
+            <p class="forum-storage-note">Everything you share here is written to JSON data inside this repository using your GitHub access token. Attachments are saved to <code>uploads/forum</code> so they publish with the site.</p>
             <form id="forum-form" class="forum-form" novalidate>
               <p id="forum-form-locked" class="forum-locked" hidden>You need to sign in before posting. <a href="/account/">Create or sign in to an account</a> and then return to the forum.</p>
 
@@ -74,7 +75,7 @@
               </fieldset>
 
               <p id="forum-form-error" class="forum-error" role="alert" hidden></p>
-                <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: Your browser blocked local storage, so your session token can't be saved. You'll need to sign in again after refreshing.</p>
+              <p id="forum-storage-warning" class="forum-warning" hidden>Heads up: Your browser blocked local storage, so your sign-in will reset after refreshing.</p>
 
               <button type="submit" class="btn btn-primary forum-submit">Share post</button>
             </form>

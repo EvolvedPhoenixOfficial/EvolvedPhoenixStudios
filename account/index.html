@@ -9,20 +9,61 @@
   <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/repo-storage.js" defer></script>
   <script src="/assets/account.js" defer></script>
 </head>
 <body>
   <div data-include="/partials/header.html"></div>
 
-  <main id="account-root" class="account">
+  <main id="account-root" class="account" data-owner="ExtynctStudios" data-repo="ExtynctStudios" data-branch="main">
     <section class="page-hero">
       <div class="container">
         <h1>Manage your account</h1>
-        <p class="account-subtitle">Create a sign-in you can use for the community forum. Accounts and sessions are stored in this repository's data files via the local server.</p>
+        <p class="account-subtitle">Create a sign-in you can use for the community forum. Accounts and sessions are stored directly in this repository through the GitHub API.</p>
       </div>
     </section>
 
     <section class="container account-layout">
+      <article class="card account-card" aria-labelledby="account-github-heading">
+        <div class="card-body">
+          <h2 id="account-github-heading" class="account-card-title">Connect to GitHub</h2>
+          <p class="account-card-intro">GitHub Pages is static, so writing data requires a personal access token with <code>repo</code> scope. The token is only stored in your browser and used to commit account and forum changes.</p>
+
+          <form id="account-github-form" class="account-form" novalidate>
+            <div class="account-config-grid">
+              <div class="account-field">
+                <label for="account-github-owner">Repository owner <span aria-hidden="true">*</span></label>
+                <input id="account-github-owner" name="owner" type="text" maxlength="100" required placeholder="ExtynctStudios" />
+              </div>
+
+              <div class="account-field">
+                <label for="account-github-repo">Repository name <span aria-hidden="true">*</span></label>
+                <input id="account-github-repo" name="repo" type="text" maxlength="100" required placeholder="ExtynctStudios" />
+              </div>
+
+              <div class="account-field">
+                <label for="account-github-branch">Branch <span aria-hidden="true">*</span></label>
+                <input id="account-github-branch" name="branch" type="text" maxlength="100" required placeholder="main" />
+              </div>
+            </div>
+
+            <div class="account-field">
+              <label for="account-github-token">GitHub personal access token</label>
+              <input id="account-github-token" name="token" type="password" autocomplete="off" placeholder="ghp_example..." />
+              <p id="account-github-token-status" class="account-token-status" aria-live="polite"></p>
+            </div>
+
+            <p id="account-github-error" class="account-error" role="alert" hidden></p>
+            <p id="account-github-success" class="account-success" role="status" hidden></p>
+
+            <div class="account-config-actions">
+              <button type="submit" class="btn btn-primary">Save settings</button>
+              <button type="button" id="account-github-clear-token" class="btn">Remove saved token</button>
+            </div>
+          </form>
+        </div>
+      </article>
+
       <article class="card account-card" aria-labelledby="account-create-heading">
         <div class="card-body">
           <h2 id="account-create-heading" class="account-card-title">Create a new account</h2>
@@ -80,6 +121,7 @@
 
           <p id="account-active-status" class="account-active-status" aria-live="polite">Not signed in.</p>
           <button type="button" id="account-signout" class="btn" hidden>Sign out</button>
+          <p id="account-storage-warning" class="account-warning" hidden>Heads up: your browser blocked local storage, so your sign-in will reset after you close this tab.</p>
 
           <p class="account-hint">Need to start posting? Head back to the <a href="/forums/">community forum</a>.</p>
         </div>

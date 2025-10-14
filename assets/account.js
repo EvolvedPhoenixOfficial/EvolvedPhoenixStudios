@@ -1,66 +1,59 @@
 (function(){
   const ROOT = document.getElementById('account-root');
-  if(!ROOT){
+  if(!ROOT || !window.repoStorage){
     return;
   }
 
-  const TOKEN_STORAGE_KEY = 'extynct-auth-token';
-  const API_BASE = '/api';
+  const client = repoStorage.createClient(ROOT);
+
+  const githubForm = document.getElementById('account-github-form');
+  const ownerInput = document.getElementById('account-github-owner');
+  const repoInput = document.getElementById('account-github-repo');
+  const branchInput = document.getElementById('account-github-branch');
+  const tokenInput = document.getElementById('account-github-token');
+  const githubErrorEl = document.getElementById('account-github-error');
+  const githubSuccessEl = document.getElementById('account-github-success');
+  const githubTokenStatus = document.getElementById('account-github-token-status');
+  const githubClearToken = document.getElementById('account-github-clear-token');
 
   const createForm = document.getElementById('account-create-form');
   const createErrorEl = document.getElementById('account-create-error');
   const createSuccessEl = document.getElementById('account-create-success');
+
   const signInForm = document.getElementById('account-signin-form');
   const signInErrorEl = document.getElementById('account-signin-error');
   const signInSuccessEl = document.getElementById('account-signin-success');
+  const storageWarningEl = document.getElementById('account-storage-warning');
+
   const activeStatusEl = document.getElementById('account-active-status');
   const signOutButton = document.getElementById('account-signout');
 
-  let activeAccount = null;
+  let activeAccount = client.getActiveAccount();
 
-  function getToken(){
-    try{
-      return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
-    }catch(err){
-      console.warn('Unable to read stored session token', err);
-      return '';
-    }
-  }
-
-  function setToken(token){
-    try{
-      if(token){
-        localStorage.setItem(TOKEN_STORAGE_KEY, token);
-      }else{
-        localStorage.removeItem(TOKEN_STORAGE_KEY);
-      }
-    }catch(err){
-      console.warn('Unable to persist session token', err);
-    }
-  }
-
-  function clearMessages(){
-    [createErrorEl, createSuccessEl, signInErrorEl, signInSuccessEl].forEach((el) => {
-      if(!el){
-        return;
-      }
-      el.hidden = true;
-      el.textContent = '';
-    });
-  }
-
-  function showMessage(target, message){
-    if(!target){
+  function showMessage(element, message){
+    if(!element){
       return;
     }
-    target.hidden = false;
-    target.textContent = message;
+    element.hidden = false;
+    element.textContent = message;
   }
 
-  function updateActiveStatus(message){
+  function hideMessage(element){
+    if(!element){
+      return;
+    }
+    element.hidden = true;
+    element.textContent = '';
+  }
+
+  function clearFormMessages(){
+    [githubErrorEl, githubSuccessEl, createErrorEl, createSuccessEl, signInErrorEl, signInSuccessEl].forEach(hideMessage);
+  }
+
+  function updateActiveStatus(customMessage){
     if(activeStatusEl){
-      if(message){
-        activeStatusEl.textContent = message;
+      if(customMessage){
+        activeStatusEl.textContent = customMessage;
       }else if(activeAccount){
         activeStatusEl.textContent = `Signed in as @${activeAccount.username}`;
       }else{
@@ -72,156 +65,279 @@
     }
   }
 
-  async function requestJson(path, options){
-    const opts = Object.assign({
-      headers: {
-        'Accept': 'application/json'
-      }
-    }, options || {});
-
-    opts.headers = Object.assign({ 'Accept': 'application/json' }, opts.headers || {});
-
-    const token = getToken();
-    if(token){
-      opts.headers['Authorization'] = `Bearer ${token}`;
+  function updateStorageWarning(show){
+    if(storageWarningEl){
+      storageWarningEl.hidden = !show;
     }
-
-    if(opts.body && !(opts.body instanceof FormData) && !opts.headers['Content-Type']){
-      opts.headers['Content-Type'] = 'application/json';
-    }
-
-    const response = await fetch(`${API_BASE}${path}`, opts);
-    const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
-    const payload = isJson ? await response.json().catch(() => null) : null;
-    if(!response.ok){
-      const errorMessage = payload && payload.message ? payload.message : `Request failed with status ${response.status}`;
-      throw new Error(errorMessage);
-    }
-    return payload;
   }
 
-  async function refreshSession(){
-    const token = getToken();
-    if(!token){
-      activeAccount = null;
-      updateActiveStatus();
+  function updateTokenStatus(){
+    if(!githubTokenStatus){
+      return;
+    }
+    if(!client.hasStorage()){
+      githubTokenStatus.textContent = 'Local storage is disabled, so tokens and settings will reset after closing this tab.';
+      return;
+    }
+    githubTokenStatus.textContent = client.hasToken()
+      ? 'A personal access token is saved in this browser.'
+      : 'No token saved yet. Provide one to enable saving to the repository.';
+  }
+
+  function populateGithubForm(){
+    if(!githubForm){
+      return;
+    }
+    const config = client.getConfig();
+    if(ownerInput){
+      ownerInput.value = config.owner || '';
+    }
+    if(repoInput){
+      repoInput.value = config.repo || '';
+    }
+    if(branchInput){
+      branchInput.value = config.branch || 'main';
+    }
+    if(tokenInput){
+      tokenInput.value = '';
+    }
+    updateTokenStatus();
+  }
+
+  function normalizeUsername(value){
+    return String(value || '').trim();
+  }
+
+  function normalizeEmail(value){
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function normalizeIdentifier(value){
+    return String(value || '').trim();
+  }
+
+  function resetAccountForms(){
+    if(createForm){
+      createForm.reset();
+    }
+    if(signInForm){
+      signInForm.reset();
+    }
+  }
+
+  async function handleGithubSubmit(event){
+    event.preventDefault();
+    clearFormMessages();
+
+    if(!githubForm){
       return;
     }
 
-    try{
-      const result = await requestJson('/auth/session', { method: 'GET' });
-      activeAccount = result && result.account ? result.account : null;
-    }catch(err){
-      console.warn('Session refresh failed', err);
-      activeAccount = null;
-      setToken('');
+    const owner = normalizeUsername(ownerInput && ownerInput.value);
+    const repo = normalizeUsername(repoInput && repoInput.value);
+    const branch = normalizeUsername(branchInput && branchInput.value) || 'main';
+    const token = tokenInput ? tokenInput.value.trim() : '';
+
+    if(!owner || !repo){
+      showMessage(githubErrorEl, 'Repository owner and name are required.');
+      return;
     }
-    updateActiveStatus();
+
+    client.setConfig({ owner, repo, branch });
+
+    let tokenPersisted = true;
+    if(token){
+      tokenPersisted = client.setToken(token);
+      if(!tokenPersisted){
+        showMessage(githubErrorEl, 'Unable to store the token. Check your browser privacy settings.');
+        updateTokenStatus();
+        return;
+      }
+    }
+
+    populateGithubForm();
+
+    const note = !client.hasStorage()
+      ? 'Settings saved for this session. They will reset once the tab closes because local storage is unavailable.'
+      : token ? 'Settings and token saved. You can now create accounts and posts.' : 'Repository settings saved.';
+    showMessage(githubSuccessEl, note);
+  }
+
+  function handleClearToken(){
+    clearFormMessages();
+    if(!client.clearToken()){
+      showMessage(githubErrorEl, 'Unable to remove the saved token.');
+    }else{
+      showMessage(githubSuccessEl, 'Token removed from this browser.');
+    }
+    updateTokenStatus();
+    if(tokenInput){
+      tokenInput.value = '';
+    }
   }
 
   async function handleCreate(event){
     event.preventDefault();
-    clearMessages();
+    clearFormMessages();
 
     if(!createForm){
       return;
     }
 
     const formData = new FormData(createForm);
-    const username = formData.get('username');
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const confirm = formData.get('confirm');
+    const username = normalizeUsername(formData.get('username'));
+    const emailRaw = String(formData.get('email') || '').trim();
+    const email = normalizeEmail(emailRaw);
+    const password = String(formData.get('password') || '');
+    const confirm = String(formData.get('confirm') || '');
+
+    if(!username || !emailRaw){
+      showMessage(createErrorEl, 'Username and email are required.');
+      return;
+    }
+
+    if(password.length < 8){
+      showMessage(createErrorEl, 'Use a password with at least eight characters.');
+      return;
+    }
 
     if(password !== confirm){
       showMessage(createErrorEl, 'Passwords do not match.');
       return;
     }
 
-    try{
-      const payload = {
-        username: username && String(username).trim(),
-        email: email && String(email).trim(),
-        password: password && String(password)
-      };
-
-      const result = await requestJson('/accounts', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-
-      if(result && result.token){
-        setToken(result.token);
-      }
-      activeAccount = result && result.account ? result.account : null;
-      showMessage(createSuccessEl, 'Account created and signed in.');
-      createForm.reset();
-      updateActiveStatus();
-    }catch(err){
-      showMessage(createErrorEl, err.message || 'Unable to create account.');
+    const config = client.getConfig();
+    if(!config.owner || !config.repo){
+      showMessage(createErrorEl, 'Connect to GitHub first so the account can be saved.');
+      return;
     }
+
+    let passwordHash;
+    try{
+      passwordHash = await repoStorage.hashPassword(password);
+    }catch(err){
+      showMessage(createErrorEl, 'Unable to hash the password in this browser.');
+      return;
+    }
+
+    const newAccount = {
+      id: repoStorage.createUid('acct'),
+      username,
+      email,
+      passwordHash,
+      createdAt: new Date().toISOString()
+    };
+
+    try{
+      await client.updateJson('data/accounts.json', (data) => {
+        const accounts = Array.isArray(data) ? data.slice() : [];
+        const lowerUsername = username.toLowerCase();
+        const lowerEmail = email;
+        if(accounts.some((account) => String(account.username || '').toLowerCase() === lowerUsername)){
+          throw new Error('That username is already taken.');
+        }
+        if(accounts.some((account) => String(account.email || '').toLowerCase() === lowerEmail)){
+          throw new Error('That email already has an account.');
+        }
+        accounts.push(newAccount);
+        return accounts;
+      }, `Add account ${username}`, []);
+    }catch(err){
+      showMessage(createErrorEl, err.message || 'Unable to save the account to GitHub.');
+      return;
+    }
+
+    activeAccount = { username, email: emailRaw };
+    const stored = client.setActiveAccount(activeAccount);
+    updateStorageWarning(!stored || !client.hasStorage());
+    showMessage(createSuccessEl, 'Account created and saved to the repository.');
+    resetAccountForms();
+    updateActiveStatus();
   }
 
   async function handleSignIn(event){
     event.preventDefault();
-    clearMessages();
+    clearFormMessages();
 
     if(!signInForm){
       return;
     }
 
     const formData = new FormData(signInForm);
-    const identifier = formData.get('identifier');
-    const password = formData.get('password');
+    const identifierRaw = normalizeIdentifier(formData.get('identifier'));
+    const password = String(formData.get('password') || '');
 
-    try{
-      const result = await requestJson('/auth/signin', {
-        method: 'POST',
-        body: JSON.stringify({
-          identifier: identifier && String(identifier).trim(),
-          password: password && String(password)
-        })
-      });
-
-      if(result && result.token){
-        setToken(result.token);
-      }
-      activeAccount = result && result.account ? result.account : null;
-      showMessage(signInSuccessEl, 'Signed in successfully.');
-      signInForm.reset();
-      updateActiveStatus();
-    }catch(err){
-      showMessage(signInErrorEl, err.message || 'Unable to sign in.');
-    }
-  }
-
-  async function handleSignOut(){
-    clearMessages();
-    const token = getToken();
-    if(!token){
-      activeAccount = null;
-      setToken('');
-      updateActiveStatus('Not signed in.');
+    if(!identifierRaw || !password){
+      showMessage(signInErrorEl, 'Enter your email or username and password.');
       return;
     }
 
-    try{
-      await requestJson('/auth/signout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ token })
-      });
-    }catch(err){
-      console.warn('Sign-out failed', err);
+    const config = client.getConfig();
+    if(!config.owner || !config.repo){
+      showMessage(signInErrorEl, 'Connect to GitHub before signing in.');
+      return;
     }
 
+    let accounts = [];
+    try{
+      accounts = await client.fetchJson('data/accounts.json', []);
+    }catch(err){
+      showMessage(signInErrorEl, 'Unable to load accounts from the repository.');
+      return;
+    }
+
+    if(!Array.isArray(accounts) || accounts.length === 0){
+      showMessage(signInErrorEl, 'No accounts exist yet. Create one first.');
+      return;
+    }
+
+    const identifierLower = identifierRaw.toLowerCase();
+    const match = accounts.find((account) => {
+      const usernameMatch = String(account.username || '').toLowerCase() === identifierLower;
+      const emailMatch = String(account.email || '').toLowerCase() === identifierLower;
+      return usernameMatch || emailMatch;
+    });
+
+    if(!match){
+      showMessage(signInErrorEl, 'No account found for that email or username.');
+      return;
+    }
+
+    let hashedInput;
+    try{
+      hashedInput = await repoStorage.hashPassword(password);
+    }catch(err){
+      showMessage(signInErrorEl, 'Unable to process the password in this browser.');
+      return;
+    }
+
+    if(hashedInput !== match.passwordHash){
+      showMessage(signInErrorEl, 'Incorrect password.');
+      return;
+    }
+
+    activeAccount = { username: match.username, email: match.email || '' };
+    const stored = client.setActiveAccount(activeAccount);
+    updateStorageWarning(!stored || !client.hasStorage());
+    showMessage(signInSuccessEl, 'Signed in successfully.');
+    signInForm.reset();
+    updateActiveStatus();
+  }
+
+  function handleSignOut(){
+    clearFormMessages();
     activeAccount = null;
-    setToken('');
+    const cleared = client.clearActiveAccount();
+    updateStorageWarning(!cleared || !client.hasStorage());
     updateActiveStatus('Signed out.');
   }
 
+  if(githubForm){
+    githubForm.addEventListener('submit', handleGithubSubmit);
+  }
+  if(githubClearToken){
+    githubClearToken.addEventListener('click', handleClearToken);
+  }
   if(createForm){
     createForm.addEventListener('submit', handleCreate);
   }
@@ -232,5 +348,7 @@
     signOutButton.addEventListener('click', handleSignOut);
   }
 
-  refreshSession();
+  populateGithubForm();
+  updateActiveStatus();
+  updateStorageWarning(!client.hasStorage() && !activeAccount);
 })();
