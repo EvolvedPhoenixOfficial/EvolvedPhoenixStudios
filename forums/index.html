@@ -18,12 +18,55 @@
     <section class="page-hero">
       <div class="container">
         <h1>Community Forum</h1>
-        <p class="forum-subtitle">Swap tips, showcase progress, and connect with fellow Extynct Studios players. Posts are stored locally so you can prototype ideas without creating an account.</p>
+        <p class="forum-subtitle">Swap tips, showcase progress, and connect with fellow Extynct Studios players. Everything is stored locally, and you can add an optional demo account to reuse your display name.</p>
       </div>
     </section>
 
     <section class="container forum-layout">
       <div class="forum-main">
+        <article class="card forum-account-card" aria-labelledby="forum-account-heading">
+          <div class="card-body">
+            <h2 id="forum-account-heading" class="forum-account-title">Create a forum account</h2>
+            <p class="forum-account-intro">Set up a local demo account to autofill your posts. Accounts live only in this browser so you can experiment without sharing personal data.</p>
+
+            <form id="forum-account-form" class="forum-account-form" novalidate>
+              <div class="forum-field">
+                <label for="forum-account-name">Display name <span aria-hidden="true">*</span></label>
+                <input id="forum-account-name" name="displayName" type="text" maxlength="40" autocomplete="nickname" required placeholder="Ex: DriftPilot" />
+              </div>
+
+              <div class="forum-field">
+                <label for="forum-account-email">Email <span aria-hidden="true">*</span></label>
+                <input id="forum-account-email" name="email" type="email" maxlength="120" autocomplete="email" required placeholder="you@example.com" />
+              </div>
+
+              <div class="forum-field">
+                <label for="forum-account-password">Password <span aria-hidden="true">*</span></label>
+                <input id="forum-account-password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="At least 8 characters" />
+              </div>
+
+              <div class="forum-field">
+                <label for="forum-account-confirm">Confirm password <span aria-hidden="true">*</span></label>
+                <input id="forum-account-confirm" name="confirm" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="Re-enter password" />
+              </div>
+
+              <p id="forum-account-error" class="forum-error" role="alert" hidden></p>
+              <p id="forum-account-success" class="forum-success" role="status" hidden></p>
+
+              <button type="submit" class="btn btn-primary">Save account</button>
+            </form>
+
+            <section class="forum-account-manage" aria-live="polite">
+              <h3 id="forum-account-status" class="forum-account-status">No account selected</h3>
+              <div class="forum-field forum-account-select" hidden>
+                <label for="forum-account-picker">Switch account</label>
+                <select id="forum-account-picker" name="account"></select>
+              </div>
+              <button type="button" id="forum-account-signout" class="btn forum-account-signout" hidden>Sign out</button>
+            </section>
+          </div>
+        </article>
+
         <article class="card forum-form-card">
           <div class="card-body">
             <h2 class="forum-form-title">Create a post</h2>

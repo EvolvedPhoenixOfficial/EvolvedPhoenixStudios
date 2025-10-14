@@ -5,12 +5,22 @@
   }
 
   const STORAGE_KEY = 'extynct-forum-posts';
+  const ACCOUNT_STORAGE_KEY = 'extynct-forum-accounts';
+  const ACTIVE_ACCOUNT_KEY = 'extynct-active-account';
   const form = document.getElementById('forum-form');
   const postsContainer = document.getElementById('forum-posts');
   const emptyState = document.getElementById('forum-empty');
   const errorEl = document.getElementById('forum-form-error');
   const storageWarning = document.getElementById('forum-storage-warning');
   const resetButton = document.getElementById('forum-reset');
+  const accountForm = document.getElementById('forum-account-form');
+  const accountErrorEl = document.getElementById('forum-account-error');
+  const accountSuccessEl = document.getElementById('forum-account-success');
+  const accountStatusEl = document.getElementById('forum-account-status');
+  const accountPickerWrapper = document.querySelector('.forum-account-select');
+  const accountPicker = document.getElementById('forum-account-picker');
+  const accountSignOut = document.getElementById('forum-account-signout');
+  const authorInput = document.getElementById('forum-author');
 
   if(!form || !postsContainer || !emptyState || !resetButton){
     return;
@@ -33,6 +43,106 @@
       }
       return null;
     }
+  }
+
+  function clearAccountAlerts(){
+    if(accountErrorEl){
+      accountErrorEl.hidden = true;
+      accountErrorEl.textContent = '';
+    }
+    if(accountSuccessEl){
+      accountSuccessEl.hidden = true;
+      accountSuccessEl.textContent = '';
+    }
+  }
+
+  function showAccountError(message){
+    if(!accountErrorEl){
+      return;
+    }
+    accountErrorEl.textContent = message;
+    accountErrorEl.hidden = false;
+    if(accountSuccessEl){
+      accountSuccessEl.hidden = true;
+      accountSuccessEl.textContent = '';
+    }
+  }
+
+  function showAccountSuccess(message){
+    if(!accountSuccessEl){
+      return;
+    }
+    accountSuccessEl.textContent = message;
+    accountSuccessEl.hidden = false;
+    if(accountErrorEl){
+      accountErrorEl.hidden = true;
+      accountErrorEl.textContent = '';
+    }
+  }
+
+  function readStoredAccounts(){
+    const value = safeCall(() => localStorage.getItem(ACCOUNT_STORAGE_KEY));
+    if(!value){
+      return [];
+    }
+
+    try{
+      const parsed = JSON.parse(value);
+      if(Array.isArray(parsed)){
+        return parsed;
+      }
+    }catch(err){
+      console.warn('Unable to parse stored account data', err);
+    }
+    return [];
+  }
+
+  function saveAccounts(list){
+    if(!Array.isArray(list)){
+      return;
+    }
+    safeCall(() => localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(list)));
+  }
+
+  function readActiveAccountId(){
+    const value = safeCall(() => localStorage.getItem(ACTIVE_ACCOUNT_KEY));
+    return value || null;
+  }
+
+  function saveActiveAccountId(id){
+    if(id){
+      safeCall(() => localStorage.setItem(ACTIVE_ACCOUNT_KEY, id));
+    }else{
+      safeCall(() => localStorage.removeItem(ACTIVE_ACCOUNT_KEY));
+    }
+  }
+
+  async function hashPassword(password){
+    if(typeof password !== 'string'){
+      return '';
+    }
+
+    if(typeof crypto !== 'undefined' && crypto.subtle && typeof TextEncoder !== 'undefined'){
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      const bytes = Array.from(new Uint8Array(digest));
+      return bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    try{
+      return btoa(unescape(encodeURIComponent(password)));
+    }catch(err){
+      return password;
+    }
+  }
+
+  function ensureStorageEnabled(){
+    if(storageAvailable){
+      return true;
+    }
+    showAccountError('Local storage is disabled, so accounts cannot be saved.');
+    return false;
   }
 
   function readStoredPosts(){
@@ -119,11 +229,13 @@
     }
   }
 
-  function createId(){
+  function createId(prefix = 'post'){
     if(typeof crypto !== 'undefined' && crypto.randomUUID){
-      return crypto.randomUUID();
+      const uuid = crypto.randomUUID();
+      return prefix ? `${prefix}-${uuid}` : uuid;
     }
-    return `post-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const fallback = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return prefix ? `${prefix}-${fallback}` : fallback;
   }
 
   function parseMediaLink(value){
@@ -275,6 +387,87 @@
     return wrapper;
   }
 
+  function getActiveAccount(){
+    if(!Array.isArray(accounts)){
+      return null;
+    }
+    return accounts.find((acct) => acct.id === activeAccountId) || null;
+  }
+
+  function updateAuthorField(){
+    if(!authorInput){
+      return;
+    }
+    const activeAccount = getActiveAccount();
+    if(activeAccount){
+      authorInput.value = activeAccount.displayName;
+      authorInput.disabled = true;
+      authorInput.setAttribute('data-locked', 'true');
+      authorInput.title = 'Using display name from your forum account';
+    }else{
+      if(authorInput.getAttribute('data-locked')){
+        authorInput.value = '';
+        authorInput.removeAttribute('data-locked');
+      }
+      authorInput.disabled = false;
+      authorInput.removeAttribute('title');
+    }
+  }
+
+  function updateAccountUI(){
+    if(!Array.isArray(accounts)){
+      accounts = [];
+    }
+
+    let activeAccount = getActiveAccount();
+    if(activeAccountId && !activeAccount){
+      activeAccountId = null;
+      saveActiveAccountId(null);
+    }
+
+    activeAccount = getActiveAccount();
+
+    if(accountStatusEl){
+      if(activeAccount){
+        accountStatusEl.textContent = `Signed in as @${activeAccount.displayName}`;
+      }else if(accounts.length > 0){
+        accountStatusEl.textContent = 'Select an account to sign in.';
+      }else{
+        accountStatusEl.textContent = 'No account selected';
+      }
+    }
+
+    if(accountPicker && accountPickerWrapper){
+      accountPicker.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = accounts.length > 0 ? 'Choose an account' : 'No saved accounts yet';
+      accountPicker.appendChild(placeholder);
+
+      accounts.forEach((acct) => {
+        const option = document.createElement('option');
+        option.value = acct.id;
+        option.textContent = `@${acct.displayName}`;
+        accountPicker.appendChild(option);
+      });
+
+      accountPickerWrapper.hidden = accounts.length === 0;
+      accountPicker.value = activeAccount ? activeAccount.id : '';
+    }
+
+    if(accountSignOut){
+      accountSignOut.hidden = !activeAccount;
+    }
+
+    updateAuthorField();
+  }
+
+  function setActiveAccount(id){
+    activeAccountId = id || null;
+    saveActiveAccountId(activeAccountId);
+    updateAccountUI();
+  }
+
   function renderPosts(posts){
     postsContainer.innerHTML = '';
     if(!posts || posts.length === 0){
@@ -336,6 +529,7 @@
 
   function clearForm(){
     form.reset();
+    updateAuthorField();
   }
 
   function showError(message){
@@ -354,12 +548,122 @@
     errorEl.textContent = '';
   }
 
+  let accounts = readStoredAccounts();
+  let activeAccountId = readActiveAccountId();
+  updateAccountUI();
+
   let posts = readStoredPosts();
   if(!posts){
     posts = createDemoPosts();
     savePosts(posts);
   }
   renderPosts(posts);
+
+  if(accountForm){
+    accountForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearAccountAlerts();
+
+      if(!ensureStorageEnabled()){
+        return;
+      }
+
+      const formData = new FormData(accountForm);
+      const displayName = (formData.get('displayName') || '').toString().trim();
+      const emailRaw = (formData.get('email') || '').toString().trim();
+      const password = (formData.get('password') || '').toString();
+      const confirm = (formData.get('confirm') || '').toString();
+
+      if(displayName.length < 3){
+        showAccountError('Display name must be at least 3 characters long.');
+        return;
+      }
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailPattern.test(emailRaw)){
+        showAccountError('Please enter a valid email address.');
+        return;
+      }
+
+      if(password.length < 8){
+        showAccountError('Passwords must be at least 8 characters long.');
+        return;
+      }
+
+      if(password !== confirm){
+        showAccountError('Passwords do not match.');
+        return;
+      }
+
+      const normalizedEmail = emailRaw.toLowerCase();
+      const normalizedName = displayName.toLowerCase();
+
+      if(accounts.some((acct) => acct.displayName.toLowerCase() === normalizedName)){
+        showAccountError('That display name is already used by another local account.');
+        return;
+      }
+
+      if(accounts.some((acct) => acct.email === normalizedEmail)){
+        showAccountError('That email is already connected to a local account.');
+        return;
+      }
+
+      try{
+        const passwordHash = await hashPassword(password);
+        const account = {
+          id: createId('acct'),
+          displayName,
+          email: normalizedEmail,
+          passwordHash,
+          createdAt: new Date().toISOString()
+        };
+
+        accounts.push(account);
+        saveAccounts(accounts);
+
+        if(!ensureStorageEnabled()){
+          accounts.pop();
+          return;
+        }
+
+        setActiveAccount(account.id);
+        accountForm.reset();
+        showAccountSuccess(`Account @${account.displayName} saved. You're signed in!`);
+      }catch(err){
+        console.error('Failed to save forum account', err);
+        showAccountError('Something went wrong while saving your account. Please try again.');
+      }
+    });
+  }
+
+  if(accountPicker){
+    accountPicker.addEventListener('change', () => {
+      clearAccountAlerts();
+      const selected = accountPicker.value;
+
+      if(!selected){
+        setActiveAccount(null);
+        showAccountSuccess('Signed out.');
+        return;
+      }
+
+      const match = accounts.find((acct) => acct.id === selected);
+      if(match){
+        setActiveAccount(match.id);
+        showAccountSuccess(`Signed in as @${match.displayName}.`);
+      }else{
+        setActiveAccount(null);
+      }
+    });
+  }
+
+  if(accountSignOut){
+    accountSignOut.addEventListener('click', () => {
+      clearAccountAlerts();
+      setActiveAccount(null);
+      showAccountSuccess('Signed out.');
+    });
+  }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -384,11 +688,12 @@
         document.getElementById('forum-media-link')
       );
 
+      const activeAccount = getActiveAccount();
       const newPost = {
         id: createId(),
         title,
         body: bodyValue,
-        author: (formData.get('author') || '').toString().trim(),
+        author: activeAccount ? activeAccount.displayName : (formData.get('author') || '').toString().trim(),
         category: (formData.get('category') || 'General').toString(),
         createdAt: new Date().toISOString(),
         media

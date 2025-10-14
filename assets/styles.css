@@ -150,11 +150,21 @@ body{
 .forum-main{display:flex;flex-direction:column;gap:1.75rem}
 .forum-form-title{margin:0;font:700 1.2rem/1.25 system-ui}
 .forum-storage-note{color:#475569;margin:.5rem 0 1.25rem;font-size:.95rem}
+.forum-account-card .card-body{display:grid;gap:1.5rem}
+.forum-account-title{margin:0;font:700 1.2rem/1.25 system-ui}
+.forum-account-intro{margin:0;color:#475569;font-size:.95rem}
+.forum-account-form{display:grid;gap:1rem}
+.forum-account-manage{display:grid;gap:.85rem;padding:1.1rem;border:2px dashed rgba(15,23,42,.15);border-radius:1rem;background:#f8fafc}
+.forum-account-status{margin:0;font:700 1rem/1.2 system-ui;color:#0f172a}
+.forum-account-select select{width:100%;padding:.65rem .85rem;border:2px solid rgba(15,23,42,.15);border-radius:.85rem;background:#fff;font:500 .95rem/1.4 system-ui;color:#0f172a;transition:border-color .2s,box-shadow .2s,background .2s}
+.forum-account-select select:focus{outline:none;border-color:#0284c7;box-shadow:0 0 0 3px rgba(56,189,248,0.25);background:#f8fafc}
+.forum-account-signout{justify-self:start}
+.forum-success{margin:0;color:#047857;font-weight:600}
 .forum-form{display:grid;gap:1.25rem}
 .forum-field{display:flex;flex-direction:column;gap:.5rem}
-.forum-form label,.forum-form legend{font:600 .95rem/1.2 system-ui;color:#0f172a}
-.forum-form input,.forum-form textarea,.forum-form select{width:100%;padding:.65rem .85rem;border:2px solid rgba(15,23,42,.15);border-radius:.85rem;background:#fff;font:500 .95rem/1.4 system-ui;color:#0f172a;transition:border-color .2s,box-shadow .2s,background .2s}
-.forum-form input:focus,.forum-form textarea:focus,.forum-form select:focus{outline:none;border-color:#0284c7;box-shadow:0 0 0 3px rgba(56,189,248,0.25);background:#f8fafc}
+.forum-form label,.forum-form legend,.forum-account-form label{font:600 .95rem/1.2 system-ui;color:#0f172a}
+.forum-form input,.forum-form textarea,.forum-form select,.forum-account-form input{width:100%;padding:.65rem .85rem;border:2px solid rgba(15,23,42,.15);border-radius:.85rem;background:#fff;font:500 .95rem/1.4 system-ui;color:#0f172a;transition:border-color .2s,box-shadow .2s,background .2s}
+.forum-form input:focus,.forum-form textarea:focus,.forum-form select:focus,.forum-account-form input:focus{outline:none;border-color:#0284c7;box-shadow:0 0 0 3px rgba(56,189,248,0.25);background:#f8fafc}
 .forum-form textarea{min-height:8rem;resize:vertical}
 .forum-form fieldset{border:2px dashed rgba(15,23,42,.2);padding:1rem 1.25rem;border-radius:1rem}
 .forum-field-help{margin:-.25rem 0 .5rem;color:#475569;font-size:.9rem}
