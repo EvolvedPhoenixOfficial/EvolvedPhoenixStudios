@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Extynct Studios</title>
+  <meta name="description" content="Extynct Studios Privacy Policy for games, websites, and related services." />
+  <meta property="og:title" content="Privacy Policy — Extynct Studios" />
+  <meta property="og:description" content="How Extynct Studios collects, uses, and protects data across our games and services." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/assets/social-card.png" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <!-- If your site already has a global stylesheet, this will adopt your theme. -->
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    /* Minimal, conflict-free theming that gracefully yields to your site's CSS */
+    :root {
+      --bg: #0b0e14;
+      --panel: #11151f;
+      --muted: #aab3c5;
+      --txt: #e6eaf2;
+      --accent: #7dd3fc; /* cyan-300 */
+      --accent-2: #38bdf8; /* sky-400 */
+      --ring: rgba(125, 211, 252, 0.45);
+      --border: #1b2231;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --muted: #475569;
+        --txt: #0f172a;
+        --accent: #0284c7;
+        --accent-2: #0369a1;
+        --ring: rgba(2, 132, 199, 0.25);
+        --border: #e2e8f0;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
+    .card {
+      background: linear-gradient(180deg, var(--panel), color-mix(in oklab, var(--panel) 90%, black 10%));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+    header.nav {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(8px);
+      background: color-mix(in oklab, var(--bg) 70%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 14px 24px; display:flex; align-items:center; gap:18px; }
+    .brand { font-weight: 800; letter-spacing:.3px; }
+    .brand a { color: var(--txt); text-decoration: none; }
+    .crumbs a { color: var(--muted); text-decoration: none; }
+    .crumbs a:hover { color: var(--txt); }
+    h1 { font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.4rem); margin: 0 0 6px; }
+    h2 { font-size: clamp(1.25rem, 1.1rem + .6vw, 1.5rem); margin: 28px 0 8px; }
+    h3 { font-size: 1.05rem; margin: 22px 0 6px; color: var(--muted); }
+    p, li { color: color-mix(in oklab, var(--txt) 92%, var(--muted) 8%); }
+    .muted { color: var(--muted); font-size: .95rem; }
+    .accent { color: var(--accent); }
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--border); border-radius:999px;
+      padding:6px 12px; font-size:.9rem; color: var(--muted);
+      background: color-mix(in oklab, var(--panel) 92%, black 8%);
+    }
+    .btn {
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: white; border-radius: 12px; text-decoration:none; font-weight: 700;
+      border: 0; box-shadow: 0 8px 20px var(--ring);
+    }
+    .btn:hover { transform: translateY(-1px); filter: saturate(1.1); }
+    .grid { display:grid; grid-template-columns: 1fr; gap: 18px; }
+    @media (min-width: 1024px) {
+      .grid { grid-template-columns: 280px 1fr; gap: 26px; }
+    }
+    .toc {
+      position: sticky; top: 72px; height: fit-content;
+      border:1px solid var(--border); border-radius: 14px; padding: 16px;
+      background: color-mix(in oklab, var(--panel) 96%, black 4%);
+    }
+    .toc a {
+      display:block; padding:8px 10px; border-radius: 10px; color: var(--muted);
+      text-decoration:none;
+    }
+    .toc a:hover, .toc a.active { background: color-mix(in oklab, var(--bg) 85%, var(--panel) 15%); color: var(--txt); }
+    code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: .95em; }
+    .footer {
+      margin-top: 36px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--muted);
+      display:flex; flex-wrap: wrap; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .notice {
+      border-left: 3px solid var(--accent); padding-left: 12px; margin: 12px 0;
+      color: color-mix(in oklab, var(--txt) 92%, var(--muted) 8%);
+    }
+    @media print {
+      header.nav, .toc, .btn { display:none !important; }
+      body { background: white; color: black; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      a::after { content: " (" attr(href) ")"; font-size: .85em; color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand"><a href="/">Extynct Studios</a></div>
+      <div class="crumbs"><a href="/">Home</a> <span class="muted">/</span> <span class="muted">Privacy Policy</span></div>
+      <div style="margin-left:auto;">
+        <a class="btn" href="#contact">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div style="display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap;">
+        <div>
+          <h1>Privacy Policy <span class="muted mono">— Extynct Studios</span></h1>
+          <div class="muted">Effective Date: <time id="effective-date">October 14, 2025</time></div>
+        </div>
+        <div><span class="pill">We do not sell your data</span></div>
+      </div>
+
+      <div class="grid" style="margin-top:18px;">
+        <!-- ToC -->
+        <nav class="toc" aria-label="Table of contents">
+          <strong class="muted" style="display:block; margin-bottom:8px;">On this page</strong>
+          <a href="#information-we-collect">1. Information We Collect</a>
+          <a href="#how-we-use">2. How We Use Information</a>
+          <a href="#sharing">3. Sharing of Information</a>
+          <a href="#international">4. International Transfers</a>
+          <a href="#retention">5. Data Retention</a>
+          <a href="#rights">6. Your Rights & Choices</a>
+          <a href="#cookies">7. Cookies & Tracking</a>
+          <a href="#security">8. Security</a>
+          <a href="#children">9. Children’s Privacy</a>
+          <a href="#third-party-links">10. Third‑Party Links</a>
+          <a href="#changes">11. Changes to This Policy</a>
+          <a href="#contact">12. Contact Us</a>
+        </nav>
+
+        <!-- Content -->
+        <article>
+          <p class="notice"><strong>Summary:</strong> We collect only what we need to run and improve our games and services, verify ownership, enable online features, and keep things secure. <strong>We don’t sell your personal information.</strong> For questions or requests, email <a class="accent" href="mailto:Glen@evolvedphoenixstudios.com">Glen@evolvedphoenixstudios.com</a>.</p>
+
+          <section id="information-we-collect">
+            <h2>1) Information We Collect</h2>
+            <h3>a) Information you provide</h3>
+            <ul>
+              <li>Account/profile data you share with us (e.g., display name, email, support requests).</li>
+              <li>In‑game preferences, settings, or saves you choose to sync to cloud services.</li>
+              <li>Feedback, bug reports, or survey responses.</li>
+            </ul>
+            <h3>b) Information collected automatically</h3>
+            <ul>
+              <li>Gameplay and usage data (session times, progression, items/equipment, match stats, crash logs).</li>
+              <li>Device and technical data (OS version, hardware identifiers, language/locale, IP address, time zone, performance metrics).</li>
+              <li>Diagnostics and anti‑cheat/anti‑fraud signals (where applicable).</li>
+            </ul>
+            <h3>c) Information from third‑party platforms</h3>
+            <p>If you connect or access via a third party (e.g., Steam, Epic, PlayStation, Xbox, mobile stores, Discord), we may receive:</p>
+            <ul>
+              <li>Platform user ID, display name, avatar.</li>
+              <li>Entitlements (ownership, DLCs, in‑app purchases).</li>
+              <li>Friends list or presence <em>only</em> if you grant permission and the feature requires it.</li>
+              <li>Cloud‑save identifiers or profile metadata supported by that platform.</li>
+            </ul>
+            <p class="muted">Examples of vendors/integrations you might use: Steamworks, Unity Services (Authentication, Cloud Save, Analytics, Cloud Diagnostics), Discord Rich Presence, PlayFab/GameAnalytics, Sentry/Backtrace. Replace or remove this line if not applicable.</p>
+          </section>
+
+          <section id="how-we-use">
+            <h2>2) How We Use Information</h2>
+            <ul>
+              <li>Operate, maintain, and improve the Services and your gameplay experience.</li>
+              <li>Provide online/social features (multiplayer, leaderboards, presence, cloud saves).</li>
+              <li>Verify entitlements and prevent fraud or abuse.</li>
+              <li>Diagnose crashes and performance issues.</li>
+              <li>Provide customer support and respond to inquiries.</li>
+              <li>Comply with legal obligations and enforce our Terms.</li>
+            </ul>
+            <p>We process data under the bases of <strong>legitimate interests</strong>, <strong>contract</strong>, <strong>consent</strong> (where required), and <strong>legal obligations</strong>.</p>
+          </section>
+
+          <section id="sharing">
+            <h2>3) Sharing of Information</h2>
+            <ul>
+              <li><strong>Service providers</strong> (hosting, analytics, crash reporting, support).</li>
+              <li><strong>Platform providers</strong> (e.g., Steam/Epic/console/mobile) to verify entitlements and enable platform features.</li>
+              <li><strong>Authorities</strong> when required by law or to protect rights, property, or safety.</li>
+              <li><strong>Business transfers</strong> (e.g., merger/acquisition) with comparable safeguards.</li>
+            </ul>
+            <p>We do <strong>not</strong> sell your personal information.</p>
+          </section>
+
+          <section id="international">
+            <h2>4) International Transfers</h2>
+            <p>Your information may be processed in countries other than your own. Where required, we use appropriate safeguards (e.g., Standard Contractual Clauses). Contact us for details.</p>
+          </section>
+
+          <section id="retention">
+            <h2>5) Data Retention</h2>
+            <p>We retain information only as long as necessary for the purposes described above. When no longer needed, we delete or anonymize the data.</p>
+          </section>
+
+          <section id="rights">
+            <h2>6) Your Rights &amp; Choices</h2>
+            <p>Depending on your location, you may have rights to access, correct, delete, object, restrict, withdraw consent, or port your data. To exercise rights, contact <a class="accent" href="mailto:Glen@evolvedphoenixstudios.com">Glen@evolvedphoenixstudios.com</a>. We may ask to verify your identity.</p>
+          </section>
+
+          <section id="cookies">
+            <h2>7) Cookies &amp; Tracking (Websites Only)</h2>
+            <p>If you visit our websites, we may use cookies or similar technologies to remember preferences, analyze traffic, and improve content. You can adjust cookie settings in your browser and (if available) via our cookie banner.</p>
+          </section>
+
+          <section id="security">
+            <h2>8) Security</h2>
+            <p>We use administrative, technical, and physical measures designed to protect your information (e.g., encryption in transit, access controls). No method of transmission or storage is 100% secure.</p>
+          </section>
+
+          <section id="children">
+            <h2>9) Children’s Privacy</h2>
+            <p><strong>Our Services are not directed to children under 13.</strong> We do not knowingly collect personal information from children under 13. If we learn that a child under 13 has provided personal information, we will promptly delete it from our systems.</p>
+            <p>If you are in the <strong>EEA/UK or other regions</strong> with a higher age of digital consent (often <strong>under 16</strong>), we do not knowingly collect personal information from children under the applicable age of consent without verifiable parental permission.</p>
+            <p><strong>Parents/Guardians:</strong> If you believe your child has provided personal information to us without your consent, please contact us at <a class="accent" href="mailto:Glen@evolvedphoenixstudios.com">Glen@evolvedphoenixstudios.com</a>. We will remove the information and, if applicable, terminate the child’s access.</p>
+          </section>
+
+          <section id="third-party-links">
+            <h2>10) Third‑Party Links</h2>
+            <p>Our Services may link to third‑party sites or services that we do not control. Their practices are governed by their own privacy policies.</p>
+          </section>
+
+          <section id="changes">
+            <h2>11) Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will update the “Effective Date” and, when required, provide additional notice (e.g., in‑game notice, website banner). Your continued use signifies acceptance of the revised policy.</p>
+          </section>
+
+          <section id="contact">
+            <h2>12) Contact Us</h2>
+            <p>Questions or requests about this policy?</p>
+            <ul>
+              <li><strong>Email:</strong> <a class="accent" href="mailto:Glen@evolvedphoenixstudios.com">Glen@evolvedphoenixstudios.com</a></li>
+              <li><strong>Mailing Address (optional):</strong> Add your studio’s legal address if you want mail‑in requests</li>
+              <li><strong>Discord (optional):</strong> Add your invite link</li>
+            </ul>
+          </section>
+
+          <div class="footer">
+            <div>© <span id="year">2025</span> Extynct Studios</div>
+            <div class="muted">Policy version: 1.0</div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ToC active section highlight
+    const links = Array.from(document.querySelectorAll('.toc a'));
+    const headings = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = '#' + entry.target.id;
+        const link = document.querySelector('.toc a[href="' + id + '"]');
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+    headings.forEach(h => observer.observe(h));
+  </script>
+</body>
+</html>
