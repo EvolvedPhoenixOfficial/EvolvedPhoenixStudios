@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Account Manager — Extynct Studios</title>
+  <meta name="description" content="Configure repository-backed accounts for the Extynct Studios forum." />
+  <link rel="icon" type="image/png" href="/assets/images/8.jpg" />
+  <link rel="apple-touch-icon" href="/assets/images/8.jpg" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script src="/assets/site.js" defer></script>
+  <script src="/assets/community-config.js" defer></script>
+  <script src="/assets/community-storage.js" defer></script>
+  <script src="/assets/account.js" defer></script>
+</head>
+<body>
+  <div data-include="/partials/header.html"></div>
+
+  <main id="account-root" class="account">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Manage your account</h1>
+        <p class="account-subtitle">Create an account you can use across the community forum. Accounts are saved directly into this website’s repository so they work wherever you sign in.</p>
+      </div>
+    </section>
+
+    <section class="container account-layout">
+      <article class="card account-card" aria-labelledby="account-create-heading">
+        <div class="card-body">
+          <h2 id="account-create-heading" class="account-card-title">Create a new account</h2>
+          <p class="account-card-intro">New accounts are committed to the repository so everyone can sign in from any device.</p>
+
+          <form id="account-create-form" class="account-form" novalidate>
+            <div class="account-field">
+              <label for="account-create-username">Username <span aria-hidden="true">*</span></label>
+              <input id="account-create-username" name="username" type="text" maxlength="32" autocomplete="username" required placeholder="Ex: DriftPilot" />
+            </div>
+
+            <div class="account-field">
+              <label for="account-create-email">Email <span aria-hidden="true">*</span></label>
+              <input id="account-create-email" name="email" type="email" maxlength="120" autocomplete="email" required placeholder="you@example.com" />
+            </div>
+
+            <div class="account-field">
+              <label for="account-create-password">Password <span aria-hidden="true">*</span></label>
+              <input id="account-create-password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="At least 8 characters" />
+            </div>
+
+            <div class="account-field">
+              <label for="account-create-confirm">Confirm password <span aria-hidden="true">*</span></label>
+              <input id="account-create-confirm" name="confirm" type="password" minlength="8" maxlength="64" autocomplete="new-password" required placeholder="Re-enter password" />
+            </div>
+
+            <p id="account-create-error" class="account-error" role="alert" hidden></p>
+            <p id="account-create-success" class="account-success" role="status" hidden></p>
+
+            <button type="submit" class="btn btn-primary">Create account</button>
+          </form>
+        </div>
+      </article>
+
+      <article class="card account-card" aria-labelledby="account-signin-heading">
+        <div class="card-body">
+          <h2 id="account-signin-heading" class="account-card-title">Sign in</h2>
+          <p class="account-card-intro">After your account exists in the repository, sign in with your email or username and password. Once signed in you can post on the community forum.</p>
+
+          <form id="account-signin-form" class="account-form" novalidate>
+            <div class="account-field">
+              <label for="account-signin-identifier">Email or username <span aria-hidden="true">*</span></label>
+              <input id="account-signin-identifier" name="identifier" type="text" autocomplete="username" required placeholder="yourname or you@example.com" />
+            </div>
+
+            <div class="account-field">
+              <label for="account-signin-password">Password <span aria-hidden="true">*</span></label>
+              <input id="account-signin-password" name="password" type="password" minlength="8" maxlength="64" autocomplete="current-password" required placeholder="Your password" />
+            </div>
+
+            <p id="account-signin-error" class="account-error" role="alert" hidden></p>
+            <p id="account-signin-success" class="account-success" role="status" hidden></p>
+            <button type="submit" class="btn btn-primary">Sign in</button>
+          </form>
+
+          <p id="account-active-status" class="account-active-status" aria-live="polite">Not signed in.</p>
+          <button type="button" id="account-signout" class="btn" hidden>Sign out</button>
+          <p id="account-storage-warning" class="account-warning" hidden>Heads up: your browser blocked local storage, so your sign-in will reset after you close this tab.</p>
+
+          <p class="account-hint">Need to start posting? Head back to the <a href="/forums/">community forum</a>.</p>
+        </div>
+      </article>
+
+      <article class="card account-card" aria-labelledby="account-info-heading">
+        <div class="card-body">
+          <h2 id="account-info-heading" class="account-card-title">How it works</h2>
+          <p id="account-config-alert" class="account-warning" role="status"></p>
+          <p class="account-card-intro">Account details are hashed in your browser and saved to <code>hidden/community/accounts.json</code> within this repository using the GitHub REST API.</p>
+          <p class="account-card-intro">Forum sessions are stored locally so the site knows who you are, while passwords never leave the browser unhashed.</p>
+          <p class="account-hint">When you’re ready to post, visit the <a href="/forums/">Community Forum</a>. Attachments upload into <code>uploads/community/</code> alongside the site.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div data-include="/partials/footer.html"></div>
+</body>
+</html>

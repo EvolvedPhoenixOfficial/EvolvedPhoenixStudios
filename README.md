@@ -37,8 +37,23 @@ If you are interested in collaboration or licensing, please contact us directly.
 ## 🛠️ Tech Stack
 
 - **HTML5, CSS3, JavaScript**  
-- **TailwindCSS** for styling  
-- **Static Hosting** (GitHub Pages / external server)  
+- **TailwindCSS** inspired utility styles
+- **Static Hosting** (GitHub Pages / external server)
+- **GitHub REST API** commits triggered from the browser for forum persistence
+
+---
+
+## 🧪 Local development & storage
+
+The site still runs on static hosting, but forum activity is committed back to the repository with the GitHub REST API.
+
+1. Update `assets/community-config.js` with your repository owner, repo name, branch, and a personal access token that has `repo` scope. The site reads this configuration automatically at runtime.
+2. Create an account on `/account/`. Passwords are hashed before they leave the browser, then saved to `hidden/community/accounts.json` in the repo.
+3. Sign in and post on `/forums/`. Posts update `hidden/community/posts.json`, while uploads land in `uploads/community/` using API commits.
+
+If the browser blocks local storage the site cannot remember your sign-in, so you'll need to log in again whenever the tab reloads.
+
+> ⚠️ Because the configuration script ships with the site, use a fine-grained token that is limited to this repository and rotate it regularly.
 
 ---
 
