@@ -37,8 +37,21 @@ If you are interested in collaboration or licensing, please contact us directly.
 ## 🛠️ Tech Stack
 
 - **HTML5, CSS3, JavaScript**  
-- **TailwindCSS** for styling  
-- **Static Hosting** (GitHub Pages / external server)  
+- **TailwindCSS** inspired utility styles
+- **Static Hosting** (GitHub Pages / external server)
+- **Client-side local storage** for forum persistence
+
+---
+
+## 🧪 Local development & storage
+
+The site runs entirely on static hosting. Forum accounts and posts are saved with the visitor's browser storage, so nothing is synced or committed back to the repository.
+
+1. Open `/account/` to create a username, email, and password. Passwords are hashed before they are stored locally.
+2. Sign in on the same page—once signed in, your status is remembered in this browser so you can post on `/forums/`.
+3. Share text, images (up to 2&nbsp;MB), short video clips (up to 6&nbsp;MB), or links on the forum. Attachments are stored as data URLs inside the same local storage bucket.
+
+If the browser blocks local storage (e.g., strict privacy or incognito modes), accounts and posts will only last for the current session.
 
 ---
 
