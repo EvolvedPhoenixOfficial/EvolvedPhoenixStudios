@@ -1,0 +1,8 @@
+{
+  "name": "extynctstudios-site",
+  "version": "1.0.0",
+  "description": "Extynct Studios static site with forum persistence",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
