@@ -38,7 +38,18 @@ If you are interested in collaboration or licensing, please contact us directly.
 
 - **HTML5, CSS3, JavaScript**  
 - **TailwindCSS** for styling  
-- **Static Hosting** (GitHub Pages / external server)  
+- **Static Hosting** (GitHub Pages / external server)
+- **Node.js + Express** API for local forum persistence
+
+---
+
+## 🧪 Local development
+
+The forum and account pages now use a lightweight Node.js server to write posts, uploads, and account records into this repository. To work on the site locally:
+
+1. Install dependencies with `npm install`.
+2. Start the server with `npm start` and visit [http://localhost:3000](http://localhost:3000).
+3. Forum posts are saved into `data/posts.json`, accounts into `data/accounts.json`, and any uploaded media into `uploads/forum/` so they can be committed.
 
 ---
 
